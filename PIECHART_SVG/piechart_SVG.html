@@ -1,0 +1,44 @@
+
+<head>
+    <title>SVG Pie Chart Test</title>
+    
+    </script>
+</head>
+<body>
+    <div id="pieWrap" style="width:600px; height:400px;">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+      <path id="pathTest" d="M100,100
+               A50,50 0 0,1 50,150
+               L50,100 Z"
+            style="fill:magenta;"/>    
+    </svg>
+    </div>
+    <script>
+
+    (function(){
+        var el = document.querySelector("#pieWrap svg path");
+
+        //radian to degree 
+        // +(Math.cos(Math.PI/180*90)).toFixed(2);
+        var segments = el.pathSegList;
+        var dataMovePos = segments.getItem(0);
+
+        for (var i = 120; i >= 0; i--) {
+          //segments.g
+        };
+
+        //get path info
+        /*
+        var segments = el.pathSegList;
+        var dataMovePos = segments.getItem(0);
+        console.log(dataMovePos.x, dataMovePos.y);
+        */
+
+        //TODO. 각도가 일정한 수준으로 증가하면서 y값을 도출해야 한다. 
+        // 그때마다 d 값을(data string)변경하면서 실시간으로 그린다.
+        // segments.getItem(2).y = -10; 이런식으로 수정할 수 있음. 
+
+      })();
+    </script>
+</body>
