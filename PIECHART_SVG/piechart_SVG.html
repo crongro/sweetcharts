@@ -1,18 +1,29 @@
 
 <head>
     <title>SVG Pie Chart Test</title>
+    <style type="text/css" media="screen">
+      svg {width: 100%; height: 100%;}
+    </style>
     
-    </script>
 </head>
 <body>
-    <div id="pieWrap" style="width:600px; height:400px;">
+    <div id="pieWrap" style="width:800px; height:800px;">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-      <path id="pathTest" d="M100,100
+<!--       <path id="pathTest" d="M100,100
                A50,50 0 0,1 50,150
                L50,100 Z"
             style="fill:magenta;"/>    
-    </svg>
+ -->            
+      <path id="pathTest" d="M200,100
+               A100,100 0 0,1 100,200
+               L100,100 Z"
+               style="stroke:red;fill:blue">
+               
+<!--       <path id="pathTest" d="M100,100
+               A50,50 0 0,1 50,150"
+               style="stroke:red;fill:blue">
+ -->    </svg>
     </div>
     <script>
 
@@ -21,12 +32,56 @@
 
         //radian to degree 
         // +(Math.cos(Math.PI/180*90)).toFixed(2);
-        var segments = el.pathSegList;
-        var dataMovePos = segments.getItem(0);
+       var segments = el.pathSegList;
 
-        for (var i = 120; i >= 0; i--) {
-          //segments.g
-        };
+       // Move : x,y 
+       var _moveXY = segments.getItem(0);
+
+       // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y 
+       var _arc = segments.getItem(1);
+
+       // LINE : x,y
+       var _line = segments.getItem(2);
+
+       /* 
+        * 초기에 인풋으로 받아야 할 값
+        * _moveXY.x, _moveXY.y
+        * 초기에 한 번 결정해야 할 값
+        * _line.x, _line,y
+        * _line.x : _moveXY.x-_arc.r1;
+        * _line.y : _moveXY.y;
+        */
+
+        //초기값 셋팅(중심좌표설정)
+        // _line.x = _moveXY.x - _arc.r1;
+        // _line.y = _moveXY.y;
+
+       /*
+        * 고정
+        * _arc.r1, _arc.r2 , _arc.angle, _arc.largeArcFlag, _arc.sweepFlag,
+        * _line.x, _line.y
+        */ 
+
+       /*
+        * 유동
+        * _arc.x, _arc.y, _line.x, _line.y
+        * 1. _arc.x  :  (_moveXY.x - _arc.r1) + (+(Math.cos(Math.PI/180 * $angle)).toFixed(2)) * _arc.r1;
+        * 2. _arc.y  :  (_moveXY.y) + (+(Math.sin(Math.PI/180 * $angle)).toFixed(2)) * _arc.r1;
+        */
+
+        var nCount = 0;
+        var nMaxvalue = 180;
+        var nInterval = 3;
+
+        (function _moveAniPie() {
+          console.log('ing...');
+          if(nCount >= nMaxvalue) return;
+          nCount = nCount+nInterval;
+          _arc.x = (_moveXY.x - _arc.r1) + (+(Math.cos(Math.PI/180 * nCount))) * _arc.r1;
+          _arc.y = (_moveXY.y) + (+(Math.sin(Math.PI/180 * nCount))) * _arc.r1;
+          setTimeout(_moveAniPie, 16);
+        })();
+
 
         //get path info
         /*
