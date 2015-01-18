@@ -15,11 +15,11 @@
                L50,100 Z"
             style="fill:magenta;"/>    
  -->            
-      <path id="pathTest" d="M200,100
+<!--       <path id="pathTest" d="M200,100
                A100,100 0 0,1 100,200
                L100,100 Z"
                style="stroke:red;fill:blue">
-               
+ -->               
 <!--       <path id="pathTest" d="M100,100
                A50,50 0 0,1 50,150"
                style="stroke:red;fill:blue">
@@ -27,30 +27,67 @@
     </div>
     <script>
     /* 
-     수도코드
-     var ele = new PIE({
+     var ele = new PIE(
+            document.querySelector("#pieWrap svg path"), {
               startX:value,
               startY:value,
               radius:value,
               angle:value
             });
-     
+    */
 
-    (function(){
-        var el = document.querySelector("#pieWrap svg path");
+      function PIE(elTarget, htOption) {
+       if(!htOption || typeof htOption !== "object") {
+         console.error("option type is wrong");
+       }
 
-        //radian to degree 
-        // +(Math.cos(Math.PI/180*90)).toFixed(2);
-       var segments = el.pathSegList;
+       this.elPath = elTarget;
+
+       for(var name in htOption) {
+         this[name] = htOption[name];
+       }
+
+       this._createPathElements();
+
+       // var segments = el.pathSegList;
+       // // Move : x,y 
+       // var _moveXY = segments.getItem(0);
+       // // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y 
+       // var _arc = segments.getItem(1);
+       // // LINE : x,y
+       // var _line = segments.getItem(2);
+      }
+
+      PIE.prototype._createPathElements = function () {
+
+        var xmlns = "http://www.w3.org/2000/svg";
+        var _elParent = document.querySelector("#pieWrap > svg");
+
+        var _el = document.createElementNS(xmlns, "path");
+
+        var _coords = _setCoordValue();
+
+        _el.setAttribute("id" , "elPath");
+        _el.setAttribute("d" , "M200 100 A100,100 0 0,1 100,200 L100,100 Z");
+        _el.setAttribute("style" , "stroke:red;fill:blue");
+        _elParent.appendChild(_el);
+      };
+
+      PIE.prototype._setCoordValue = function() {
+                      
+      }
+
+
+
 
        // Move : x,y 
-       var _moveXY = segments.getItem(0);
+       // var _moveXY = segments.getItem(0);
 
-       // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y 
-       var _arc = segments.getItem(1);
+       // // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y 
+       // var _arc = segments.getItem(1);
 
-       // LINE : x,y
-       var _line = segments.getItem(2);
+       // // LINE : x,y
+       // var _line = segments.getItem(2);
 
        /* 
         * 초기에 인풋으로 받아야 할 값
@@ -78,18 +115,18 @@
         * 2. _arc.y  :  (_moveXY.y) + (+(Math.sin(Math.PI/180 * $angle)).toFixed(2)) * _arc.r1;
         */
 
-        var nCount = 0;
-        var nMaxvalue = 180;
-        var nInterval = 3;
+        // var nCount = 0;
+        // var nMaxvalue = 180;
+        // var nInterval = 3;
 
-        (function _moveAniPie() {
-          console.log('ing...');
-          if(nCount >= nMaxvalue) return;
-          nCount = nCount+nInterval;
-          _arc.x = (_moveXY.x - _arc.r1) + (+(Math.cos(Math.PI/180 * nCount))) * _arc.r1;
-          _arc.y = (_moveXY.y) + (+(Math.sin(Math.PI/180 * nCount))) * _arc.r1;
-          setTimeout(_moveAniPie, 16);
-        })();
+        // (function _moveAniPie() {
+        //   console.log('ing...');
+        //   if(nCount >= nMaxvalue) return;
+        //   nCount = nCount+nInterval;
+        //   _arc.x = (_moveXY.x - _arc.r1) + (+(Math.cos(Math.PI/180 * nCount))) * _arc.r1;
+        //   _arc.y = (_moveXY.y) + (+(Math.sin(Math.PI/180 * nCount))) * _arc.r1;
+        //   setTimeout(_moveAniPie, 16);
+        // })();
 
 
         //get path info
@@ -103,6 +140,5 @@
         // 그때마다 d 값을(data string)변경하면서 실시간으로 그린다.
         // segments.getItem(2).y = -10; 이런식으로 수정할 수 있음. 
 
-      })();
     </script>
 </body>
