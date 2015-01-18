@@ -10,11 +10,11 @@
     <div id="pieWrap" style="width:800px; height:800px;">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-<!--       <path id="pathTest" d="M100,100
-               A50,50 0 0,1 50,150
+      <path id="pathTest" d="M100,100
+               A50,50 0 1,1 0,100
                L50,100 Z"
             style="fill:magenta;"/>    
- -->            
+            
 <!--       <path id="pathTest" d="M200,100
                A100,100 0 0,1 100,200
                L100,100 Z"
@@ -32,7 +32,10 @@
               startX:value,
               startY:value,
               radius:value,
-              angle:value
+              nMaxAngle:value,
+              nInterval:value,
+              strokeStyle:value,
+              fillStyle:value
             });
     */
 
@@ -47,7 +50,15 @@
          this[name] = htOption[name];
        }
 
+       //중심좌표 
+       this.centerX = this.startX - this.radius;
+       this.centerY = this.startY;
+
+       this.nCount = 0;
+
        this._createPathElements();
+
+       this._setDataForSet();
 
        // var segments = el.pathSegList;
        // // Move : x,y 
@@ -63,21 +74,47 @@
         var xmlns = "http://www.w3.org/2000/svg";
         var _elParent = document.querySelector("#pieWrap > svg");
 
-        var _el = document.createElementNS(xmlns, "path");
+        this.elPath = document.createElementNS(xmlns, "path");
 
-        var _coords = _setCoordValue();
+        var _coords = this._setCoordValue();
 
-        _el.setAttribute("id" , "elPath");
-        _el.setAttribute("d" , "M200 100 A100,100 0 0,1 100,200 L100,100 Z");
-        _el.setAttribute("style" , "stroke:red;fill:blue");
-        _elParent.appendChild(_el);
+        this.elPath.setAttribute("id" , "elPath");
+        this.elPath.setAttribute("d" , _coords);
+        this.elPath.setAttribute("style" , "stroke:"+this.strokeStyle+";fill:"+this.fillStyle);
+        _elParent.appendChild(this.elPath);
       };
 
+
       PIE.prototype._setCoordValue = function() {
-                      
-      }
 
+        var _result = "M" + this.startX + " " + this.startY + " "+ 
+                      "A" + this.radius + "," + this.radius + " "+ 
+                      "0 0,1 "+
+                      this.startX + ","+
+                      this.startY + " "+
+                      "L" + this.centerX + "," + this.centerY + " "+
+                      "Z";
+        return _result;
+      };
 
+      PIE.prototype._setDataForSet = function() {
+          var _segments = this.elPath.pathSegList;
+          // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y 
+          this._arc = _segments.getItem(1);
+      };
+
+      PIE.prototype.runAnimation = function() {
+          if(this.nCount >= this.nMaxAngle) return;
+          this.nCount = this.nCount + this.nInterval;
+          this._arc.x = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.radius;
+          this._arc.y = (this.startY) + (+(Math.sin(Math.PI/180 * this.nCount))) * this.radius;
+          if(this.nCount >= 180) this._arc.largeArcFlag = 1;
+          setTimeout(this.runAnimation.bind(this), 16);
+      };
+
+      PIE.prototype.reset = function() {
+        this.nCount = 0;
+      };
 
 
        // Move : x,y 
@@ -94,7 +131,7 @@
         * _moveXY.x, _moveXY.y
         * 초기에 한 번 결정해야 할 값
         * _line.x, _line,y
-        * _line.x : _moveXY.x-_arc.r1;
+         * _line.x : _moveXY.x-_arc.r1;
         * _line.y : _moveXY.y;
         */
 
