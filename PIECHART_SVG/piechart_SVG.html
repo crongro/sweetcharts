@@ -52,9 +52,21 @@
 
       PIE.prototype._setOption = function(htOption) {
 
-       for(var name in htOption) {
-         this[name] = htOption[name];
-       }
+         //SET Default value
+         //TODO. default 값 다른곳에 저장해두자.
+         var htDefaultValue =  {
+                startX:100,
+                startY:100,
+                radius:50,
+                nMaxAngle:180,
+                nInterval:5,
+                strokeStyle:"",
+                fillStyle:"#000"
+         };
+
+         for(var name in htDefaultValue) {
+          this[name] = htOption[name] || htDefaultValue[name];
+         }
 
       };
 
@@ -127,15 +139,17 @@
 
       /* START Service CODE */
 
-      var oPy = new PIE( document.querySelector("#pieWrap svg"), {
-              startX:200,
-              startY:100,
-              radius:100,
-              nMaxAngle:250,
-              nInterval:1,
-              strokeStyle:"green",
-              fillStyle:"gray"
-            });
+      var oPy = new PIE( document.querySelector("#pieWrap svg"), {});
+
+      // var oPy = new PIE( document.querySelector("#pieWrap svg"), {
+      //         startX:200,
+      //         startY:100,
+      //         radius:100,
+      //         nMaxAngle:250,
+      //         nInterval:1,
+      //         strokeStyle:"green",
+      //         fillStyle:"gray"
+      //       });
 
       oPy.runAnimation();
 
