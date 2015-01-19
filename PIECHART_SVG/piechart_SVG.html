@@ -104,10 +104,17 @@
       };
 
       PIE.prototype.runAnimation = function() {
+          //약속된 크기까지만 동작한다. 
           if(this.nCount >= this.nMaxAngle) return;
+
+          //인터벌만큼증가
           this.nCount = this.nCount + this.nInterval;
+
+          //각도를 기준으로 x,y좌표값을 설정
           this._arc.x = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.radius;
           this._arc.y = (this.startY) + (+(Math.sin(Math.PI/180 * this.nCount))) * this.radius;
+
+          //180도가 넘으면 largeArcFlag를 변경해야 한다.
           if(this.nCount >= 180) this._arc.largeArcFlag = 1;
           setTimeout(this.runAnimation.bind(this), 16);
       };
