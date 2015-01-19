@@ -106,6 +106,7 @@
       PIE.prototype.runAnimation = function() {
           //약속된 크기까지만 동작한다. 
           if(this.nCount >= this.nMaxAngle) return;
+          console.log(this.nCount);
 
           //인터벌만큼증가
           this.nCount = this.nCount + this.nInterval;
@@ -116,11 +117,18 @@
 
           //180도가 넘으면 largeArcFlag를 변경해야 한다.
           if(this.nCount >= 180) this._arc.largeArcFlag = 1;
-          setTimeout(this.runAnimation.bind(this), 16);
+          this.timeCtl = setTimeout(this.runAnimation.bind(this), 16);
       };
 
-      PIE.prototype.reset = function() {
+      PIE.prototype._resetAnimation = function() {
         this.nCount = 0;
+        this._arc.largeArcFlag = 0;
+        clearTimeout(this.timeCtl);
+      };
+
+      PIE.prototype.reStartAnimation = function() {
+        this._resetAnimation();
+        this.runAnimation();
       };
 
 
