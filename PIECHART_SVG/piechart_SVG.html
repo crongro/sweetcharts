@@ -34,11 +34,9 @@
          console.error("option type is wrong");
        }
 
-       this.elPath = elTarget;
+       this.elParentSVG = elTarget;
 
-       for(var name in htOption) {
-         this[name] = htOption[name];
-       }
+       this._setOption(htOption);
 
        //중심좌표 
        this.centerX = this.startX - this.radius;
@@ -52,10 +50,18 @@
 
       }
 
+      PIE.prototype._setOption = function(htOption) {
+
+       for(var name in htOption) {
+         this[name] = htOption[name];
+       }
+
+      };
+
       PIE.prototype._createPathElements = function () {
 
         var xmlns = "http://www.w3.org/2000/svg";
-        var _elParent = document.querySelector("#pieWrap > svg");
+        //var _elParent = document.querySelector("#pieWrap > svg");
 
         this.elPath = document.createElementNS(xmlns, "path");
 
@@ -64,7 +70,7 @@
         this.elPath.setAttribute("id" , "elPath");
         this.elPath.setAttribute("d" , _coords);
         this.elPath.setAttribute("style" , "stroke:"+this.strokeStyle+";fill:"+this.fillStyle);
-        _elParent.appendChild(this.elPath);
+        this.elParentSVG.appendChild(this.elPath);
       };
 
 
@@ -121,7 +127,17 @@
 
       /* START Service CODE */
 
+      var oPy = new PIE( document.querySelector("#pieWrap svg"), {
+              startX:200,
+              startY:100,
+              radius:100,
+              nMaxAngle:250,
+              nInterval:1,
+              strokeStyle:"green",
+              fillStyle:"gray"
+            });
 
+      oPy.runAnimation();
 
     </script>
 </body>
