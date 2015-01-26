@@ -1,4 +1,4 @@
-
+<html>
 <head>
     <title>SVG Pie Chart Test</title>
     <style type="text/css" media="screen">
@@ -23,7 +23,7 @@
               startY:value,
               radius:value,
               nMaxAngle:value,
-              nInterval:value,
+              nIncrease:value,
               strokeStyle:value,
               fillStyle:value
             });
@@ -59,7 +59,7 @@
                 startY:100,
                 radius:50,
                 nMaxAngle:180,
-                nInterval:5,
+                nIncrease:5,
                 strokeStyle:"",
                 fillStyle:"#000"
          };
@@ -98,14 +98,13 @@
         return _result;
       };
 
-      PIE.prototype._setDataForSet = function() {
-
        /*
        var segments = el.pathSegList;
        // Move : x,y ------> segments.getItem(0);
        // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y ----->  segments.getItem(1);
        // LINE : x,y  ------> segments.getItem(2);
        */
+      PIE.prototype._setDataForSet = function() {
         var _segments = this.elPath.pathSegList;
         this._arc = _segments.getItem(1);
       };
@@ -115,7 +114,7 @@
           if(this.nCount >= this.nMaxAngle) return;
 
           //interval 만큼 증가
-          this.nCount = this.nCount + this.nInterval;
+          this.nCount = this.nCount + this.nIncrease;
 
           //각도를 기준으로 x,y좌표값을 설정
           this._arc.x = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.radius;
@@ -139,17 +138,18 @@
 
       /* START Service CODE */
 
-      var oPy = new PIE( document.querySelector("#pieWrap svg"), {});
+      //default value
+      //var oPy = new PIE(document.querySelector("#pieWrap svg"), {});
 
-      // var oPy = new PIE( document.querySelector("#pieWrap svg"), {
-      //         startX:200,
-      //         startY:100,
-      //         radius:100,
-      //         nMaxAngle:250,
-      //         nInterval:1,
-      //         strokeStyle:"green",
-      //         fillStyle:"gray"
-      //       });
+      var oPy = new PIE( document.querySelector("#pieWrap svg"), {
+              startX:200,
+              startY:100,
+              radius:100,
+              nMaxAngle:250,
+              nIncrease:6, /* 이걸증가시키면 그만큼 animation은 끊긴다. */
+              strokeStyle:"green",
+              fillStyle:"gray"
+      });
 
       oPy.runAnimation();
 
