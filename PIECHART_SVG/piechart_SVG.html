@@ -50,8 +50,11 @@
 
       }
 
-      PIE.prototype._setOption = function(htOption) {
+      PIE.prototype = {
 
+        constructor : PIE,
+
+        _setOption : function(htOption) {
          //SET Default value
          //TODO. default 값 다른곳에 저장해두자.
          var htDefaultValue =  {
@@ -67,11 +70,9 @@
          for(var name in htDefaultValue) {
           this[name] = htOption[name] || htDefaultValue[name];
          }
+       },
 
-      };
-
-      PIE.prototype._createPathElements = function () {
-
+      _createPathElements : function () {
         var xmlns = "http://www.w3.org/2000/svg";
         //var _elParent = document.querySelector("#pieWrap > svg");
 
@@ -83,10 +84,9 @@
         this.elPath.setAttribute("d" , _coords);
         this.elPath.setAttribute("style" , "stroke:"+this.strokeStyle+";fill:"+this.fillStyle);
         this.elParentSVG.appendChild(this.elPath);
-      };
+      },
 
-
-      PIE.prototype._setCoordValue = function() {
+      _setCoordValue : function() {
 
         var _result = "M" + this.startX + " " + this.startY + " "+ 
                       "A" + this.radius + "," + this.radius + " "+ 
@@ -96,7 +96,7 @@
                       "L" + this.centerX + "," + this.centerY + " "+
                       "Z";
         return _result;
-      };
+      },
 
        /*
        var segments = el.pathSegList;
@@ -104,12 +104,12 @@
        // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y ----->  segments.getItem(1);
        // LINE : x,y  ------> segments.getItem(2);
        */
-      PIE.prototype._setDataForSet = function() {
+      _setDataForSet : function() {
         var _segments = this.elPath.pathSegList;
         this._arc = _segments.getItem(1);
-      };
+      },
 
-      PIE.prototype.runAnimation = function() {
+      runAnimation : function() {
           //약속된 크기까지만 동작한다. 
           if(this.nCount >= this.nMaxAngle) return;
 
@@ -123,18 +123,19 @@
           //180도가 넘으면 largeArcFlag를 변경해야 한다.
           if(this.nCount >= 180) this._arc.largeArcFlag = 1;
           this.timeCtl = setTimeout(this.runAnimation.bind(this), 16);
-      };
+      },
 
-      PIE.prototype._resetAnimation = function() {
+      _resetAnimation : function() {
         this.nCount = 0;
         this._arc.largeArcFlag = 0;
         clearTimeout(this.timeCtl);
-      };
-
-      PIE.prototype.reStartAnimation = function() {
+      },
+      
+      reStartAnimation : function() {
         this._resetAnimation();
         this.runAnimation();
-      };
+      }
+    };
 
       /* START Service CODE */
 
