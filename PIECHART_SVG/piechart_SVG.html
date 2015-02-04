@@ -35,11 +35,15 @@
 
        this.elParentSVG = elTarget;
 
-       this._setOption(htOption);
+       this.htCore = {};
 
-       //중심좌표 
-       this.centerX = this.startX - this.radius;
-       this.centerY = this.startY;
+       try {
+        this._setOption(htOption);
+      } catch (err) {console.error("[PIE] option error => ",err);}
+
+      //set center position
+       this.htCore.centerX = this.htCore.startX - this.htCore.radius;
+       this.htCore.centerY = this.htCore.startY;
 
        this.nCount = 0;
        this.aElPath = [];
@@ -52,7 +56,6 @@
         this._createPathElements(i);
         this._setDataForSet(i);
        }
-
       }
 
       PIE.prototype = {
@@ -60,22 +63,26 @@
         constructor : PIE,
 
         _setOption : function(htOption) {
-         //SET Default value
-         //TODO. default 값 다른곳에 저장해두자.
-         var htDefaultValue =  {
-                startX:100,
-                startY:100,
-                radius:50,
-                nMaxAngle:180,
-                nIncrease:5,
-                strokeStyle:"",
-                fillStyle:"#000"
-         };
 
-         for(var name in htDefaultValue) {
-          this[name] = htOption[name] || htDefaultValue[name];
-         }
-       },
+          var htCoreOption  = htOption.core;
+          this.aPiece        = htOption.piece;
+
+          //check. piece
+          if(this.aPiece.length < 2) throw Error("Require pie's piece datas");
+
+          //check. core 
+          var htDefaultCoreValue =  {
+            startX:100,
+            startY:100,
+            radius:50,
+            nMaxAngle:360,
+            nIncrease:5,
+          };
+
+          for(var name in htDefaultCoreValue) {
+            this.htCore[name] = htCoreOption[name] || htDefaultCoreValue[name];
+          }
+        },
 
       _createPathElements : function (nIndex) {
         var xmlns = "http://www.w3.org/2000/svg";
@@ -83,22 +90,21 @@
 
         this.aElPath[nIndex] = document.createElementNS(xmlns, "path");
 
-        var _coords = this._setCoordValue();
+        var _coords = this._getCoordProperty();
 
         this.aElPath[nIndex].setAttribute("id" , "elPath");
         this.aElPath[nIndex].setAttribute("d" , _coords);
-        this.aElPath[nIndex].setAttribute("style" , "stroke:"+this.strokeStyle+";fill:"+this.fillStyle);
+        this.aElPath[nIndex].setAttribute("style" , "stroke:'';fill:"+this.aPiece[nIndex][1]);
         this.elParentSVG.appendChild(this.aElPath[nIndex]);
       },
 
-      _setCoordValue : function() {
-
-        var _result = "M" + this.startX + " " + this.startY + " "+ 
-                      "A" + this.radius + "," + this.radius + " "+ 
+      _getCoordProperty : function() {
+        var _result = "M" + this.htCore.startX + " " + this.htCore.startY + " "+ 
+                      "A" + this.htCore.radius + "," + this.htCore.radius + " "+ 
                       "0 0,1 "+
-                      this.startX + ","+
-                      this.startY + " "+
-                      "L" + this.centerX + "," + this.centerY + " "+
+                      this.htCore.startX + ","+
+                      this.htCore.startY + " "+
+                      "L" + this.htCore.centerX + "," + this.htCore.centerY + " "+
                       "Z";
         return _result;
       },
@@ -125,31 +131,31 @@
           if(this.nCount >= N_MAX_ANGLE) return;
 
           //interval 만큼 증가
-          this.nCount = this.nCount + this.nIncrease;
+          this.nCount = this.nCount + this.htCore.nIncrease;
 
           //두 가지 그리기 시작.
           nA1 = this.nCount * 0.3; //첫번째 원은 count의 반값이다.
           nB1 = this.nCount;
 
           //약속된 크기까지만 동작한다. 
-          if(this.nCount > (this.nMaxAngle - this.nIncrease)) {
+          if(this.nCount > (this.htCore.nMaxAngle - this.htCore.nIncrease)) {
             this.nCount = N_MAX_ANGLE;
             nA1 = N_MAX_ANGLE * 0.3;
           }
 
           //첫번째 것. 각도를 기준으로 x,y좌표값을 설정
-          // this._aArc[0].x = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.radius;
-          // this._aArc[0].y = (this.startY) + (+(Math.sin(Math.PI/180 * this.nCount))) * this.radius;
-          var _pre = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * nA1))) * this.radius;
-          var _after = (this.startY) + (+(Math.sin(Math.PI/180 * nA1))) * this.radius;
+          // this._aArc[0].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.htCore.radius;
+          // this._aArc[0].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * this.nCount))) * this.htCore.radius;
+          var _pre = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * nA1))) * this.htCore.radius;
+          var _after = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * nA1))) * this.htCore.radius;
           this._aArc[0].x =  _pre;
           this._aArc[0].y =  _after;
 
           //두번째 것.
           this._aStart[1].x = _pre;
           this._aStart[1].y = _after;
-          this._aArc[1].x = (this.startX - this.radius) + (+(Math.cos(Math.PI/180 * nB1))) * this.radius;
-          this._aArc[1].y = (this.startY) + (+(Math.sin(Math.PI/180 * nB1))) * this.radius;
+          this._aArc[1].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * nB1))) * this.htCore.radius;
+          this._aArc[1].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * nB1))) * this.htCore.radius;
 
           //180도가 넘으면 largeArcFlag를 변경해야 한다.
           //if(this.nCount >= 180) this._aArc[0].largeArcFlag = 1;
@@ -177,14 +183,25 @@
       //var oPy = new PIE(document.querySelector("#pieWrap svg"), {});
 
       var oPy = new PIE( document.querySelector("#pieWrap svg"), {
-              startX:200,
-              startY:100,
-              radius:100,
-              nMaxAngle:360,
-              nIncrease:6, /* 이걸증가시키면 그만큼 animation은 끊긴다. */
-              strokeStyle:"green",
-              fillStyle:"gray"
+                core : {
+                  startX:200,
+                  startY:100,
+                  radius:100,
+                  nIncrease:6, /* 이걸증가시키면 그만큼 animation은 끊긴다. */
+                }, 
+                piece :
+                [[30,'magenta'], [50,'skyblue']]
       });
+
+      // var oPy = new PIE( document.querySelector("#pieWrap svg"), {
+      //         startX:200,
+      //         startY:100,
+      //         radius:100,
+      //         nMaxAngle:360,
+      //         nIncrease:6,
+      //         strokeStyle:"green",
+      //         fillStyle:"gray"
+      // });
 
       oPy.runAnimation();
 
