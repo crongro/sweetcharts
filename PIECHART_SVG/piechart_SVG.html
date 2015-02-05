@@ -15,31 +15,26 @@
     </svg>
   </div>
   <script>
-    /* 
-     var ele = new PIE(
-            document.querySelector("#pieWrap svg path"), {
-              startX:value,
-              startY:value,
-              radius:value,
-              nMaxAngle:value,
-              nIncrease:value,
-              strokeStyle:value,
-              fillStyle:value
-            });
-    */
+
+      var FXDATA = {
+        minPieceCount : 2,
+        xmlns         : "http://www.w3.org/2000/svg",
+        maxAngle      : 359.9999,
+        sErrorMSG     : {}
+      };
 
       function PIE(elTarget, htOption) {
-       if(!htOption || typeof htOption !== "object") {
+       if(!(htOption && typeof htOption === "object")) {
          console.error("option type is wrong");
        }
 
        this.elParentSVG = elTarget;
 
        this.htCore = {};
+       this.aPiece = [];
 
-       try {
-        this._setOption(htOption);
-      } catch (err) {console.error("[PIE] option error => ",err);}
+       //set options
+       try {this._setOption(htOption);} catch(err){console.error("[PIE] option error => ",err);}
 
       //set center position
        this.htCore.centerX = this.htCore.startX - this.htCore.radius;
@@ -50,12 +45,9 @@
        this._aArc = [];
        this._aStart = [];
 
+       this._makeCreatePath();
        //TODO. change index number
-       var nPathCount = 2;
-       for(var i=0; i<nPathCount; i++) {
-        this._createPathElements(i);
-        this._setDataForSet(i);
-       }
+      
       }
 
       PIE.prototype = {
@@ -67,8 +59,14 @@
           var htCoreOption  = htOption.core;
           this.aPiece        = htOption.piece;
 
-          //check. piece
-          if(this.aPiece.length < 2) throw Error("Require pie's piece datas");
+          //check. piece count
+          if(this.aPiece.length < FXDATA.minPieceCount) throw Error("Require pie's piece datas");
+
+          //check. piece distribution
+          if( this.aPiece.reduce(function(pre,now){
+                if(typeof pre!== "number") pre = +pre[0];
+                return pre + (+now[0]);
+           }) !== 100 ) throw Error ("the sum of pieceData should be 100");
 
           //check. core 
           var htDefaultCoreValue =  {
@@ -82,13 +80,12 @@
           for(var name in htDefaultCoreValue) {
             this.htCore[name] = htCoreOption[name] || htDefaultCoreValue[name];
           }
-        },
+       },
 
       _createPathElements : function (nIndex) {
-        var xmlns = "http://www.w3.org/2000/svg";
         //var _elParent = document.querySelector("#pieWrap > svg");
 
-        this.aElPath[nIndex] = document.createElementNS(xmlns, "path");
+        this.aElPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
         var _coords = this._getCoordProperty();
 
@@ -122,25 +119,32 @@
         this._aStart[nIndex] = aSegments[nIndex].getItem(0);
       },
 
+      _makeCreatePath : function(){ 
+        var nPathCount = this.aPiece.length;
+        for(var i=0; i<nPathCount; i++) {
+          this._createPathElements(i);
+          this._setDataForSet(i);
+        }
+      },
+
       runAnimation : function() {
 
           var nA1,nA2;
 
-          var N_MAX_ANGLE = 359.9999;
 
-          if(this.nCount >= N_MAX_ANGLE) return;
+          if(this.nCount >= FXDATA.maxAngle) return;
 
           //interval 만큼 증가
           this.nCount = this.nCount + this.htCore.nIncrease;
 
           //두 가지 그리기 시작.
-          nA1 = this.nCount * 0.3; //첫번째 원은 count의 반값이다.
+          nA1 = this.nCount * 0.3;
           nB1 = this.nCount;
 
           //약속된 크기까지만 동작한다. 
           if(this.nCount > (this.htCore.nMaxAngle - this.htCore.nIncrease)) {
-            this.nCount = N_MAX_ANGLE;
-            nA1 = N_MAX_ANGLE * 0.3;
+            this.nCount = FXDATA.maxAngle;
+            nA1 = FXDATA.maxAngle * 0.3;
           }
 
           //첫번째 것. 각도를 기준으로 x,y좌표값을 설정
@@ -177,31 +181,31 @@
       }
     };
 
+
       /* START Service CODE */
 
-      //default value
-      //var oPy = new PIE(document.querySelector("#pieWrap svg"), {});
+      /**
+      {core : {
+          startX:200,
+          startY:100,
+          radius:100,
+          nIncrease:6,
+        },
+        piece : 
+        [[30,'red'], [50,'blue']]
+      }
+      */
 
       var oPy = new PIE( document.querySelector("#pieWrap svg"), {
                 core : {
                   startX:200,
                   startY:100,
                   radius:100,
-                  nIncrease:6, /* 이걸증가시키면 그만큼 animation은 끊긴다. */
+                  nIncrease:6,
                 }, 
                 piece :
-                [[30,'magenta'], [50,'skyblue']]
+                [[30,'magenta'], [70,'skyblue']]
       });
-
-      // var oPy = new PIE( document.querySelector("#pieWrap svg"), {
-      //         startX:200,
-      //         startY:100,
-      //         radius:100,
-      //         nMaxAngle:360,
-      //         nIncrease:6,
-      //         strokeStyle:"green",
-      //         fillStyle:"gray"
-      // });
 
       oPy.runAnimation();
 
