@@ -69,11 +69,7 @@
 
             //check. core 
             var htDefaultCoreValue =  {
-              startX:100,
-              startY:100,
-              radius:50,
-              nMaxAngle:360,
-              nIncrease:5,
+              startX:100, startY:100, radius:50, nMaxAngle:360, nIncrease:5,
             };
 
             for(var name in htDefaultCoreValue) {
@@ -127,70 +123,53 @@
         },
 
         runAnimation : function() {
-
-            var nA1,nB1;
+            this._nR = 0;
 
             //condition of stop ANIMATION
             if(this.nCount >= FXDATA.maxAngle) return;
 
-            //interval 만큼 증가
+            //Increase 만큼 증가
             this.nCount = this.nCount + this.htCore.nIncrease;
 
-            //두 가지 그리기 시작.
-            //nA1 = this.nCount * 0.3;
-            //nB1 = this.nCount * this.aPiece[1][0]/100;
-            nA1 = this.nCount * this.aPiece[0][0]/100;
-            nB1 = nA1 + (this.nCount * this.aPiece[1][0]/100); //이건 마지막꺼니까.. 이렇게 해야지.
+            //최대값을 보정한다.
+            if(this.nCount > (this.htCore.nMaxAngle - this.htCore.nIncrease)) this.nCount = FXDATA.maxAngle;
 
-            //약속된 크기까지만 동작한다. 
-            if(this.nCount > (this.htCore.nMaxAngle - this.htCore.nIncrease)) {
-              this.nCount = FXDATA.maxAngle;
-              nA1 = FXDATA.maxAngle * this.aPiece[0][0]/100;
-            }
+            this.aPiece.forEach(this._setSVGPathAttribute.bind(this));
 
-            /**
-             * 리팩톨잉 포인인 
-             * 함수로 분리한다. 
-             * ApIECE를 푸르로 돌리는 방법 있을 듯. 
-             * nA1, nCount는 변수로 묶어서 상황에 따라서 다르게 설정하면 된다. 
-             * nA1 180도 플래그도 포함하기. 
-             * 
-             */
-            //첫번째 것. 각도를 기준으로 x,y좌표값을 설정
-            this._aArc[0].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * nA1))) * this.htCore.radius;
-            this._aArc[0].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * nA1))) * this.htCore.radius;
-
-            //두번째 것.
-            //두번째 부터는 start 설정 필요하다. 
-            this._aStart[1].x = this._aArc[0].x;
-            this._aStart[1].y = this._aArc[0].y;
-            this._aArc[1].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * nB1))) * this.htCore.radius;
-            this._aArc[1].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * nB1))) * this.htCore.radius;
-
-            this._aStart[2].x = this._aArc[1].x;
-            this._aStart[2].y = this._aArc[1].y;
-            this._aArc[2].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * this.nCount))) * this.htCore.radius;
-            this._aArc[2].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * this.nCount))) * this.htCore.radius;
-
-            //180도가 넘으면 largeArcFlag를 변경해야 한다.
-            //if(this.nCount >= 180) this._aArc[0].largeArcFlag = 1;
-            if(nA1 >= 180) this._aArc[0].largeArcFlag = 1;
-
-            //자기 자체 크기가 180이상인지를 체크하는 로직이다.
-            if((this.nCount - nA1) >= 180 ) this._aArc[1].largeArcFlag = 1;
             this.timeCtl = setTimeout(this.runAnimation.bind(this), 16);
         },
 
+        _setSVGPathAttribute : function(v,i,o) {
+
+            if(i > 0) {
+              this._aStart[i].x = this._aArc[i-1].x;
+              this._aStart[i].y = this._aArc[i-1].y;
+            }
+
+            //calculate piece Rangoe
+            var _nPieceRange = this.nCount * v[0] / 100;
+            this._nR += _nPieceRange;
+
+            //set end Point
+            this._aArc[i].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * this._nR))) * this.htCore.radius;
+            this._aArc[i].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * this._nR))) * this.htCore.radius;
+
+            //change flag (if 180 degree)
+            if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) { 
+              this._aArc[i].largeArcFlag = 1;
+            }
+        },
+
         _resetAnimation : function() {
-            this.nCount = 0;
-            this._aArc[0].largeArcFlag = 0;
+            //this.nCount = 0;
+            //this._aArc[0].largeArcFlag = 0;
             clearTimeout(this.timeCtl);
         },
 
         reStartAnimation : function() {
             this._resetAnimation();
             this.runAnimation();
-        }
+         }
     };
 
       /* START Service CODE */
@@ -215,7 +194,7 @@
                   nIncrease:6,
                 }, 
                 piece :
-                [[50,'magenta'], [20,'skyblue'], [30,'green']]
+                [[15,'magenta'], [70,'skyblue'], [15,'green']]
       });
 
       oPy.runAnimation();
