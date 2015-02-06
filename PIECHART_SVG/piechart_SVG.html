@@ -15,6 +15,7 @@
 
       var FXDATA = {
         minPieceCount       : 2,
+        nAniTime            : 16,
         xmlns               : "http://www.w3.org/2000/svg",
         maxAngle            : 359.9999,
         sErrorMSG           : {
@@ -23,7 +24,7 @@
               SUM_ERROR         : "the sum of pieceData should be 100"
         },
         htDefaultCoreValue  : {
-              startX:100, startY:100, radius:50, nMaxAngle:360, nIncrease:5,
+              startX:100, startY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
         }
       };
 
@@ -69,14 +70,12 @@
                   return pre + (+now[0]);
              }) !== 100 ) throw Error (FXDATA.sErrorMSG.SUM_ERROR);
 
-            //check. core 
-            var htDefaultCoreValue =  {
-              startX:100, startY:100, radius:50, nMaxAngle:360, nIncrease:5,
-            };
-
             for(var name in FXDATA.htDefaultCoreValue) {
               this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
             }
+
+            //100 is piece animation time(추정)
+            this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
          },
 
         _createPathElements : function (nIndex) {
@@ -123,6 +122,7 @@
             }
         },
 
+        //개별 running time : 0.1s 추정.
         runAnimation : function() {
             this._nR = 0;
 
@@ -173,25 +173,12 @@
     };
 
       /* START Service CODE */
-
-      /**
-      {core : {
-          startX:200,
-          startY:100,
-          radius:100,
-          nIncrease:6,
-        },
-        piece : 
-        [[30,'red'], [50,'blue']]
-      }
-      */
-
       var oPy = new PIE( document.querySelector("#pieWrap svg"), {
                 core : {
                   startX:200,
                   startY:100,
                   radius:100,
-                  nIncrease:10,
+                  nMilliSecondCycle:10000,
                 }, 
                 piece :
                 [[15,'magenta'], [20,'skyblue'], [15,'green'], [28,'black'], [22,'brown']]
