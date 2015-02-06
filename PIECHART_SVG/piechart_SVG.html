@@ -9,23 +9,28 @@
 <body>
     <div id="pieWrap" style="width:800px; height:800px;">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<!--       <path id="pathTest" d="M100,100 A50,50 0 1,1 0,100 L50,100 Z"style="fill:magenta;"/> -->
-<!--       <path id="pathTest" d="M200,100 A100,100 0 0,1 100,200 L100,100 Z"style="stroke:red;fill:blue"> -->
-<!--       <path id="pathTest" d="M100,100 A50,50 0 0,1 50,150"style="stroke:red;fill:blue"> -->
-    </svg>
+      </svg>
   </div>
   <script>
 
       var FXDATA = {
-        minPieceCount : 2,
-        xmlns         : "http://www.w3.org/2000/svg",
-        maxAngle      : 359.9999,
-        sErrorMSG     : {}
+        minPieceCount       : 2,
+        xmlns               : "http://www.w3.org/2000/svg",
+        maxAngle            : 359.9999,
+        sErrorMSG           : {
+              OPTION_TYPE_ERROR : "option type is wrong",
+              REQ_PIECE_DATA    : "Require pie's piece datas",
+              SUM_ERROR         : "the sum of pieceData should be 100"
+        },
+        htDefaultCoreValue  : {
+              startX:100, startY:100, radius:50, nMaxAngle:360, nIncrease:5,
+        }
       };
 
       function PIE(elTarget, htOption) {
        if(!(htOption && typeof htOption === "object")) {
-         console.error("option type is wrong");
+           if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
+           return null;
        }
 
        this.elParentSVG = elTarget;
@@ -34,7 +39,7 @@
        this.aPiece = [];
 
        //set options
-       try {this._setOption(htOption);} catch(err){console.error("[PIE] option error => ",err);}
+       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
 
       //set center position
        this.htCore.centerX = this.htCore.startX - this.htCore.radius;
@@ -45,35 +50,32 @@
        this._aArc = [];
        this._aStart = [];
 
-       this._makeCreatePath();
+       this._makeCreatePathElement();
       }
 
 
       PIE.prototype = {
-
-        constructor : PIE,
-
         _setOption : function(htOption) {
 
             var htCoreOption  = htOption.core;
             this.aPiece        = htOption.piece;
 
             //check. piece count
-            if(this.aPiece.length < FXDATA.minPieceCount) throw Error("Require pie's piece datas");
+            if(this.aPiece.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
 
             //check. piece distribution
             if( this.aPiece.reduce(function(pre,now){
                   if(typeof pre!== "number") pre = +pre[0];
                   return pre + (+now[0]);
-             }) !== 100 ) throw Error ("the sum of pieceData should be 100");
+             }) !== 100 ) throw Error (FXDATA.sErrorMSG.SUM_ERROR);
 
             //check. core 
             var htDefaultCoreValue =  {
               startX:100, startY:100, radius:50, nMaxAngle:360, nIncrease:5,
             };
 
-            for(var name in htDefaultCoreValue) {
-              this.htCore[name] = htCoreOption[name] || htDefaultCoreValue[name];
+            for(var name in FXDATA.htDefaultCoreValue) {
+              this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
             }
          },
 
@@ -101,12 +103,11 @@
           return _result;
         },
 
-         /*
-         var segments = el.pathSegList;
-         // Move : x,y ------> segments.getItem(0);
-         // ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y ----->  segments.getItem(1);
-         // LINE : x,y  ------> segments.getItem(2);
-         */
+         /* var segments = el.pathSegList;
+          * Move : x,y ------> segments.getItem(0);
+          * ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y ----->  segments.getItem(1);
+          * LINE : x,y  ------> segments.getItem(2);
+          */
         _setDataForSet : function(nIndex) {
             var aSegments = [];
             aSegments[nIndex] = this.aElPath[nIndex].pathSegList;
@@ -114,7 +115,7 @@
             this._aStart[nIndex] = aSegments[nIndex].getItem(0);
         },
 
-        _makeCreatePath : function(){ 
+        _makeCreatePathElement : function(){ 
             var nPathCount = this.aPiece.length;
             for(var i=0; i<nPathCount; i++) {
               this._createPathElements(i);
@@ -155,9 +156,7 @@
             this._aArc[i].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * this._nR))) * this.htCore.radius;
 
             //change flag (if 180 degree)
-            if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) { 
-              this._aArc[i].largeArcFlag = 1;
-            }
+            if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) this._aArc[i].largeArcFlag = 1;
         },
 
         _resetAnimation : function() {
@@ -169,7 +168,8 @@
         reStartAnimation : function() {
             this._resetAnimation();
             this.runAnimation();
-         }
+        },
+        constructor : PIE,
     };
 
       /* START Service CODE */
@@ -191,10 +191,10 @@
                   startX:200,
                   startY:100,
                   radius:100,
-                  nIncrease:6,
+                  nIncrease:10,
                 }, 
                 piece :
-                [[15,'magenta'], [70,'skyblue'], [15,'green']]
+                [[15,'magenta'], [20,'skyblue'], [15,'green'], [28,'black'], [22,'brown']]
       });
 
       oPy.runAnimation();
