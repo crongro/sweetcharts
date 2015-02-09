@@ -81,6 +81,9 @@
         _createPathElements : function (nIndex) {
             //var _elParent = document.querySelector("#pieWrap > svg");
 
+            var g = document.createElementNS(FXDATA.xmlns, "g");
+            this.elParentSVG.appendChild(g);
+
             this.aElPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
             var _coords = this._getCoordProperty();
@@ -88,8 +91,10 @@
             this.aElPath[nIndex].setAttribute("id" , "elPath");
             this.aElPath[nIndex].setAttribute("d" , _coords);
             this.aElPath[nIndex].setAttribute("style" , "stroke:'';fill:"+this.aPiece[nIndex][1]);
-            this.elParentSVG.appendChild(this.aElPath[nIndex]);
-        },
+            //this.elParentSVG.appendChild(this.aElPath[nIndex]);
+            g.appendChild(this.aElPath[nIndex]);
+
+          },
 
         _getCoordProperty : function() {
           var _result = "M" + this.htCore.startX + " " + this.htCore.startY + " "+ 
@@ -127,7 +132,11 @@
             this._nR = 0;
 
             //condition of stop ANIMATION
-            if(this.nCount >= FXDATA.maxAngle) return;
+            if(this.nCount >= FXDATA.maxAngle) {
+              this._showTextData();
+              this._showLastPiecePos();
+              return;
+            }
 
             //Increase 만큼 증가
             this.nCount = this.nCount + this.htCore.nIncrease;
@@ -157,7 +166,68 @@
 
             //change flag (if 180 degree)
             if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) this._aArc[i].largeArcFlag = 1;
+
+            return this._nR; //for Array.map
         },
+
+        _showLastPiecePos : function() {
+
+            this.aPiece.forEach(function(v,i,o) {
+                // console.log('start X[' + i + ']' + this._aStart[i].x);
+                // console.log('start Y[' + i + ']' + this._aStart[i].y);
+            }.bind(this));
+        },
+
+        _showTextData : function() {
+
+            var aGcenterPos = [];
+            var _ta;
+
+            var aGangles = this.aPiece.map(this._setSVGPathAttribute.bind(this));
+
+            //append to array value of Center piece angle.
+            for(var i = 0; i< aGangles.length; i++){
+
+                if(i === 0 ) _ta = Math.floor(aGangles[0]/2);
+                else _ta = Math.floor((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
+
+                var _tx = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * _ta))) * this.htCore.radius;
+                var _ty = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * _ta))) * this.htCore.radius;
+                console.log(_tx,_ty);
+
+                if(this.htCore.centerX < _tx)_tx = Math.floor(this.htCore.centerX + (_tx-this.htCore.centerX)/2);
+                else _tx = Math.floor(this.htCore.centerX - (this.htCore.centerX - _tx)/2);
+
+                if(this.htCore.centerY < _ty)_ty = Math.floor(this.htCore.centerY + (_ty-this.htCore.centerY)/2);
+                else _ty = Math.floor(this.htCore.centerY - (this.htCore.centerY - _ty)/2);
+
+                //_ty = Math.floor((_ty-this.htCore.centerY)/2);
+                console.log(_tx, _ty);
+                _appendText.apply(this,[i+1,_tx,_ty]);
+            }
+
+            //add text
+            //var p = this.aElPath[nIndex];
+            //todo. 이거 계속 바껴야 함...
+
+            function _appendText(index,x,y) {
+                var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                var elGs = this.elParentSVG.querySelector("g:nth-child("+index+")");
+
+                var b = elGs.getBBox();
+                //t.setAttribute("transform", "translate(" + (b.x + b.width/2) + " " + (b.y + b.height/2) + ")");
+                //t.setAttribute("transform", "translate(" + (b.x + x) + " " + (b.y + y) + ")");
+                t.setAttribute("transform", "translate(" + (x-16) + " " + y + ")");
+
+                t.textContent = "12%";
+                t.setAttribute("fill", "#000");
+                t.setAttribute("font-size", "14");
+                elGs.appendChild(t);
+            }
+
+            //p.parentNode.insertBefore(t, p.nextSibling);
+            //g.appendChild(t);
+          },
 
         _resetAnimation : function() {
             //this.nCount = 0;
@@ -175,13 +245,13 @@
       /* START Service CODE */
       var oPy = new PIE( document.querySelector("#pieWrap svg"), {
                 core : {
-                  startX:200,
-                  startY:100,
-                  radius:100,
-                  nMilliSecondCycle:10000,
+                  startX:500,
+                  startY:400,
+                  radius:200,
+                  nMilliSecondCycle:1500,
                 }, 
                 piece :
-                [[15,'magenta'], [20,'skyblue'], [15,'green'], [28,'black'], [22,'brown']]
+                [[15,'magenta'], [3,'skyblue'], [2,'#fff'], [15,'blue'],[15,'yellow'],[15,'green'], [35,'brown']]
       });
 
       oPy.runAnimation();
