@@ -1,16 +1,55 @@
 <html>
 <head>
     <title>SVG Pie Chart Test</title>
+    <meta name="viewport" content="width=device-width">
     <style type="text/css" media="screen">
-      svg {width: 100%; height: 100%;}
-    </style>
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+      #wrap {
+        min-width: 1050px;
+        padding-top: 20px;
+      }
+      #pieWrap {
+        background-color: steelblue;
+        float:left;
+      }
+      #leftDesc {
+        float: left;
+        width: 200px;
+        margin-left: 50px;
+        text-align: center;
+        line-height: 2em;
+      }
+
+    @media (max-width: 600px) {
+        #wrap {
+          min-width: 320px;
+          background-color: "red";
+        }
+        #wrap, #leftDesc{
+          float: none;
+        }
+   }
+</style>
     
 </head>
 <body>
-    <div id="pieWrap" style="width:800px; height:800px;">
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      </svg>
+<div id="wrap">
+  <div id="pieWrap" style="width:600px; height:600px;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    </svg>
   </div>
+
+  <section id="leftDesc">
+    <h2>PIEANI.js DEMO</h2>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod illum sint inventore dolorem, modi consectetur doloribus ipsum omnis. Inventore corporis hic nobis quidem reprehenderit qui amet, nemo error accusamus eligendi?
+    </p>
+  </section>
+</div>
+
   <script>
 
       var FXDATA = {
@@ -245,10 +284,10 @@
       /* START Service CODE */
       var oPy = new PIE( document.querySelector("#pieWrap svg"), {
                 core : {
-                  startX:500,
-                  startY:400,
+                  startX:300,
+                  startY:200,
                   radius:200,
-                  nMilliSecondCycle:1500,
+                  nMilliSecondCycle:500,
                 }, 
                 piece :
                 [[15,'magenta'], [3,'skyblue'], [2,'#fff'], [15,'blue'],[15,'yellow'],[15,'green'], [35,'brown']]
