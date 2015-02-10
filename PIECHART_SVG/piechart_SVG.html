@@ -11,9 +11,11 @@
         min-width: 1050px;
         padding-top: 20px;
       }
-      #pieWrap {
-        background-color: steelblue;
+      .pieWrap {
+        outline : 1px solid gray;
         float:left;
+        margin-left: 20px;
+        margin-top:20px;
       }
       #leftDesc {
         float: left;
@@ -23,7 +25,7 @@
         line-height: 2em;
       }
 
-    @media (max-width: 600px) {
+      @media (max-width: 600px) {
         #wrap {
           min-width: 320px;
           background-color: "red";
@@ -31,19 +33,31 @@
         #wrap, #leftDesc{
           float: none;
         }
-   }
-</style>
+      }
+    </style>
     
 </head>
 <body>
 <div id="wrap">
-  <div id="pieWrap" style="width:600px; height:600px;">
+  <div class="pieWrap" style="width:400px; height:400px;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    </svg>
+  </div>
+  <div class="pieWrap" style="width:400px; height:400px;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    </svg>
+  </div>
+  <div class="pieWrap" style="width:400px; height:400px;">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    </svg>
+  </div>
+  <div class="pieWrap" style="width:400px; height:400px;">
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     </svg>
   </div>
 
   <section id="leftDesc">
-    <h2>PIEANI.js DEMO</h2>
+    <h2> ANIChart.js DEMO</h2>
     <p>
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod illum sint inventore dolorem, modi consectetur doloribus ipsum omnis. Inventore corporis hic nobis quidem reprehenderit qui amet, nemo error accusamus eligendi?
     </p>
@@ -63,7 +77,8 @@
               SUM_ERROR         : "the sum of pieceData should be 100"
         },
         htDefaultCoreValue  : {
-              startX:100, startY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
+              //startX:100, startY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
+              centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
         }
       };
 
@@ -82,8 +97,10 @@
        try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
 
       //set center position
-       this.htCore.centerX = this.htCore.startX - this.htCore.radius;
-       this.htCore.centerY = this.htCore.startY;
+       // this.htCore.centerX = this.htCore.startX - this.htCore.radius;
+       // this.htCore.centerY = this.htCore.startY;
+       this.htCore.startX = this.htCore.centerX + this.htCore.radius;
+       this.htCore.startY = this.htCore.centerY;
 
        this.nCount = 0;
        this.aElPath = [];
@@ -232,7 +249,6 @@
 
                 var _tx = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * _ta))) * this.htCore.radius;
                 var _ty = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * _ta))) * this.htCore.radius;
-                console.log(_tx,_ty);
 
                 if(this.htCore.centerX < _tx)_tx = Math.floor(this.htCore.centerX + (_tx-this.htCore.centerX)/2);
                 else _tx = Math.floor(this.htCore.centerX - (this.htCore.centerX - _tx)/2);
@@ -282,18 +298,52 @@
     };
 
       /* START Service CODE */
-      var oPy = new PIE( document.querySelector("#pieWrap svg"), {
+      var oPy = new PIE( document.querySelector(".pieWrap:nth-child(1) svg"), {
                 core : {
-                  startX:300,
-                  startY:200,
-                  radius:200,
-                  nMilliSecondCycle:500,
+                  centerX:200,
+                  centerY:200,
+                  radius:150,
+                  nMilliSecondCycle:250,
                 }, 
                 piece :
                 [[15,'magenta'], [3,'skyblue'], [2,'#fff'], [15,'blue'],[15,'yellow'],[15,'green'], [35,'brown']]
-      });
+      }).runAnimation();
 
-      oPy.runAnimation();
+      var oPy2 = new PIE( document.querySelector(".pieWrap:nth-child(2) svg"), {
+                core : {
+                  centerX:200,
+                  centerY:200,
+                  radius:150,
+                  nMilliSecondCycle:500,
+                }, 
+                piece :
+                [[2,'#f0e'], [15,'blue'],[25,'#f32'],[25,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
+      }).runAnimation();
+
+      var oPy3 = new PIE( document.querySelector(".pieWrap:nth-child(3) svg"), {
+                core : {
+                  centerX:200,
+                  centerY:200,
+                  radius:150,
+                  nMilliSecondCycle:1000,
+                }, 
+                piece :
+                [[2,'#f0e'], [15,'blue'],[25,'#f32'],[25,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
+      }).runAnimation();
+
+      var oPy3 = new PIE( document.querySelector(".pieWrap:nth-child(4) svg"), {
+                core : {
+                  centerX:200,
+                  centerY:200,
+                  radius:150,
+                  nMilliSecondCycle:1500,
+                }, 
+                piece :
+                [[2,'#f0e'], [15,'blue'],[25,'#f32'],[25,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
+      }).runAnimation();
+
+
+
 
     </script>
 </body>
