@@ -130,7 +130,7 @@
               this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
             }
 
-            //100 is piece animation time(추정)
+            //100 is piece animation time(adjusted value)
             this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
          },
 
@@ -186,6 +186,8 @@
         //개별 running time : 0.1s 추정.
         runAnimation : function() {
             this._nR = 0;
+            var _ma = this.htCore.nMaxAngle;
+            var _ic = this.htCore.nIncrease;
 
             //condition of stop ANIMATION
             if(this.nCount >= FXDATA.maxAngle) {
@@ -195,10 +197,10 @@
             }
 
             //Increase 만큼 증가
-            this.nCount = this.nCount + this.htCore.nIncrease;
+            this.nCount = this.nCount + _ic;
 
             //최대값을 보정한다.
-            if(this.nCount > (this.htCore.nMaxAngle - this.htCore.nIncrease)) this.nCount = FXDATA.maxAngle;
+            if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
 
             this.aPiece.forEach(this._setSVGPathAttribute.bind(this));
 
@@ -206,6 +208,10 @@
         },
 
         _setSVGPathAttribute : function(v,i,o) {
+
+            var _r = this.htCore.radius;
+            var _sx = this.htCore.startX;
+            var _sy = this.htCore.startY;
 
             if(i > 0) {
               this._aStart[i].x = this._aArc[i-1].x;
@@ -217,8 +223,8 @@
             this._nR += _nPieceRange;
 
             //set end Point
-            this._aArc[i].x = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * this._nR))) * this.htCore.radius;
-            this._aArc[i].y = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * this._nR))) * this.htCore.radius;
+            this._aArc[i].x = (_sx - _r) + (+(Math.cos(Math.PI/180 * this._nR))) * _r;
+            this._aArc[i].y = (_sy) + (+(Math.sin(Math.PI/180 * this._nR))) * _r;
 
             //change flag (if 180 degree)
             if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) this._aArc[i].largeArcFlag = 1;
@@ -238,26 +244,28 @@
 
             var aGcenterPos = [];
             var _ta;
+            var _caledPy = 0.01745329251; // (Math.PI / 180)
+            var _r = this.htCore.radius;
+            var _cx = this.htCore.centerX;
+            var _cy = this.htCore.centerY;
 
             var aGangles = this.aPiece.map(this._setSVGPathAttribute.bind(this));
 
             //append to array value of Center piece angle.
-            for(var i = 0; i< aGangles.length; i++){
+            for(var i = 0; i< aGangles.length; i++) {
 
+                //calculate center angle (_ta)
                 if(i === 0 ) _ta = Math.floor(aGangles[0]/2);
                 else _ta = Math.floor((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
 
-                var _tx = (this.htCore.startX - this.htCore.radius) + (+(Math.cos(Math.PI/180 * _ta))) * this.htCore.radius;
-                var _ty = (this.htCore.startY) + (+(Math.sin(Math.PI/180 * _ta))) * this.htCore.radius;
+                //원의 원점을 기준으로 x,y 좌표를 설정한다. 원의 중심이 (0,0) 이다.
+                var _tx = (Math.cos(_caledPy * _ta)) * _r;
+                var _ty = (Math.sin(_caledPy * _ta)) * _r;
 
-                if(this.htCore.centerX < _tx)_tx = Math.floor(this.htCore.centerX + (_tx-this.htCore.centerX)/2);
-                else _tx = Math.floor(this.htCore.centerX - (this.htCore.centerX - _tx)/2);
+                //실제 svg기준 좌표를 설정한다.
+                _tx = _cx + (_tx/2);
+                _ty = _cy + (_ty/2);
 
-                if(this.htCore.centerY < _ty)_ty = Math.floor(this.htCore.centerY + (_ty-this.htCore.centerY)/2);
-                else _ty = Math.floor(this.htCore.centerY - (this.htCore.centerY - _ty)/2);
-
-                //_ty = Math.floor((_ty-this.htCore.centerY)/2);
-                console.log(_tx, _ty);
                 _appendText.apply(this,[i+1,_tx,_ty]);
             }
 
@@ -266,13 +274,12 @@
             //todo. 이거 계속 바껴야 함...
 
             function _appendText(index,x,y) {
-                var t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                var t = document.createElementNS(FXDATA.xmlns, "text");
                 var elGs = this.elParentSVG.querySelector("g:nth-child("+index+")");
 
                 var b = elGs.getBBox();
-                //t.setAttribute("transform", "translate(" + (b.x + b.width/2) + " " + (b.y + b.height/2) + ")");
-                //t.setAttribute("transform", "translate(" + (b.x + x) + " " + (b.y + y) + ")");
-                t.setAttribute("transform", "translate(" + (x-16) + " " + y + ")");
+                //'15' is adjusted data for postion center.
+                t.setAttribute("transform", "translate(" + (x-15) + " " + y + ")");
 
                 t.textContent = "12%";
                 t.setAttribute("fill", "#000");
@@ -303,7 +310,7 @@
                   centerX:200,
                   centerY:200,
                   radius:150,
-                  nMilliSecondCycle:250,
+                  nMilliSecondCycle:3500,
                 }, 
                 piece :
                 [[15,'magenta'], [3,'skyblue'], [2,'#fff'], [15,'blue'],[15,'yellow'],[15,'green'], [35,'brown']]
