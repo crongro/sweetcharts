@@ -118,6 +118,10 @@ var ANICHART_PIE = (function() {
     },
 
     runAnimation : function() {
+      this.animationId = window.requestAnimationFrame(this._runAnimation.bind(this));
+    },
+
+    _runAnimation : function() {
         this._nR = 0;
         var _ma = this.htCore.nMaxAngle;
         var _ic = this.htCore.nIncrease;
@@ -137,7 +141,7 @@ var ANICHART_PIE = (function() {
 
         this.aPiece.forEach(this._setSVGPathAttribute.bind(this));
 
-        this.timeCtl = setTimeout(this.runAnimation.bind(this), 16);
+        window.requestAnimationFrame(this._runAnimation.bind(this));
     },
 
     _setSVGPathAttribute : function(v,i,o) {
@@ -216,10 +220,14 @@ var ANICHART_PIE = (function() {
         this.elParentSVG.style.webkitFilter = "drop-shadow(8px 10px 3px rgba(0,0,0,0.5))";
         this.elParentSVG.style.filter = "drop-shadow(8px 10px 3px rgba(0,0,0,0.5))";
     },
+
     _resetAnimation : function() {
         //this.nCount = 0;
         //this._aArc[0].largeArcFlag = 0;
-        clearTimeout(this.timeCtl);
+        if(this.animationId) {
+          window.cancelAnimationFrame(requestId);
+          this.animationId = undefined;
+        } 
     },
 
     reStartAnimation : function() {
@@ -231,6 +239,7 @@ var ANICHART_PIE = (function() {
   return PIE;
 }());
 
+//support Require
 if (typeof define === "function" && define.amd) {
     define("ac_pie", [], function() {
         return ANICHART_PIE;
