@@ -16,6 +16,9 @@ var ANICHART_PIE = (function() {
       },
       htDefaultCoreValue  : {
             centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
+      },
+      CSS : {
+        chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))"
       }
   };
 
@@ -217,8 +220,8 @@ var ANICHART_PIE = (function() {
     },
 
     _addShadow : function() {
-        this.elParentSVG.style.webkitFilter = "drop-shadow(8px 10px 3px rgba(0,0,0,0.5))";
-        this.elParentSVG.style.filter = "drop-shadow(8px 10px 3px rgba(0,0,0,0.5))";
+        this.elParentSVG.style.webkitFilter = CSS.chartShadow;
+        this.elParentSVG.style.filter = CSS.chartShadow;
     },
 
     _resetAnimation : function() {
