@@ -57,11 +57,14 @@ var ANICHART_PIE = (function() {
         //check. piece count
         if(this.aPiece.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
 
-        //check. piece distribution
-        if( this.aPiece.reduce(function(pre,now){
-              if(typeof pre!== "number") pre = +pre[0];
-              return pre + (+now[0]);
-         }) !== 100 ) throw Error (FXDATA.sErrorMSG.SUM_ERROR);
+        //piece option recalculate : to % ratio
+        var _nSumPiece = this.aPiece.reduce(function(pre,now,i,o){
+          if(typeof pre!== "number") pre = +pre[0]; 
+          return pre + now[0];
+        });
+        this.aPiece.forEach(function(v,i,o) {
+          this.aPiece[i][0] = +((v[0]/_nSumPiece)*100).toFixed(2);
+        }.bind(this));
 
         for(var name in FXDATA.htDefaultCoreValue) {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
@@ -142,6 +145,7 @@ var ANICHART_PIE = (function() {
         //최대값을 보정한다.
         if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
 
+        //TODO. aPiece의 [0]의 값이 100% 비율로 맞춰진 상태로 넘겨야 한다. 
         this.aPiece.forEach(this._setSVGPathAttribute.bind(this));
 
         window.requestAnimationFrame(this._runAnimation.bind(this));
