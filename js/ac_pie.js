@@ -80,7 +80,7 @@ var ANICHART_PIE = (function() {
 
         this.aElPath[nIndex].setAttribute("id" , "elPath");
         this.aElPath[nIndex].setAttribute("d" , _coords);
-        this.aElPath[nIndex].setAttribute("style" , "stroke:'';fill:"+this.aPiece[nIndex][1]);
+        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+this.aPiece[nIndex][1]);
         //this.elParentSVG.appendChild(this.aElPath[nIndex]);
         g.appendChild(this.aElPath[nIndex]);
 
@@ -155,7 +155,7 @@ var ANICHART_PIE = (function() {
           this._aStart[i].y = this._aArc[i-1].y;
         }
 
-        //calculate piece Rangoe
+        //calculate piece Range
         var _nPieceRange = this.nCount * v[0] / 100;
         this._nR += _nPieceRange;
 
