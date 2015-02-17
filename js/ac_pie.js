@@ -63,7 +63,7 @@ var ANICHART_PIE = (function() {
           return pre + now[0];
         });
         this.aPiece.forEach(function(v,i,o) {
-          this.aPiece[i][0] = +((v[0]/_nSumPiece)*100).toFixed(2);
+          this.aPiece[i][0] = +(((v[0]/_nSumPiece)*100).toFixed(2));
         }.bind(this));
 
         for(var name in FXDATA.htDefaultCoreValue) {
@@ -192,8 +192,8 @@ var ANICHART_PIE = (function() {
         for(var i = 0; i< _al; i++) {
 
             //calculate center angle (_ta)
-            if(i === 0 ) _ta = Math.floor(aGangles[0]/2);
-            else _ta = Math.floor((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
+            if(i === 0 ) _ta = Math.round(aGangles[0]/2);
+            else _ta = Math.round((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
 
             //원의 원점을 기준으로 x,y 좌표를 설정한다. 원의 중심이 (0,0) 이다.
             var _tx = (Math.cos(_caledPy * _ta)) * _r;
@@ -215,10 +215,13 @@ var ANICHART_PIE = (function() {
 
             var b = elGs.getBBox();
             //'15' is adjusted data for postion center.
+            var _nPercentRatio = +(this.aPiece[index-1][0].toFixed(1));
+            var _nPercentFontIncreaseSize =  Math.round(this.aPiece[index-1][0] * 0.40); //font-size range is 10~50(40)
+
             t.setAttribute("transform", "translate(" + (x-15) + " " + y + ")");
-            t.textContent = "12%";
+            t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
             t.setAttribute("fill", "#000");
-            t.setAttribute("font-size", "14");
+            t.setAttribute("font-size", 10 + _nPercentFontIncreaseSize + "");
             elGs.appendChild(t);
         }
     },
