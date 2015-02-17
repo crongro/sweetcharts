@@ -15,7 +15,7 @@ require([
           nMilliSecondCycle:1000,
         }, 
         piece :
-        [[15,'magenta'], [13,'skyblue'], [20,'#fff'], [55,'blue'],[15,'yellow'],[15,'green'], [35,'brown']]
+        [[15,'magenta'], [13,'skyblue'], [20,'#fff'], [55,'orange'],[15,'yellow'],[15,'green'], [35,'brown']]
     }).runAnimation();
 
     var oPy2 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(2) svg"), {
@@ -26,7 +26,7 @@ require([
           nMilliSecondCycle:500,
       }, 
       piece :
-      [[2,'#f0e'], [15,'blue'],[25,'#f32'],[35,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
+      [[2,'#f0e'], [15,'magenta'],[25,'#f32'],[35,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
     }).runAnimation();
 
     var oPy3 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(3) svg"), {
@@ -37,7 +37,7 @@ require([
           nMilliSecondCycle:1000,
       }, 
       piece :
-      [[2,'#f0e'], [15,'blue'],[205,'#f32'],[25,'green'], [150,'brown'], [30,'skyblue'],[150,'gray'] ]
+      [[2,'#f0e'], [15,'orange'],[205,'#f32'],[25,'green'], [150,'brown'], [30,'skyblue'],[150,'gray'] ]
     }).runAnimation();
 
     var oPy3 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(4) svg"), {
@@ -48,6 +48,6 @@ require([
           nMilliSecondCycle:1500,
       }, 
       piece :
-      [[2,'#f0e'], [15,'blue'],[25,'#f32'],[25,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
+      [[2,'#f0e'], [15,'orange'],[25,'#f32'],[25,'green'], [15,'brown'], [3,'skyblue'],[15,'gray'] ]
     }).runAnimation();
 });
