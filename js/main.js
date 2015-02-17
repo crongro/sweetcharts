@@ -48,28 +48,7 @@ require([
           nMilliSecondCycle:500,
           colorType : "d"
       }, 
-      piece : [15, 33, 10, 30, 42, 73]
+      piece : [15, 33, 10, 30, 42, 73,12,12,42,34,34,23,22,33,42,92,12,32,42,23,24,34]
     }).runAnimation();
 
-    var oPy5 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(5) svg"), {
-        core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
-          nMilliSecondCycle:500,
-          colorType : "e"
-      }, 
-      piece : [15, 33, 10, 30, 42, 73]
-    }).runAnimation();
-    
-    var oPy6 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(6) svg"), {
-        core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
-          nMilliSecondCycle:500,
-          colorType : "f"
-      }, 
-      piece : [15, 33, 10, 30, 42, 73]
-    }).runAnimation();
 });

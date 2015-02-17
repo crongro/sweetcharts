@@ -31,7 +31,7 @@ var ANICHART_PIE = (function() {
                      });
             })(11);
 
-            //a:100, b:a100, c:500, d:a700, e:900, 
+            //a:100, b:a100, c:500, d: http://colrd.com/palette/19308/ 
          */
 
         colorTypeA : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
@@ -40,12 +40,7 @@ var ANICHART_PIE = (function() {
                    "#B9F6CA", "#CCFF90", "#F4FF81", "#FFFF8D", "#FFE57F", "#FFD180", "#FF9E80"],
         colorTypeC : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
                   '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'],
-        colorTypeD : ["#D50000", "#C51162", "#AA00FF", "#6200EA", "#304FFE", "#2962FF", "#0091EA", "#00B8D4", "#00BFA5",
-                    "#00C853", "#64DD17", "#AEEA00", "#FFD600", "#FFAB00", "#FF6D00", "#DD2C00"],
-        colorTypeE : ["#B71C1C", "#880E4F", "#4A148C", "#311B92", "#1A237E", "#0D47A1", "#01579B", "#006064", "#004D40",
-                  "#1B5E20", "#33691E", "#827717", "#F57F17", "#FF6F00", "#E65100", "#BF360C", "#3E2723", "#212121", "#263238"],
-        // URL :  http://colrd.com/palette/19308/
-        colorTypeF : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
+        colorTypeD : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
                   '#c94a53', '#be5168', '#a34974', '#993767', '#65387d', '#4e2472', '#9163b6', '#e279a3', '#e0598b', '#7c9fb0','#5698c4','#9abf88']
       }
   };
@@ -75,7 +70,7 @@ var ANICHART_PIE = (function() {
 
       //set color random array 
       //this.aColorSet = this._getRandomIndex(this.aPiece.length, FXDATA.CSS.colors.length-1);
-      this.aColorSet = this._getRandomIndex(this.aPiece.length, FXDATA.CSS[this.htCore.colorType].length-1);
+      this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.colorType].length-1, this.aPiece.length);
       console.log("this.aColorSet -> ", this.aColorSet);
 
       this._makeCreatePathElement();
@@ -158,11 +153,13 @@ var ANICHART_PIE = (function() {
         }
     },
 
-    _getRandomIndex : function(nNeedCount, nRandomRange) {
+    _getRandomIndex : function(nRandomRange, nNeedCount) {
         var _arr = [];
         while(_arr.length < nNeedCount) {
           var _ranValue = Math.round(Math.random() * nRandomRange);
-          if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
+          if(_arr.length > nRandomRange) _arr.push(_ranValue);
+          else if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
+          else continue;
         }
         return _arr;
     },
@@ -266,7 +263,8 @@ var ANICHART_PIE = (function() {
             //'2.5' is adjusted data for postion center.
             t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
             t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
-            t.setAttribute("fill", (this.htCore.colorType === "colorTypeE" || this.htCore.colorType === "colorTypeD") ? "#fff" : "#000");
+            //t.setAttribute("fill", (this.htCore.colorType === "colorTypeE" || this.htCore.colorType === "colorTypeD") ? "#fff" : "#000");
+            t.setAttribute("fill","#000");
             t.setAttribute("font-size", 8 + _nPercentFontIncreaseSize + ""); //10 is default font-size(minimum-size)
             elGs.appendChild(t);
         }
