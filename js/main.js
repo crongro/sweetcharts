@@ -61,4 +61,15 @@ require([
       }, 
       piece : [15, 33, 10, 30, 42, 73]
     }).runAnimation();
+    
+    var oPy6 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(6) svg"), {
+        core : {
+          centerX:200,
+          centerY:200,
+          radius:150,
+          nMilliSecondCycle:500,
+          colorType : "f"
+      }, 
+      piece : [15, 33, 10, 30, 42, 73]
+    }).runAnimation();
 });
