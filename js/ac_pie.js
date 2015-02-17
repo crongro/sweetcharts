@@ -15,10 +15,15 @@ var ANICHART_PIE = (function() {
             SUM_ERROR         : "the sum of pieceData should be 100"
       },
       htDefaultCoreValue  : {
-            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5
+            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, colorType : "A"
       },
       CSS : {
-        chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))"
+        chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))",
+        //http://www.google.com/design/spec/style/color.html#color-color-palette
+        colorTypeA : ['#ffcdd2','#f8bbd0','#e1bee7','#d1c4e9','#c5cae9','#bbdefb','#b3e5fc','#b2ebf2','#b2dfdb',
+                  '#c8e6c9','#dcedc8','#f0f4c3','#fff9c4','#ffecb3','#ffe0b2','#ffccbc','#d7ccc8','#f5f5f5','#cfd8dc'],
+        colorTypeB : ['#f44336','#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#03a9f4','#00bcd4','#009688',
+                  '#4caf50','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff5722','#795548','#9e9e9e','#607d8b']
       }
   };
 
@@ -36,6 +41,7 @@ var ANICHART_PIE = (function() {
       this.elParentSVG = elTarget;
       this.htCore = {};
       this.aPiece = [];
+      this.aColorSet = [];
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -43,6 +49,11 @@ var ANICHART_PIE = (function() {
       //set center position
       this.htCore.startX = this.htCore.centerX + this.htCore.radius;
       this.htCore.startY = this.htCore.centerY;
+
+      //set color random array 
+      //this.aColorSet = this._getRandomIndex(this.aPiece.length, FXDATA.CSS.colors.length-1);
+      this.aColorSet = this._getRandomIndex(this.aPiece.length, FXDATA.CSS[this.htCore.colorType].length-1);
+      console.log("this.aColorSet -> ", this.aColorSet);
 
       this._makeCreatePathElement();
   }
@@ -59,17 +70,18 @@ var ANICHART_PIE = (function() {
 
         //piece option recalculate : to % ratio
         var _nSumPiece = this.aPiece.reduce(function(pre,now,i,o){
-          if(typeof pre!== "number") pre = +pre[0]; 
-          return pre + now[0];
+          if(typeof pre!== "number") pre = +pre; 
+          return pre + now;
         });
         this.aPiece.forEach(function(v,i,o) {
-          this.aPiece[i][0] = +(((v[0]/_nSumPiece)*100).toFixed(2));
+          this.aPiece[i] = +(((v/_nSumPiece)*100).toFixed(2));
         }.bind(this));
 
         for(var name in FXDATA.htDefaultCoreValue) {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
         }
 
+        this.htCore.colorType = "colorType" + this.htCore.colorType.toUpperCase();
         //100 is piece animation time(adjusted value)
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
      },
@@ -86,8 +98,7 @@ var ANICHART_PIE = (function() {
 
         this.aElPath[nIndex].setAttribute("id" , "elPath");
         this.aElPath[nIndex].setAttribute("d" , _coords);
-        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+this.aPiece[nIndex][1]);
-        //this.elParentSVG.appendChild(this.aElPath[nIndex]);
+        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+ FXDATA.CSS[this.htCore.colorType][this.aColorSet[nIndex]]);
         g.appendChild(this.aElPath[nIndex]);
 
       },
@@ -117,10 +128,20 @@ var ANICHART_PIE = (function() {
 
     _makeCreatePathElement : function(){ 
         var nPathCount = this.aPiece.length;
+
         for(var i=0; i<nPathCount; i++) {
           this._createPathElements(i);
           this._setDataForSet(i);
         }
+    },
+
+    _getRandomIndex : function(nNeedCount, nRandomRange) {
+        var _arr = [];
+        while(_arr.length < nNeedCount) {
+          var _ranValue = Math.round(Math.random() * nRandomRange);
+          if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
+        }
+        return _arr;
     },
 
     runAnimation : function() {
@@ -163,7 +184,7 @@ var ANICHART_PIE = (function() {
         }
 
         //calculate piece Range
-        var _nPieceRange = this.nCount * v[0] / 100;
+        var _nPieceRange = this.nCount * v / 100;
         this._nR += _nPieceRange;
 
         //set end Point
@@ -205,7 +226,7 @@ var ANICHART_PIE = (function() {
             _tx = _cx + (_tx/1.6); //값이 작을수록 원점과 멀어진다.
             _ty = _cy + (_ty/1.6);
 
-            _appendText.apply(this,[i+1,_tx,_ty]);
+            _appendText.apply(this,[i,_tx,_ty]);
         }
 
         //add text
@@ -213,11 +234,11 @@ var ANICHART_PIE = (function() {
         //todo. 이거 계속 바껴야 함...
         function _appendText(index,x,y) {
             var t = document.createElementNS(FXDATA.xmlns, "text");
-            var elGs = this.elParentSVG.querySelector("g:nth-child("+index+")");
+            var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
 
             var b = elGs.getBBox();
-            var _nPercentRatio = +(this.aPiece[index-1][0].toFixed(1));
-            var _nPercentFontIncreaseSize =  Math.round(this.aPiece[index-1][0] * 0.40); //font-size range is 10~50(40)
+            var _nPercentRatio = +(this.aPiece[index].toFixed(1));
+            var _nPercentFontIncreaseSize =  Math.round(this.aPiece[index] * 0.40); //font-size range is 10~50(40)
 
             //'2.5' is adjusted data for postion center.
             t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
