@@ -58,7 +58,7 @@ var ANICHART_PIE = (function() {
 
       this.elParentSVG = elTarget;
       this.htCore = {};
-      this.aPiece = [];
+      this.aPieceValue = [];
       this.aColorSet = [];
 
       //set options
@@ -69,7 +69,7 @@ var ANICHART_PIE = (function() {
       this.htCore.startY = this.htCore.centerY;
 
       //set color random array 
-      this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.colorType].length-1, this.aPiece.length);
+      this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.colorType].length-1, this.aPieceValue.length);
 
       this._makeCreatePathElement();
   }
@@ -80,18 +80,19 @@ var ANICHART_PIE = (function() {
 
         var htCoreOption  = htOption.core;
         this.htPiece      = htOption.htPiece;
-        this.aPiece       = Object.keys(this.htPiece).map(function(v){return this.htPiece[v];}.bind(this));
+        this.aPieceKeys   = Object.keys(this.htPiece);
+        this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v];}.bind(this));
 
         //check. piece count
-        if(this.aPiece.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
+        if(this.aPieceValue.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
 
         //piece option recalculate : to % ratio
-        var _nSumPiece = this.aPiece.reduce(function(pre,now,i,o){
+        var _nSumPiece = this.aPieceValue.reduce(function(pre,now,i,o){
           if(typeof pre!== "number") pre = +pre; 
           return pre + now;
         });
-        this.aPiece.forEach(function(v,i,o) {
-          this.aPiece[i] = +(((v/_nSumPiece)*100).toFixed(2));
+        this.aPieceValue.forEach(function(v,i,o) {
+          this.aPieceValue[i] = +(((v/_nSumPiece)*100).toFixed(2));
         }.bind(this));
 
         for(var name in FXDATA.htDefaultCoreValue) {
@@ -144,7 +145,7 @@ var ANICHART_PIE = (function() {
     },
 
     _makeCreatePathElement : function(){ 
-        var nPathCount = this.aPiece.length;
+        var nPathCount = this.aPieceValue.length;
 
         for(var i=0; i<nPathCount; i++) {
           this._createPathElements(i);
@@ -186,7 +187,7 @@ var ANICHART_PIE = (function() {
         if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
 
         //TODO. aPiece의 [0]의 값이 100% 비율로 맞춰진 상태로 넘겨야 한다. 
-        this.aPiece.forEach(this._setSVGPathAttribute.bind(this));
+        this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
 
         window.requestAnimationFrame(this._runAnimation.bind(this));
     },
@@ -225,7 +226,7 @@ var ANICHART_PIE = (function() {
         var _cx = this.htCore.centerX;
         var _cy = this.htCore.centerY;
 
-        var aGangles = this.aPiece.map(this._setSVGPathAttribute.bind(this));
+        var aGangles = this.aPieceValue.map(this._setSVGPathAttribute.bind(this));
         var _al = aGangles.length;
 
         //append to array value of Center piece angle.
@@ -256,8 +257,8 @@ var ANICHART_PIE = (function() {
             var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
 
             var b = elGs.getBBox();
-            var _nPercentRatio = +(this.aPiece[index].toFixed(1));
-            var _nPercentFontIncreaseSize =  Math.round(this.aPiece[index] * 0.40); //font-size range is 10~50(40)
+            var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
+            var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
             //'3.0' is adjusted data for postion center.
             t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
