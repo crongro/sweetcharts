@@ -241,32 +241,27 @@ var ANICHART_PIE = (function() {
             var _ty = (Math.sin(_caledPy * _ta)) * _r;
 
             //실제 svg기준 좌표를 설정한다.
-            // _tx = _cx + (_tx/2);
-            // _ty = _cy + (_ty/2);
             _tx = _cx + (_tx/1.6); //값이 작을수록 원점과 멀어진다.
             _ty = _cy + (_ty/1.6);
 
-            _appendText.apply(this,[i,_tx,_ty]);
+            this._appendText(i, _tx, _ty);
         }
+    },
+    
+    _appendText : function(index,x,y) {
+        var t = document.createElementNS(FXDATA.xmlns, "text");
+        var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
 
-        //add text
-        //var p = this.aElPath[nIndex];
-        //todo. 이거 계속 바껴야 함...
-        function _appendText(index,x,y) {
-            var t = document.createElementNS(FXDATA.xmlns, "text");
-            var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
+        var b = elGs.getBBox();
+        var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
+        var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
-            var b = elGs.getBBox();
-            var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
-            var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
-
-            //'3.0' is adjusted data for postion center.
-            t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
-            t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
-            t.setAttribute("fill","#000");
-            t.setAttribute("font-size", 8 + _nPercentFontIncreaseSize + ""); //10 is default font-size(minimum-size)
-            elGs.appendChild(t);
-        }
+        //'3.0' is adjusted data for postion center.
+        t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
+        t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
+        t.setAttribute("fill","#000");
+        t.setAttribute("font-size", 8 + _nPercentFontIncreaseSize + ""); //10 is default font-size(minimum-size)
+        elGs.appendChild(t);
     },
 
     _addShadow : function() {
