@@ -50,16 +50,16 @@ var ANICHART_PIE = (function() {
           if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
           return null;
        }
-      this.nCount = 0;
-
-      this.aElPath = [];
-      this._aArc = [];
-      this._aStart = [];
-
-      this.elParentSVG = elTarget;
-      this.htCore = {};
-      this.aPieceValue = [];
-      this.aColorSet = [];
+      this.nCount       = 0;
+      this.aElPath      = [];
+      this._aArc        = [];
+      this._aStart      = [];
+      this.elParentSVG  = elTarget;
+      this.elWrapDiv    = elTarget.parentNode;
+      this.htCore       = {};
+      this.aPieceKeys   = [];
+      this.aPieceValue  = [];
+      this.aColorSet    = [];
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -177,6 +177,7 @@ var ANICHART_PIE = (function() {
         if(this.nCount >= FXDATA.maxAngle) {
           this._showTextData();
           this._addShadow();
+          var _oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
           return;
         }
 
@@ -247,7 +248,7 @@ var ANICHART_PIE = (function() {
             this._appendText(i, _tx, _ty);
         }
     },
-    
+
     _appendText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
         var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
@@ -285,6 +286,64 @@ var ANICHART_PIE = (function() {
     },
     constructor : PIE,
   };
+
+  //Legend CLASS
+  function LegendManager(elParentDiv, aName, aColor) {
+      this.elParentSVG = elParentDiv.querySelector("svg:nth-child(2)");
+      this.nDivHeight = parseInt(elParentDiv.style.height);
+      this.aName = aName;
+      this.aColor = aColor;
+      this.htData = {
+        nH : 15,
+        nG : 10,
+      }
+      this._init();
+  }
+
+  LegendManager.prototype = {
+      _init : function() {
+
+      //1. 항목전체의 높이를 계산한다.
+      var o = this.htData;
+      var nLegendHeight = (o.nH+o.nG)*this.aName.length - 15;
+      if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
+        // 더 크다면 전체의 높이값을 변경한다.
+
+      //2. 첫번째의 위치를 결정한다.
+      this.nFristElementTop = (this.nDivHeight - nLegendHeight) / 2;
+
+      //3. 자식들을 만든다.
+      this.createElement();
+      //4. 나머지 아이들의 위치를 결정한다 .
+      },
+
+      createElement : function() {
+        var p = this.elParentSVG;
+        var g = document.createElementNS(FXDATA.xmlns, "g");
+        var r = document.createElementNS(FXDATA.xmlns, "rect");
+        var t = document.createElementNS(FXDATA.xmlns, "text");
+
+        p.appendChild(g);
+
+        r.setAttribute("x" , "10");
+        r.setAttribute("y" , this.nFristElementTop);
+        r.setAttribute("width", this.htData.nH+1);
+        r.setAttribute("height", this.htData.nH+1);
+        g.appendChild(r);
+
+        var _f = this.nFristElementTop;
+
+        t.textContent = "ddddddddd";
+        t.setAttribute("x" , "40");
+        t.setAttribute("y" , _f+12);
+        t.setAttribute("fill","#000");
+        t.setAttribute("font-size", 12);
+        g.appendChild(t);
+      },
+
+      constructor : LegendManager
+  }
+
   return PIE;
 }());
 
