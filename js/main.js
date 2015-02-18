@@ -15,7 +15,8 @@ require([
           nMilliSecondCycle:1000,
           colorType : "a"
         }, 
-        piece : [15, 13, 20, 30, 12, 23]
+        //piece : [15, 13, 20, 30, 12, 23]
+        htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
     }).runAnimation();
 
     var oPy2 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(2) svg"), {
@@ -26,7 +27,7 @@ require([
           nMilliSecondCycle:500,
           colorType : "b"
       }, 
-      piece : [15, 33, 10, 30, 42, 73]
+      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
     }).runAnimation();
 
     var oPy3 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(3) svg"), {
@@ -37,7 +38,7 @@ require([
           nMilliSecondCycle:500,
           colorType : "c"
       }, 
-      piece : [15, 33, 10, 30, 42, 73]
+      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
     }).runAnimation();
 
     var oPy4 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(4) svg"), {
@@ -48,7 +49,7 @@ require([
           nMilliSecondCycle:500,
           colorType : "d"
       }, 
-      piece : [15, 33, 10, 30, 42, 73,12,12,42,34,34,23,22,33,42,92,12,32,42,23,24,34]
+      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12, "Design" : 20, "UX" : 20, "기획" : 12, "EP" : 22, "QA" : 29, "PM" : 9}
     }).runAnimation();
 
 });

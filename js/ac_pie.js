@@ -69,9 +69,7 @@ var ANICHART_PIE = (function() {
       this.htCore.startY = this.htCore.centerY;
 
       //set color random array 
-      //this.aColorSet = this._getRandomIndex(this.aPiece.length, FXDATA.CSS.colors.length-1);
       this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.colorType].length-1, this.aPiece.length);
-      console.log("this.aColorSet -> ", this.aColorSet);
 
       this._makeCreatePathElement();
   }
@@ -81,7 +79,8 @@ var ANICHART_PIE = (function() {
     _setOption : function(htOption) {
 
         var htCoreOption  = htOption.core;
-        this.aPiece        = htOption.piece;
+        this.htPiece      = htOption.htPiece;
+        this.aPiece       = Object.keys(this.htPiece).map(function(v){return this.htPiece[v];}.bind(this));
 
         //check. piece count
         if(this.aPiece.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
@@ -260,10 +259,9 @@ var ANICHART_PIE = (function() {
             var _nPercentRatio = +(this.aPiece[index].toFixed(1));
             var _nPercentFontIncreaseSize =  Math.round(this.aPiece[index] * 0.40); //font-size range is 10~50(40)
 
-            //'2.5' is adjusted data for postion center.
+            //'3.0' is adjusted data for postion center.
             t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
             t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
-            //t.setAttribute("fill", (this.htCore.colorType === "colorTypeE" || this.htCore.colorType === "colorTypeD") ? "#fff" : "#000");
             t.setAttribute("fill","#000");
             t.setAttribute("font-size", 8 + _nPercentFontIncreaseSize + ""); //10 is default font-size(minimum-size)
             elGs.appendChild(t);
