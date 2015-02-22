@@ -13,7 +13,7 @@ require([
           centerY:200,
           radius:150,
           nMilliSecondCycle:1000,
-          colorType : "a"
+          aColorType : "a"
         }, 
         //piece : [15, 13, 20, 30, 12, 23]
         htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
@@ -25,7 +25,7 @@ require([
           centerY:200,
           radius:150,
           nMilliSecondCycle:500,
-          colorType : "b"
+          aColorType : "b"
       }, 
       htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
     }).runAnimation();
@@ -36,7 +36,7 @@ require([
           centerY:200,
           radius:150,
           nMilliSecondCycle:500,
-          colorType : "c"
+          aColorType : "c"
       }, 
       htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
     }).runAnimation();
@@ -47,7 +47,7 @@ require([
           centerY:200,
           radius:150,
           nMilliSecondCycle:500,
-          colorType : "d"
+          aColorType : "d"
       }, 
       htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12, "Design" : 20, "UX" : 20, "기획" : 12, "EP" : 22, "QA" : 29, "PM" : 9}
     }).runAnimation();

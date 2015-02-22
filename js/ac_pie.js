@@ -15,7 +15,7 @@ var ANICHART_PIE = (function() {
             SUM_ERROR         : "the sum of pieceData should be 100"
       },
       htDefaultCoreValue  : {
-            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, colorType : "A"
+            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, aColorType : "A"
       },
       CSS : {
         chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))",
@@ -34,13 +34,13 @@ var ANICHART_PIE = (function() {
             //a:100, b:a100, c:500, d: http://colrd.com/palette/19308/ 
          */
 
-        colorTypeA : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
+        aColorTypeA : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
                   '#c8e6c9', '#dcedc8', '#f0f4c3', '#fff9c4', '#ffecb3', '#ffe0b2', '#ffccbc', '#d7ccc8', '#f5f5f5', '#cfd8dc'],
-        colorTypeB : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
+        aColorTypeB : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
                    "#B9F6CA", "#CCFF90", "#F4FF81", "#FFFF8D", "#FFE57F", "#FFD180", "#FF9E80"],
-        colorTypeC : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
+        aColorTypeC : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
                   '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'],
-        colorTypeD : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
+        aColorTypeD : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
                   '#c94a53', '#be5168', '#a34974', '#993767', '#65387d', '#4e2472', '#9163b6', '#e279a3', '#e0598b', '#7c9fb0','#5698c4','#9abf88']
       }
   };
@@ -69,7 +69,11 @@ var ANICHART_PIE = (function() {
       this.htCore.startY = this.htCore.centerY;
 
       //set color random array 
-      this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.colorType].length-1, this.aPieceValue.length);
+      //this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
+      var aRandomIndex  = this._getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
+      this.aColorSet    = aRandomIndex.map(function(v){
+                              return FXDATA.CSS[this.htCore.aColorType][v];
+                          }.bind(this));
 
       this._makeCreatePathElement();
   }
@@ -99,7 +103,7 @@ var ANICHART_PIE = (function() {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
         }
 
-        this.htCore.colorType = "colorType" + this.htCore.colorType.toUpperCase();
+        this.htCore.aColorType = "aColorType" + this.htCore.aColorType.toUpperCase();
         //100 is piece animation time(adjusted value)
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
      },
@@ -116,7 +120,7 @@ var ANICHART_PIE = (function() {
 
         this.aElPath[nIndex].setAttribute("id" , "elPath");
         this.aElPath[nIndex].setAttribute("d" , _coords);
-        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+ FXDATA.CSS[this.htCore.colorType][this.aColorSet[nIndex]]);
+        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+ this.aColorSet[nIndex]);
         g.appendChild(this.aElPath[nIndex]);
 
       },
@@ -310,37 +314,40 @@ var ANICHART_PIE = (function() {
         // 더 크다면 전체의 높이값을 변경한다.
 
       //2. 첫번째의 위치를 결정한다.
-      this.nFristElementTop = (this.nDivHeight - nLegendHeight) / 2;
+      this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
 
       //3. 자식들을 만든다.
-      this.createElement();
+      this.makeLegend();
       //4. 나머지 아이들의 위치를 결정한다 .
       },
-
-      createElement : function() {
+      makeLegend : function() {
+          this.aName.forEach(function(v,i) {
+              var _nPlusValue = this.nFirstElementTop + i*20; //line height가 20이라고 가정.
+              this.createElement(v,this.aColor[i],_nPlusValue);
+          }.bind(this));
+      },
+      createElement : function(sName,sColor,nPlusValue) {
         var p = this.elParentSVG;
         var g = document.createElementNS(FXDATA.xmlns, "g");
         var r = document.createElementNS(FXDATA.xmlns, "rect");
         var t = document.createElementNS(FXDATA.xmlns, "text");
-
-        p.appendChild(g);
+        //var nF = this.nFirstElementTop;
 
         r.setAttribute("x" , "10");
-        r.setAttribute("y" , this.nFristElementTop);
+        r.setAttribute("y" , nPlusValue);
         r.setAttribute("width", this.htData.nH+1);
         r.setAttribute("height", this.htData.nH+1);
-        g.appendChild(r);
+        r.setAttribute("style" , "fill:" + sColor);
 
-        var _f = this.nFristElementTop;
-
-        t.textContent = "ddddddddd";
+        t.textContent = sName;
         t.setAttribute("x" , "40");
-        t.setAttribute("y" , _f+12);
+        t.setAttribute("y" , nPlusValue+12); //rect와 맞추기 위한 보정값
         t.setAttribute("fill","#000");
-        t.setAttribute("font-size", 12);
+
+        p.appendChild(g);
+        g.appendChild(r);
         g.appendChild(t);
       },
-
       constructor : LegendManager
   }
 
