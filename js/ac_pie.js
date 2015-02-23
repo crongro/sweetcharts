@@ -298,8 +298,9 @@ var ANICHART_PIE = (function() {
       this.aName = aName;
       this.aColor = aColor;
       this.htData = {
-        nH : 15,
-        nG : 10,
+        nGap  : 24, //line Height
+        nSize : 16, //height and width
+        nFontSize : 12
       }
       this._init();
   }
@@ -307,46 +308,47 @@ var ANICHART_PIE = (function() {
   LegendManager.prototype = {
       _init : function() {
 
-      //1. 항목전체의 높이를 계산한다.
-      var o = this.htData;
-      var nLegendHeight = (o.nH+o.nG)*this.aName.length - 15;
-      if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
-        // 더 크다면 전체의 높이값을 변경한다.
+          //1. 항목전체의 높이를 계산한다.
+          var o = this.htData;
+          var nLegendHeight = o.nGap * this.aName.length - (o.nGap-o.nSize);
+          if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
+            // 더 크다면 전체의 높이값을 변경한다.
 
-      //2. 첫번째의 위치를 결정한다.
-      this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
+          //2. 첫번째의 위치를 결정한다.
+          this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
 
-      //3. 자식들을 만든다.
-      this.makeLegend();
-      //4. 나머지 아이들의 위치를 결정한다 .
+          //3. 자식들을 만든다.
+          this.makeLegend();
+          //4. 나머지 아이들의 위치를 결정한다 .
       },
       makeLegend : function() {
           this.aName.forEach(function(v,i) {
-              var _nPlusValue = this.nFirstElementTop + i*20; //line height가 20이라고 가정.
+              var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
               this.createElement(v,this.aColor[i],_nPlusValue);
           }.bind(this));
       },
       createElement : function(sName,sColor,nPlusValue) {
-        var p = this.elParentSVG;
-        var g = document.createElementNS(FXDATA.xmlns, "g");
-        var r = document.createElementNS(FXDATA.xmlns, "rect");
-        var t = document.createElementNS(FXDATA.xmlns, "text");
-        //var nF = this.nFirstElementTop;
+          var p = this.elParentSVG;
+          var g = document.createElementNS(FXDATA.xmlns, "g");
+          var r = document.createElementNS(FXDATA.xmlns, "rect");
+          var t = document.createElementNS(FXDATA.xmlns, "text");
+          //var nF = this.nFirstElementTop;
 
-        r.setAttribute("x" , "10");
-        r.setAttribute("y" , nPlusValue);
-        r.setAttribute("width", this.htData.nH+1);
-        r.setAttribute("height", this.htData.nH+1);
-        r.setAttribute("style" , "fill:" + sColor);
+          r.setAttribute("x" , "10");
+          r.setAttribute("y" , nPlusValue);
+          r.setAttribute("width", this.htData.nSize);
+          r.setAttribute("height", this.htData.nSize);
+          r.setAttribute("style" , "fill:" + sColor);
 
-        t.textContent = sName;
-        t.setAttribute("x" , "40");
-        t.setAttribute("y" , nPlusValue+12); //rect와 맞추기 위한 보정값
-        t.setAttribute("fill","#000");
+          t.textContent = sName;
+          t.setAttribute("x" , "40");
+          t.setAttribute("y" , nPlusValue+this.htData.nFontSize); //text 의 y값은 바닥기준이다. 따라서 폰트 사이즈를 더 해줘야 함.
+          t.setAttribute("font-size", this.htData.nFontSize);
+          t.setAttribute("fill","#000");
 
-        p.appendChild(g);
-        g.appendChild(r);
-        g.appendChild(t);
+          p.appendChild(g);
+          g.appendChild(r);
+          g.appendChild(t);
       },
       constructor : LegendManager
   }

@@ -9,7 +9,7 @@ svg:nth-child(2) {
 }
 
 svg:nth-child(2) > g > text {
-  font-size: 12px;
+  1font-size: 12px;
 }
 
 #wrap {
