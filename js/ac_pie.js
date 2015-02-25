@@ -218,19 +218,27 @@ var ANICHART_PIE = (function() {
     },
 
     _registerOverEffect : function() {
-      this.elParentSVG.addEventListener("mouseover", function(e){
-        var elCur = e.target;
-        if(elCur.nodeName === "path") {
-            //e.target.setAttribute("transform", "translate(" + 200 + "," + 200 + ")");
-            var aPos = this.htPathOutlinePos[elCur.id];
-            var nSlope = Math.abs(aPos[1]/aPos[0]); // slope = y/x
-            var nXdirection = (aPos[0] > 0) ? 1 : -1;
-            var nYdirection = (aPos[1] > 0) ? 1 : -1;
-            var nXPos = Math.sqrt(100 / (Math.pow(nSlope,2)+1));
-            elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
-        }
-        console.log("enter");
+        this.elParentSVG.addEventListener("mouseover", function(e){
+            var elCur = e.target;
+            var nCount=0;
+            if(elCur.nodeName === "path") {
+                //e.target.setAttribute("transform", "translate(" + 200 + "," + 200 + ")");
+                var aPos = this.htPathOutlinePos[elCur.id];
+                var nSlope = Math.abs(aPos[1]/aPos[0]); // slope = y/x
+                var nXdirection = (aPos[0] > 0) ? 1 : -1;
+                var nYdirection = (aPos[1] > 0) ? 1 : -1;
+                var nXPos = Math.sqrt(300 / (Math.pow(nSlope,2)+1));
+                window.requestAnimationFrame(_overHandler.bind(null, nCount));
+            }
+
+            function _overHandler(nCount) {
+                nCount+= 0.5;
+                elCur.setAttribute("transform", "translate(" + (nCount*nXdirection) + "," + (nCount*nSlope*nYdirection) + ")");
+                if(nCount < nXPos) window.requestAnimationFrame(_overHandler.bind(null,nCount));
+            }
+
       }.bind(this));
+
 
       // for(var i = 0 ; i < this.aOutlinePos.length ; i++) {
       //     console.log(this.aOutlinePos[i][0] / this.aOutlinePos[i][1]);
