@@ -45,6 +45,16 @@ var ANICHART_PIE = (function() {
       }
   };
 
+  var _c = {
+      setAttrs : function(elBase, htData) {
+          for(var sKey in htData) {
+              if(htData.hasOwnProperty(sKey)) {
+                  elBase.setAttribute(sKey, htData[sKey]);
+              }
+          }
+      }
+  }
+
   function PIE(elTarget, htOption) {
       if(!(htOption && typeof htOption === "object")) {
           if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
@@ -109,8 +119,6 @@ var ANICHART_PIE = (function() {
      },
 
     _createPathElements : function (nIndex) {
-        //var _elParent = document.querySelector("#pieWrap > svg");
-
         var g = document.createElementNS(FXDATA.xmlns, "g");
         this.elParentSVG.appendChild(g);
 
@@ -118,12 +126,14 @@ var ANICHART_PIE = (function() {
 
         var _coords = this._getCoordProperty();
 
-        this.aElPath[nIndex].setAttribute("id" , "elPath");
-        this.aElPath[nIndex].setAttribute("d" , _coords);
-        this.aElPath[nIndex].setAttribute("style" , "stroke:white;fill:"+ this.aColorSet[nIndex]);
-        g.appendChild(this.aElPath[nIndex]);
+        _c.setAttrs(this.aElPath[nIndex], {
+            "id"    : "elPath",
+            "d"     : _coords,
+            "style" : "stroke:white;fill:"+ this.aColorSet[nIndex],
+        });
 
-      },
+        g.appendChild(this.aElPath[nIndex]);
+    },
 
     _getCoordProperty : function() {
       var _result = "M" + this.htCore.startX + " " + this.htCore.startY + " "+ 
@@ -261,11 +271,13 @@ var ANICHART_PIE = (function() {
         var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
         var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
-        //'3.0' is adjusted data for postion center.
-        t.setAttribute("transform", "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")");
+        _c.setAttrs(t, {
+            "transform" : "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")", // a '3.0' is adjusted data for postion center.
+            "fill"      : "#000",
+            "font-size" : 8 + _nPercentFontIncreaseSize + "", //a '8' is default font-size(minimum-size)
+        });
+
         t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
-        t.setAttribute("fill","#000");
-        t.setAttribute("font-size", 8 + _nPercentFontIncreaseSize + ""); //10 is default font-size(minimum-size)
         elGs.appendChild(t);
     },
 
@@ -332,20 +344,23 @@ var ANICHART_PIE = (function() {
           var g = document.createElementNS(FXDATA.xmlns, "g");
           var r = document.createElementNS(FXDATA.xmlns, "rect");
           var t = document.createElementNS(FXDATA.xmlns, "text");
-          //var nF = this.nFirstElementTop;
 
-          r.setAttribute("x" , "10");
-          r.setAttribute("y" , nPlusValue);
-          r.setAttribute("width", this.htData.nSize);
-          r.setAttribute("height", this.htData.nSize);
-          r.setAttribute("style" , "fill:" + sColor);
+          _c.setAttrs(r, {
+              "x"       : "10",
+              "y"       : nPlusValue,
+              "width"   : this.htData.nSize,
+              "height"  : this.htData.nSize,
+              "fill"    : sColor,
+          });
+
+          _c.setAttrs(t, {
+              "x"         : "40",
+              "y"         : nPlusValue+this.htData.nFontSize,
+              "font-size" : this.htData.nFontSize,
+              "fill"      : "#000",
+          });
 
           t.textContent = sName;
-          t.setAttribute("x" , "40");
-          t.setAttribute("y" , nPlusValue+this.htData.nFontSize); //text 의 y값은 바닥기준이다. 따라서 폰트 사이즈를 더 해줘야 함.
-          t.setAttribute("font-size", this.htData.nFontSize);
-          t.setAttribute("fill","#000");
-
           p.appendChild(g);
           g.appendChild(r);
           g.appendChild(t);
