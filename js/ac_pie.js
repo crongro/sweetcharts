@@ -71,6 +71,8 @@ var ANICHART_PIE = (function() {
       this.aPieceKeys   = [];
       this.aPieceValue  = [];
       this.aColorSet    = [];
+      //this.aOutlinePos  = [];
+      this.htPathOutlinePos = {};
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -128,7 +130,8 @@ var ANICHART_PIE = (function() {
         var _coords = this._getCoordProperty();
 
         _c.setAttrs(this.aElPath[nIndex], {
-            "id"    : "elPath",
+            //"id"    : "elPath",
+            "id"    : "elPath"+nIndex,
             "d"     : _coords,
             "style" : "stroke:white;fill:"+ this.aColorSet[nIndex],
         });
@@ -190,9 +193,10 @@ var ANICHART_PIE = (function() {
 
         //condition of stop ANIMATION
         if(this.nCount >= FXDATA.maxAngle) {
-          this._showTextData();
-          this._addShadow();
-          var _oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
+          // this._showTextData();
+          // this._addShadow();
+          // var _oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
+          this._afterAnimation();
           return;
         }
 
@@ -204,6 +208,33 @@ var ANICHART_PIE = (function() {
         this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
 
         window.requestAnimationFrame(this._runAnimation.bind(this));
+    },
+
+    _afterAnimation : function() {
+        this._showTextData();
+        this._addShadow();
+        new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
+        this._registerOverEffect();
+    },
+
+    _registerOverEffect : function() {
+      this.elParentSVG.addEventListener("mouseover", function(e){
+        var elCur = e.target;
+        if(elCur.nodeName === "path") {
+            //e.target.setAttribute("transform", "translate(" + 200 + "," + 200 + ")");
+            var aPos = this.htPathOutlinePos[elCur.id];
+            var nSlope = Math.abs(aPos[1]/aPos[0]); // slope = y/x
+            var nXdirection = (aPos[0] > 0) ? 1 : -1;
+            var nYdirection = (aPos[1] > 0) ? 1 : -1;
+            var nXPos = Math.sqrt(100 / (Math.pow(nSlope,2)+1));
+            elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+        }
+        console.log("enter");
+      }.bind(this));
+
+      // for(var i = 0 ; i < this.aOutlinePos.length ; i++) {
+      //     console.log(this.aOutlinePos[i][0] / this.aOutlinePos[i][1]);
+      // }
     },
 
     _setSVGPathAttribute : function(v,i,o) {
@@ -254,12 +285,23 @@ var ANICHART_PIE = (function() {
             var _tx = (Math.cos(_caledPy * _ta)) * _r;
             var _ty = (Math.sin(_caledPy * _ta)) * _r;
 
+            //
+            this._pushCenterPosition(_tx, _ty, i);
+
             //set x,y position to the SVG Element
             _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
             _ty = _cy + (_ty/1.6);
 
             this._appendText(i, _tx, _ty);
         }
+    },
+
+    _pushCenterPosition : function(nX, nY, nIndex) {
+        //var elCurrent = this.elParentSVG.querySelector("g:nth-child("+(nIndex+1)+") path"); 
+        var elCurrent = this.elParentSVG.querySelector("#elPath"+nIndex);
+        //this.aOutlinePos.push([nX,nY]);
+        //this.htPathOutlinePos[elCurrent] = [nX, nY];
+        this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
 
     _appendText : function(index,x,y) {
