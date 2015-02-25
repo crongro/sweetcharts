@@ -45,6 +45,7 @@ var ANICHART_PIE = (function() {
       }
   };
 
+  //common Utilities
   var _c = {
       setAttrs : function(elBase, htData) {
           for(var sKey in htData) {
@@ -195,13 +196,11 @@ var ANICHART_PIE = (function() {
           return;
         }
 
-        //Increase 만큼 증가
         this.nCount = this.nCount + _ic;
 
-        //최대값을 보정한다.
+        //revise maximum value 
         if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
 
-        //TODO. aPiece의 [0]의 값이 100% 비율로 맞춰진 상태로 넘겨야 한다. 
         this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
 
         window.requestAnimationFrame(this._runAnimation.bind(this));
@@ -251,12 +250,12 @@ var ANICHART_PIE = (function() {
             if(i === 0 ) _ta = Math.round(aGangles[0]/2);
             else _ta = Math.round((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
 
-            //원의 원점을 기준으로 x,y 좌표를 설정한다. 원의 중심이 (0,0) 이다.
+            //set x,y position to the circle center
             var _tx = (Math.cos(_caledPy * _ta)) * _r;
             var _ty = (Math.sin(_caledPy * _ta)) * _r;
 
-            //실제 svg기준 좌표를 설정한다.
-            _tx = _cx + (_tx/1.6); //값이 작을수록 원점과 멀어진다.
+            //set x,y position to the SVG Element
+            _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
             _ty = _cy + (_ty/1.6);
 
             this._appendText(i, _tx, _ty);
@@ -320,18 +319,16 @@ var ANICHART_PIE = (function() {
   LegendManager.prototype = {
       _init : function() {
 
-          //1. 항목전체의 높이를 계산한다.
+          //1. calculate all element's height.
           var o = this.htData;
           var nLegendHeight = o.nGap * this.aName.length - (o.nGap-o.nSize);
           if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
-            // 더 크다면 전체의 높이값을 변경한다.
 
-          //2. 첫번째의 위치를 결정한다.
+          //2. decide first element position 
           this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
 
-          //3. 자식들을 만든다.
+          //3. make all elements
           this.makeLegend();
-          //4. 나머지 아이들의 위치를 결정한다 .
       },
       makeLegend : function() {
           this.aName.forEach(function(v,i) {
