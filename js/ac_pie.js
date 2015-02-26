@@ -71,8 +71,8 @@ var ANICHART_PIE = (function() {
       this.aPieceKeys   = [];
       this.aPieceValue  = [];
       this.aColorSet    = [];
-      //this.aOutlinePos  = [];
       this.htPathOutlinePos = {};
+      this.elOver       = null;
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -219,30 +219,41 @@ var ANICHART_PIE = (function() {
 
     _registerOverEffect : function() {
         this.elParentSVG.addEventListener("mouseover", function(e){
+
+            var aPos, nSlope, nXdirection, nYdirection, nXPos;
             var elCur = e.target;
-            var nCount=0;
-            if(elCur.nodeName === "path") {
-                //e.target.setAttribute("transform", "translate(" + 200 + "," + 200 + ")");
-                var aPos = this.htPathOutlinePos[elCur.id];
-                var nSlope = Math.abs(aPos[1]/aPos[0]); // slope = y/x
-                var nXdirection = (aPos[0] > 0) ? 1 : -1;
-                var nYdirection = (aPos[1] > 0) ? 1 : -1;
-                var nXPos = Math.sqrt(300 / (Math.pow(nSlope,2)+1));
-                window.requestAnimationFrame(_overHandler.bind(null, nCount));
+            var elCurName = elCur.nodeName;
+            var _x, _y;
+
+            if(!(elCurName === "path" || elCurName === "text")) {
+              _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
+              _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
+
+              var dis = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
+              //var dis = Math.sqrt(Math.pow(this.htCore.centerX - e.offsetX, 2) + Math.pow(this.htCore.centerY - e.offsetY,2));
+              console.log(dis);
+              if(dis < this.htCore.radius) return;
+              if(this.elOver) this.elOver.setAttribute("transform", "translate(0,0)");
+              return;
             }
 
-            function _overHandler(nCount) {
-                nCount+= 0.5;
-                elCur.setAttribute("transform", "translate(" + (nCount*nXdirection) + "," + (nCount*nSlope*nYdirection) + ")");
-                if(nCount < nXPos) window.requestAnimationFrame(_overHandler.bind(null,nCount));
+            if(this.elOver && this.elOver !== elCur) {
+               console.log("다른 엘리먼트에 오버가 발생했음");
+               this.elOver.setAttribute("transform", "translate(0,0)");
+               console.log("이전 엘리먼트를 돌려놨음.");
             }
 
+            this.elOver = elCur;
+
+            elCur = (elCurName === "text") ? elCur.previousSibling : elCur;
+
+            aPos = this.htPathOutlinePos[elCur.id];
+            nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
+            nXdirection = (aPos[0] > 0) ? 1 : -1;
+            nYdirection = (aPos[1] > 0) ? 1 : -1;
+            nXPos = Math.sqrt(300 / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
+            elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
       }.bind(this));
-
-
-      // for(var i = 0 ; i < this.aOutlinePos.length ; i++) {
-      //     console.log(this.aOutlinePos[i][0] / this.aOutlinePos[i][1]);
-      // }
     },
 
     _setSVGPathAttribute : function(v,i,o) {
