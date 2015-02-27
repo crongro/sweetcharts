@@ -218,14 +218,25 @@ var ANICHART_PIE = (function() {
     },
 
     _registerOverEffect : function() {
-        this.elParentSVG.addEventListener("mouseover", function(e){
+        this.elParentSVG.addEventListener("mouseover", this._overHandler.bind(this));
 
+        //over가 늘 일어나지 않음으로 정기적으로 발생시킨다. 
+        setInterval(function(){
+             if(this.elOver) this.elOver.setAttribute("transform", "translate(0,0)");
+        }, 500);
+
+    },
+
+    _overHandler : function(e) {
+            console.log("over fired");
+   
             var aPos, nSlope, nXdirection, nYdirection, nXPos;
             var elCur = e.target;
             var elCurName = elCur.nodeName;
             var _x, _y;
 
             if(!(elCurName === "path" || elCurName === "text")) {
+              console.log("path도 아니고 text도 아닌 곳에 오버가 발생 ");
               _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
               _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
 
@@ -235,6 +246,8 @@ var ANICHART_PIE = (function() {
               if(dis < this.htCore.radius) return;
               if(this.elOver) this.elOver.setAttribute("transform", "translate(0,0)");
               return;
+            } else {
+              console.log("path 또는 텍스트 영역에 오버가 발생 ");
             }
 
             if(this.elOver && this.elOver !== elCur) {
@@ -253,7 +266,6 @@ var ANICHART_PIE = (function() {
             nYdirection = (aPos[1] > 0) ? 1 : -1;
             nXPos = Math.sqrt(300 / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
             elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
-      }.bind(this));
     },
 
     _setSVGPathAttribute : function(v,i,o) {
