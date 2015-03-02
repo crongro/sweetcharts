@@ -59,8 +59,19 @@ var ANICHART_PIE = (function() {
           _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
           var nDistance = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
           return nDistance;
+      },
+      movePiece : function(elCur, nSize) {
+        console.log("movePiece");
+          var aPos, nSlope, nXdirection, nYdirection, nXPos;
+          
+          aPos = this.htPathOutlinePos[elCur.id];
+          nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
+          nXdirection = (aPos[0] > 0) ? 1 : -1;
+          nYdirection = (aPos[1] > 0) ? 1 : -1;
+          nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
+          elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
       }
-  }
+  };
 
   function PIE(elTarget, htOption) {
       if(!(htOption && typeof htOption === "object")) {
@@ -251,40 +262,28 @@ var ANICHART_PIE = (function() {
         }
     },
     _overHandler : function(e) {
-        console.log("over fired");
-
         var aPos, nSlope, nXdirection, nYdirection, nXPos;
         var elCur = e.target;
         var elCurName = elCur.nodeName;
-        var _x, _y;
 
         if(elCurName !== "path" && elCurName !== "text") {
             var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
-
-            if(nDistance > this.htCore.radius && this.elOver) {
-                this.elOver.setAttribute("transform", "translate(0,0)");
-                this.elOver = null;
-            }
+            if(nDistance > this.htCore.radius && this.elOver) _rollback.call(this);
             return;
         } 
 
-        if(this.elOver && this.elOver !== elCur) {
-           console.log("다른 엘리먼트에 오버가 발생했음");
-           this.elOver.setAttribute("transform", "translate(0,0)");
-           this.elOver = null;
-           console.log("이전 엘리먼트를 돌려놨음.");
-        }
-
-        this.elOver = elCur;
+        if(this.elOver && this.elOver !== elCur) _rollback.call(this);
 
         elCur = (elCurName === "text") ? elCur.previousSibling : elCur;
 
-        aPos = this.htPathOutlinePos[elCur.id];
-        nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
-        nXdirection = (aPos[0] > 0) ? 1 : -1;
-        nYdirection = (aPos[1] > 0) ? 1 : -1;
-        nXPos = Math.sqrt(300 / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
-        elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+        _c.movePiece.call(this, elCur, 300);
+
+        this.elOver = elCur;
+
+        function _rollback() {
+           _c.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+           this.elOver = null;
+         }
     },
 
     _setSVGPathAttribute : function(v,i,o) {
@@ -404,7 +403,7 @@ var ANICHART_PIE = (function() {
         nGap  : 24, //line Height
         nSize : 16, //height and width
         nFontSize : 12
-      }
+      };
       this._init();
   }
 
@@ -455,7 +454,7 @@ var ANICHART_PIE = (function() {
           g.appendChild(t);
       },
       constructor : LegendManager
-  }
+  };
 
   return PIE;
 }());
