@@ -61,7 +61,6 @@ var ANICHART_PIE = (function() {
           return nDistance;
       },
       movePiece : function(elCur, nSize) {
-        console.log("movePiece");
           var aPos, nSlope, nXdirection, nYdirection, nXPos;
           
           aPos = this.htPathOutlinePos[elCur.id];
@@ -238,23 +237,11 @@ var ANICHART_PIE = (function() {
 
     },
     _moveHandler :  function(e) {
-        var elCur = e.target;
-        var elCurName = elCur.nodeName;
-        var _x, _y;
-        var dis;
+        if(e.target.nodeName !== "svg" || !this.elOver) return;
 
-        if(elCurName !== "svg" || !this.elOver) return;
-        console.log("move : 지금 svg영역을 지나고 있음!");
-
-        _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
-        _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
-
-        dis = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
-
-        if(dis < this.htCore.radius) return;
-        if(this.elOver) { 
-          _c._rollback.call(this);
-        }
+        var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
+        if(nDistance < this.htCore.radius) return;
+        if(this.elOver) _c._rollback.call(this);
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
