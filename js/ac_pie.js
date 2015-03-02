@@ -202,21 +202,13 @@ var ANICHART_PIE = (function() {
         }
         return _arr;
     },
-
     runAnimation : function() {
-      this.animationId = window.requestAnimationFrame(this._runAnimation.bind(this));
-    },
-
-    _runAnimation : function() {
         this._nR = 0;
         var _ma = this.htCore.nMaxAngle;
         var _ic = this.htCore.nIncrease;
 
         //condition of stop ANIMATION
         if(this.nCount >= FXDATA.maxAngle) {
-          // this._showTextData();
-          // this._addShadow();
-          // var _oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
           this._afterAnimation();
           return;
         }
@@ -228,7 +220,7 @@ var ANICHART_PIE = (function() {
 
         this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
 
-        window.requestAnimationFrame(this._runAnimation.bind(this));
+        window.requestAnimationFrame(this.runAnimation.bind(this));
     },
 
     _afterAnimation : function() {
