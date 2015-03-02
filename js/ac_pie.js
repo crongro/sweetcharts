@@ -53,6 +53,12 @@ var ANICHART_PIE = (function() {
                   elBase.setAttribute(sKey, htData[sKey]);
               }
           }
+      },
+      getDistanceFromCircleCenter : function(e) {
+          _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
+          _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
+          var nDistance = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
+          return nDistance;
       }
   }
 
@@ -252,23 +258,15 @@ var ANICHART_PIE = (function() {
         var elCurName = elCur.nodeName;
         var _x, _y;
 
-        if(!(elCurName === "path" || elCurName === "text")) {
-            console.log("path도 아니고 text도 아닌 곳에 오버가 발생 ");
-            _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
-            _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
+        if(elCurName !== "path" && elCurName !== "text") {
+            var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
 
-            var dis = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
-            //var dis = Math.sqrt(Math.pow(this.htCore.centerX - e.offsetX, 2) + Math.pow(this.htCore.centerY - e.offsetY,2));
-            console.log(dis);
-            if(dis < this.htCore.radius) return;
-            if(this.elOver) {
+            if(nDistance > this.htCore.radius && this.elOver) {
                 this.elOver.setAttribute("transform", "translate(0,0)");
                 this.elOver = null;
             }
             return;
-        } else {
-            console.log("다른영역 진입");
-        }
+        } 
 
         if(this.elOver && this.elOver !== elCur) {
            console.log("다른 엘리먼트에 오버가 발생했음");
