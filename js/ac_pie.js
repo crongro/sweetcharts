@@ -70,6 +70,10 @@ var ANICHART_PIE = (function() {
           nYdirection = (aPos[1] > 0) ? 1 : -1;
           nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
           elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+      },
+      _rollback : function() {
+          _c.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+          this.elOver = null;
       }
   };
 
@@ -257,35 +261,23 @@ var ANICHART_PIE = (function() {
 
         if(dis < this.htCore.radius) return;
         if(this.elOver) { 
-          this.elOver.setAttribute("transform", "translate(0,0)");
-          this.elOver = null;
+          _c._rollback.call(this);
         }
     },
     _overHandler : function(e) {
-        var aPos, nSlope, nXdirection, nYdirection, nXPos;
-        var elCur = e.target;
-        var elCurName = elCur.nodeName;
+        var elCurName = e.target.nodeName;
+        var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
-        if(elCurName !== "path" && elCurName !== "text") {
+        if(elCurName !== "path") {
             var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
-            if(nDistance > this.htCore.radius && this.elOver) _rollback.call(this);
+            if(nDistance > this.htCore.radius && this.elOver) _c._rollback.call(this);
             return;
         } 
 
-        if(this.elOver && this.elOver !== elCur) _rollback.call(this);
-
-        elCur = (elCurName === "text") ? elCur.previousSibling : elCur;
-
+        if(this.elOver && this.elOver !== elCur) _c._rollback.call(this);
         _c.movePiece.call(this, elCur, 300);
-
         this.elOver = elCur;
-
-        function _rollback() {
-           _c.setAttrs(this.elOver, {"transform":"translate(0,0)"});
-           this.elOver = null;
-         }
     },
-
     _setSVGPathAttribute : function(v,i,o) {
 
         var _r = this.htCore.radius;
@@ -404,11 +396,11 @@ var ANICHART_PIE = (function() {
         nSize : 16, //height and width
         nFontSize : 12
       };
-      this._init();
+      this.init();
   }
 
   LegendManager.prototype = {
-      _init : function() {
+      init : function() {
 
           //1. calculate all element's height.
           var o = this.htData;
