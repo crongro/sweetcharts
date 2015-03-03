@@ -152,6 +152,7 @@ var ANICHART_PIE = (function() {
       this.reqId        = null;
       this.htReq        = {};
       this.htTextPos    = {};
+      this.oLegend      = null;
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -276,7 +277,10 @@ var ANICHART_PIE = (function() {
     _execAfterAnimation : function() {
         this._showTextData();
         this._addShadow();
-        new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
+
+        this.oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
+        this.oLegend.makeLegend();
+
         this._registerOverEffect();
     },
     _registerOverEffect : function() {
@@ -289,7 +293,10 @@ var ANICHART_PIE = (function() {
         //var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
         var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
         if(nDistance < this.htCore.radius) return;
-        if(this.elOver) _u.rollback.call(this);
+        if(this.elOver) {
+             if(this.oLegend) this.oLegend.clearEmphasizeMenu();
+            _u.rollback.call(this);
+        }
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
@@ -298,7 +305,10 @@ var ANICHART_PIE = (function() {
 
         if(elCurName !== "path") {
             var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
-            if(nDistance > this.htCore.radius && this.elOver) _u.rollback.call(this);
+            if(nDistance > this.htCore.radius && this.elOver) {
+                if(this.oLegend) this.oLegend.clearEmphasizeMenu();
+                _u.rollback.call(this);
+            }
             return;
         } 
 
@@ -312,6 +322,12 @@ var ANICHART_PIE = (function() {
        // var nTextY = elCur.nextElementSibling.transform.baseVal.getItem(0).matrix.f;
 
         _u.movePiece.call(this, elCur, this.htTextPos[elCur.id].x,this.htTextPos[elCur.id].y, 30);
+
+
+        //emphasize Legend match menu.
+        var nIndex = (+elCur.id.substr(6)); //6 is count of word('elPath')
+        this.oLegend.emphasizeMenu(nIndex);
+
         this.elOver = elCur;
     },
     _setSVGPathAttribute : function(v,i,o) {
@@ -424,8 +440,6 @@ var ANICHART_PIE = (function() {
           //2. decide first element position 
           this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
 
-          //3. make all elements
-          this.makeLegend();
       },
       makeLegend : function() {
           this.aName.forEach(function(v,i) {
@@ -458,6 +472,25 @@ var ANICHART_PIE = (function() {
           p.appendChild(g);
           g.appendChild(r);
           g.appendChild(t);
+      },
+      emphasizeMenu : function(nIndex) {
+          this.aElText = Array.prototype.slice.call(this.elParentSVG.querySelectorAll("g > text"));
+          this.aElText.forEach(function(v,i){
+              if(nIndex === i) {
+                  v.setAttribute("font-size", 20);
+                  v.style.opacity = "1.0";
+              } 
+              else {
+                  v.setAttribute("font-size",12);
+                  v.style.opacity = "0.3";
+              } 
+          });
+      },
+      clearEmphasizeMenu : function() {
+          this.aElText.forEach(function(v){
+              v.setAttribute("font-size", 12);
+              v.style.opacity = "1.0";
+          });
       },
       constructor : LegendManager
   };
