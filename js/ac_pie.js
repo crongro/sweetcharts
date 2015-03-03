@@ -15,7 +15,7 @@ var ANICHART_PIE = (function() {
             SUM_ERROR         : "the sum of pieceData should be 100"
       },
       htDefaultCoreValue  : {
-            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, aColorType : "A"
+            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, aColorType : "custom"
       },
       CSS : {
         chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))",
@@ -34,6 +34,7 @@ var ANICHART_PIE = (function() {
             //a:100, b:a100, c:500, d: http://colrd.com/palette/19308/ 
          */
 
+        //TODO . Object 형태로..
         aColorTypeA : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
                   '#c8e6c9', '#dcedc8', '#f0f4c3', '#fff9c4', '#ffecb3', '#ffe0b2', '#ffccbc', '#d7ccc8', '#f5f5f5', '#cfd8dc'],
         aColorTypeB : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
@@ -130,6 +131,13 @@ var ANICHART_PIE = (function() {
 
           return { "x" : _tx, "y" : _ty};
       },
+      getRandomColorArray : function(aColorType, nPieceLen) {
+            var aRandomIndex  = _u.getRandomIndex(FXDATA.CSS[aColorType].length-1, nPieceLen);
+            var aColorSet     = aRandomIndex.map(function(v){
+                                  return FXDATA.CSS[aColorType][v];
+                                });
+            return  aColorSet;
+      }
   };
 
   function PIE(elTarget, htOption) {
@@ -146,7 +154,7 @@ var ANICHART_PIE = (function() {
       this.htCore       = {};
       this.aPieceKeys   = [];
       this.aPieceValue  = [];
-      this.aColorSet    = [];
+      this.aColorSet    = null; 
       this.htPathOutlinePos = {};
       this.elOver       = null;
       this.reqId        = null;
@@ -161,19 +169,10 @@ var ANICHART_PIE = (function() {
       this.htCore.startX = this.htCore.centerX + this.htCore.radius;
       this.htCore.startY = this.htCore.centerY;
 
-      //set color random array 
-      //this.aColorSet = this.getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
-      var aRandomIndex  = _u.getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
-      this.aColorSet    = aRandomIndex.map(function(v){
-                              return FXDATA.CSS[this.htCore.aColorType][v];
-                          }.bind(this));
-
       this._makeCreatePathElement();
 
       _u.setCompatiblility();
-
   }
-
 
   PIE.prototype = {
     _setOption : function(htOption) {
@@ -181,7 +180,8 @@ var ANICHART_PIE = (function() {
         var htCoreOption  = htOption.core;
         this.htPiece      = htOption.htPiece;
         this.aPieceKeys   = Object.keys(this.htPiece);
-        this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v];}.bind(this));
+        ////this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v];}.bind(this));
+        this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v].data;}.bind(this));
 
         //check. piece count
         if(this.aPieceValue.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
@@ -199,7 +199,13 @@ var ANICHART_PIE = (function() {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
         }
 
-        this.htCore.aColorType = "aColorType" + this.htCore.aColorType.toUpperCase();
+        if(this.htCore.aColorType !== "custom") {
+            this.htCore.aColorType = "aColorType" + this.htCore.aColorType.toUpperCase();
+            this.aColorSet    = _u.getRandomColorArray(this.htCore.aColorType, this.aPieceValue.length);
+        } else {
+            this.aColorSet    = this.aPieceKeys.map(function(v){return this.htPiece[v].color;}.bind(this));
+        }
+
         //100 is piece animation time(adjusted value)
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
      },
@@ -398,20 +404,6 @@ var ANICHART_PIE = (function() {
         this.elParentSVG.style.webkitFilter = _v;
         this.elParentSVG.style.filter = _v;
     },
-
-    _resetAnimation : function() {
-        //this.nCount = 0;
-        //this._aArc[0].largeArcFlag = 0;
-        if(this.animationId) {
-          window.cancelAnimationFrame(requestId);
-          this.animationId = undefined;
-        } 
-    },
-
-    reStartAnimation : function() {
-        this._resetAnimation();
-        this.runAnimation();
-    },
     constructor : PIE,
   };
 
@@ -478,7 +470,7 @@ var ANICHART_PIE = (function() {
           var n = this.htData.nFontSize;
           this.aElText.forEach(function(v,i){
               if(nIndex === i) {
-                  v.setAttribute("font-size", n * 1.6);
+                  v.setAttribute("font-size", n * 1.3);
                   v.style.opacity = "1.0";
               } 
               else {

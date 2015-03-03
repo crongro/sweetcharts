@@ -9,47 +9,53 @@ require([
 ], function (ANICHART_PIE) {
     var oPy = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(1) svg"), {
         core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
+          centerX:150,
+          centerY:150,
+          radius:100,
           nMilliSecondCycle:1000,
-          aColorType : "a"
+          aColorType : "c"
         }, 
         //piece : [15, 13, 20, 30, 12, 23]
-        htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
+        htPiece : {
+                   "WEBUI"          : {"data" : 23, "color" : "red"},
+                   "WEBServer"      : {"data" : 13, "color" : "blue"},
+                   "DBMaster"       : {"data" : 3,  "color" : "grey"},
+                   "ProjectManager" : {"data" : 33, "color" : "green"},
+                   "Designer"       : {"data" : 63, "color" : "magenta"},
+                 }
     }).runAnimation();
 
-    var oPy2 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(2) svg"), {
-        core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
-          nMilliSecondCycle:500,
-          aColorType : "b"
-      }, 
-      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
-    }).runAnimation();
+    // var oPy2 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(2) svg"), {
+    //     core : {
+    //       centerX:200,
+    //       centerY:200,
+    //       radius:150,
+    //       nMilliSecondCycle:500,
+    //       aColorType : "b"
+    //   }, 
+    //   htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
+    // }).runAnimation();
 
-    var oPy3 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(3) svg"), {
-        core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
-          nMilliSecondCycle:500,
-          aColorType : "c"
-      }, 
-      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
-    }).runAnimation();
+    // var oPy3 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(3) svg"), {
+    //     core : {
+    //       centerX:200,
+    //       centerY:200,
+    //       radius:150,
+    //       nMilliSecondCycle:500,
+    //       aColorType : "c"
+    //   }, 
+    //   htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12}
+    // }).runAnimation();
 
-    var oPy4 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(4) svg"), {
-        core : {
-          centerX:200,
-          centerY:200,
-          radius:150,
-          nMilliSecondCycle:500,
-          aColorType : "d"
-      }, 
-      htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12, "Design" : 20, "UX" : 20, "기획" : 12, "EP" : 22, "QA" : 29, "PM" : 9}
-    }).runAnimation();
+    // var oPy4 = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(4) svg"), {
+    //     core : {
+    //       centerX:200,
+    //       centerY:200,
+    //       radius:150,
+    //       nMilliSecondCycle:500,
+    //       aColorType : "d"
+    //   }, 
+    //   htPiece : {"WEBUI" : 13, "WEBServer" : 25, "GameClient" : 10, "GameServer" : 5, "Mobile" : 12, "Design" : 20, "UX" : 20, "기획" : 12, "EP" : 22, "QA" : 29, "PM" : 9}
+    // }).runAnimation();
 
 });
