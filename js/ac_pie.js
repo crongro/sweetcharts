@@ -475,20 +475,22 @@ var ANICHART_PIE = (function() {
       },
       emphasizeMenu : function(nIndex) {
           this.aElText = Array.prototype.slice.call(this.elParentSVG.querySelectorAll("g > text"));
+          var n = this.htData.nFontSize;
           this.aElText.forEach(function(v,i){
               if(nIndex === i) {
-                  v.setAttribute("font-size", 20);
+                  v.setAttribute("font-size", n * 1.6);
                   v.style.opacity = "1.0";
               } 
               else {
-                  v.setAttribute("font-size",12);
+                  v.setAttribute("font-size",n);
                   v.style.opacity = "0.3";
               } 
           });
       },
       clearEmphasizeMenu : function() {
+          var n = this.htData.nFontSize;
           this.aElText.forEach(function(v){
-              v.setAttribute("font-size", 12);
+              v.setAttribute("font-size", n);
               v.style.opacity = "1.0";
           });
       },
