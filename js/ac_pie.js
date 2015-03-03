@@ -45,8 +45,8 @@ var ANICHART_PIE = (function() {
       }
   };
 
-  //common Utilities
-  var _c = {
+  //Utility
+  var _u = {
       setAttrs : function(elBase, htData) {
           for(var sKey in htData) {
               if(htData.hasOwnProperty(sKey)) {
@@ -73,16 +73,13 @@ var ANICHART_PIE = (function() {
           nSize+=30; //increase size
 
           if(nSize < 300) { 
-            this.reqId = requestAnimationFrame(_c.movePiece.bind(this,elCur, nSize));
+            this.reqId = requestAnimationFrame(_u.movePiece.bind(this,elCur, nSize));
             this.htReq[elCur.id] = this.reqId;
           }
       },
-      _rollback : function() {
-          for(var value in this.htReq) {
-              cancelAnimationFrame(this.htReq[value]);
-          }
-
-          _c.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+      rollback : function() {
+          _u.cancelAllAnimationFrame(this.htReq);
+          _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
           this.elOver = null;
       },
       setCompatiblility : function() {
@@ -91,7 +88,43 @@ var ANICHART_PIE = (function() {
 
         cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-      }
+      },
+      cancelAllAnimationFrame : function(htReq) {
+          for(var value in htReq) {cancelAnimationFrame(htReq[value]);}
+      },
+      getRandomIndex : function(nRandomRange, nNeedCount) {
+        var _arr = [];
+        while(_arr.length < nNeedCount) {
+          var _ranValue = Math.round(Math.random() * nRandomRange);
+          if(_arr.length > nRandomRange) _arr.push(_ranValue);
+          else if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
+          else continue;
+        }
+        return _arr;
+      },
+      getPosition : function(aAngles,htCore, i, fCallback) {
+          var _ta;
+          var _caledPy = 0.01745329251; // (Math.PI / 180)
+          var _r = htCore.radius;
+          var _cx = htCore.centerX;
+          var _cy = htCore.centerY;
+
+          //calculate center angle (_ta)
+          if(i === 0 ) _ta = Math.round(aAngles[0]/2);
+          else _ta = Math.round((aAngles[i] - aAngles[i-1])/2 + aAngles[i-1]);
+
+          //set x,y position to the circle center
+          var _tx = (Math.cos(_caledPy * _ta)) * _r;
+          var _ty = (Math.sin(_caledPy * _ta)) * _r;
+
+          fCallback(_tx, _ty, i);
+
+          //set x,y position to the SVG Element
+          _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
+          _ty = _cy + (_ty/1.6);
+
+          return { "x" : _tx, "y" : _ty};
+      },
   };
 
   function PIE(elTarget, htOption) {
@@ -122,15 +155,15 @@ var ANICHART_PIE = (function() {
       this.htCore.startY = this.htCore.centerY;
 
       //set color random array 
-      //this.aColorSet = this._getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
-      var aRandomIndex  = this._getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
+      //this.aColorSet = this.getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
+      var aRandomIndex  = _u.getRandomIndex(FXDATA.CSS[this.htCore.aColorType].length-1, this.aPieceValue.length);
       this.aColorSet    = aRandomIndex.map(function(v){
                               return FXDATA.CSS[this.htCore.aColorType][v];
                           }.bind(this));
 
       this._makeCreatePathElement();
 
-      _c.setCompatiblility();
+      _u.setCompatiblility();
 
   }
 
@@ -172,7 +205,7 @@ var ANICHART_PIE = (function() {
 
         var _coords = this._getCoordProperty();
 
-        _c.setAttrs(this.aElPath[nIndex], {
+        _u.setAttrs(this.aElPath[nIndex], {
             //"id"    : "elPath",
             "id"    : "elPath"+nIndex,
             "d"     : _coords,
@@ -214,16 +247,6 @@ var ANICHART_PIE = (function() {
         }
     },
 
-    _getRandomIndex : function(nRandomRange, nNeedCount) {
-        var _arr = [];
-        while(_arr.length < nNeedCount) {
-          var _ranValue = Math.round(Math.random() * nRandomRange);
-          if(_arr.length > nRandomRange) _arr.push(_ranValue);
-          else if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
-          else continue;
-        }
-        return _arr;
-    },
     runAnimation : function() {
         this._nR = 0;
         var _ma = this.htCore.nMaxAngle;
@@ -231,7 +254,7 @@ var ANICHART_PIE = (function() {
 
         //condition of stop ANIMATION
         if(this.nCount >= FXDATA.maxAngle) {
-          this._afterAnimation();
+          this._execAfterAnimation();
           return;
         }
 
@@ -244,47 +267,39 @@ var ANICHART_PIE = (function() {
 
         requestAnimationFrame(this.runAnimation.bind(this));
     },
-
-    _afterAnimation : function() {
+    _execAfterAnimation : function() {
         this._showTextData();
         this._addShadow();
         new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
         this._registerOverEffect();
     },
-
     _registerOverEffect : function() {
         this.elParentSVG.addEventListener("mouseover", this._overHandler.bind(this));
         this.elParentSVG.addEventListener("mousemove", this._moveHandler.bind(this));
-
-        //over가 늘 일어나지 않음으로 정기적으로 발생시킨다. 
-
     },
     _moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
 
-        var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
+        var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
         if(nDistance < this.htCore.radius) return;
-        if(this.elOver) _c._rollback.call(this);
+        if(this.elOver) _u.rollback.call(this);
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
         if(elCurName !== "path") {
-            var nDistance = _c.getDistanceFromCircleCenter.call(this,e);
-            if(nDistance > this.htCore.radius && this.elOver) _c._rollback.call(this);
+            var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
+            if(nDistance > this.htCore.radius && this.elOver) _u.rollback.call(this);
             return;
         } 
 
-        if(this.elOver && this.elOver !== elCur) _c._rollback.call(this);
-        //_c.movePiece.call(this, elCur, 300);
+        if(this.elOver && this.elOver !== elCur) _u.rollback.call(this);
 
         //before animation moving, should be cancel all animationframe
-        for(var value in this.htReq) {
-            cancelAnimationFrame(this.htReq[value]);
-        }
+       _u.cancelAllAnimationFrame(this.htReq);
 
-        _c.movePiece.call(this, elCur, 30);
+        _u.movePiece.call(this, elCur, 30);
         this.elOver = elCur;
     },
     _setSVGPathAttribute : function(v,i,o) {
@@ -313,36 +328,11 @@ var ANICHART_PIE = (function() {
     },
 
     _showTextData : function() {
-
-        var aGcenterPos = [];
-        var _ta;
-        var _caledPy = 0.01745329251; // (Math.PI / 180)
-        var _r = this.htCore.radius;
-        var _cx = this.htCore.centerX;
-        var _cy = this.htCore.centerY;
-
-        var aGangles = this.aPieceValue.map(this._setSVGPathAttribute.bind(this));
-        var _al = aGangles.length;
-
+        var aAngles = this.aPieceValue.map(this._setSVGPathAttribute.bind(this));
         //append to array value of Center piece angle.
-        for(var i = 0; i< _al; i++) {
-
-            //calculate center angle (_ta)
-            if(i === 0 ) _ta = Math.round(aGangles[0]/2);
-            else _ta = Math.round((aGangles[i] - aGangles[i-1])/2 + aGangles[i-1]);
-
-            //set x,y position to the circle center
-            var _tx = (Math.cos(_caledPy * _ta)) * _r;
-            var _ty = (Math.sin(_caledPy * _ta)) * _r;
-
-            //
-            this._pushCenterPosition(_tx, _ty, i);
-
-            //set x,y position to the SVG Element
-            _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
-            _ty = _cy + (_ty/1.6);
-
-            this._appendText(i, _tx, _ty);
+        for(var i = 0, _al=aAngles.length; i< _al; i++) {
+            var oPos = _u.getPosition(aAngles, this.htCore, i, this._pushCenterPosition.bind(this));
+            this._appendText(i, oPos.x , oPos.y);
         }
     },
 
@@ -359,7 +349,7 @@ var ANICHART_PIE = (function() {
         var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
         var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
-        _c.setAttrs(t, {
+        _u.setAttrs(t, {
             "transform" : "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")", // a '3.0' is adjusted data for postion center.
             "fill"      : "#000",
             "font-size" : 8 + _nPercentFontIncreaseSize + "", //a '8' is default font-size(minimum-size)
@@ -431,7 +421,7 @@ var ANICHART_PIE = (function() {
           var r = document.createElementNS(FXDATA.xmlns, "rect");
           var t = document.createElementNS(FXDATA.xmlns, "text");
 
-          _c.setAttrs(r, {
+          _u.setAttrs(r, {
               "x"       : "10",
               "y"       : nPlusValue,
               "width"   : this.htData.nSize,
@@ -439,7 +429,7 @@ var ANICHART_PIE = (function() {
               "fill"    : sColor,
           });
 
-          _c.setAttrs(t, {
+          _u.setAttrs(t, {
               "x"         : "40",
               "y"         : nPlusValue+this.htData.nFontSize,
               "font-size" : this.htData.nFontSize,
