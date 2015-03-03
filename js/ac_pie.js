@@ -54,13 +54,13 @@ var ANICHART_PIE = (function() {
               }
           }
       },
-      getDistanceFromCircleCenter : function(e) {
+      getDistanceFromCircleCenter : function(e, htCore) {
           _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
           _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
-          var nDistance = Math.sqrt(Math.pow(this.htCore.centerX - _x, 2) + Math.pow(this.htCore.centerY - _y, 2));
+          var nDistance = Math.sqrt(Math.pow(htCore.centerX - _x, 2) + Math.pow(htCore.centerY - _y, 2));
           return nDistance;
       },
-      movePiece : function(elCur, nSize) {
+      movePiece : function(elCur, nTx, nTy, nSize) {
           var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
           
           aPos = this.htPathOutlinePos[elCur.id];
@@ -68,18 +68,23 @@ var ANICHART_PIE = (function() {
           nXdirection = (aPos[0] > 0) ? 1 : -1;
           nYdirection = (aPos[1] > 0) ? 1 : -1;
           nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1));
+
           elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
 
-          nSize+=30; //increase size
+          //move text element
+          elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
+
+          nSize+=20; //increase size
 
           if(nSize < 300) { 
-            this.reqId = requestAnimationFrame(_u.movePiece.bind(this,elCur, nSize));
+            this.reqId = requestAnimationFrame(_u.movePiece.bind(this,elCur,nTx, nTy, nSize));
             this.htReq[elCur.id] = this.reqId;
           }
       },
       rollback : function() {
           _u.cancelAllAnimationFrame(this.htReq);
           _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+          _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
           this.elOver = null;
       },
       setCompatiblility : function() {
@@ -146,6 +151,7 @@ var ANICHART_PIE = (function() {
       this.elOver       = null;
       this.reqId        = null;
       this.htReq        = {};
+      this.htTextPos    = {};
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -280,16 +286,18 @@ var ANICHART_PIE = (function() {
     _moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
 
-        var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
+        //var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
+        var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
         if(nDistance < this.htCore.radius) return;
         if(this.elOver) _u.rollback.call(this);
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
+        if(elCurName === "path" && e.relatedTarget.nodeName === "text") return;
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
         if(elCurName !== "path") {
-            var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
+            var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) _u.rollback.call(this);
             return;
         } 
@@ -299,7 +307,11 @@ var ANICHART_PIE = (function() {
         //before animation moving, should be cancel all animationframe
        _u.cancelAllAnimationFrame(this.htReq);
 
-        _u.movePiece.call(this, elCur, 30);
+       //set text position
+       // var nTextX = elCur.nextElementSibling.transform.baseVal.getItem(0).matrix.e;
+       // var nTextY = elCur.nextElementSibling.transform.baseVal.getItem(0).matrix.f;
+
+        _u.movePiece.call(this, elCur, this.htTextPos[elCur.id].x,this.htTextPos[elCur.id].y, 30);
         this.elOver = elCur;
     },
     _setSVGPathAttribute : function(v,i,o) {
@@ -349,14 +361,20 @@ var ANICHART_PIE = (function() {
         var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
         var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
+        var xResult = x - _nPercentFontIncreaseSize*3.0;
+
         _u.setAttrs(t, {
-            "transform" : "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")", // a '3.0' is adjusted data for postion center.
+            //"transform" : "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")", // a '3.0' is adjusted data for postion center.
+            "transform" : "translate(" + xResult + " " + y + ")", // a '3.0' is adjusted data for postion center.
             "fill"      : "#000",
             "font-size" : 8 + _nPercentFontIncreaseSize + "", //a '8' is default font-size(minimum-size)
         });
 
         t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
         elGs.appendChild(t);
+
+        //save text position info
+        this.htTextPos[elGs.firstElementChild.id] = { "x" : xResult , "y" : y};
     },
 
     _addShadow : function() {
