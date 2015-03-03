@@ -61,18 +61,36 @@ var ANICHART_PIE = (function() {
           return nDistance;
       },
       movePiece : function(elCur, nSize) {
-          var aPos, nSlope, nXdirection, nYdirection, nXPos;
+          var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
           
           aPos = this.htPathOutlinePos[elCur.id];
           nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
           nXdirection = (aPos[0] > 0) ? 1 : -1;
           nYdirection = (aPos[1] > 0) ? 1 : -1;
-          nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1)); //TODO. seperate 300
+          nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1));
           elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+
+          nSize+=30; //increase size
+
+          if(nSize < 300) { 
+            this.reqId = requestAnimationFrame(_c.movePiece.bind(this,elCur, nSize));
+            this.htReq[elCur.id] = this.reqId;
+          }
       },
       _rollback : function() {
+          for(var value in this.htReq) {
+              cancelAnimationFrame(this.htReq[value]);
+          }
+
           _c.setAttrs(this.elOver, {"transform":"translate(0,0)"});
           this.elOver = null;
+      },
+      setCompatiblility : function() {
+        requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+        cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
       }
   };
 
@@ -93,6 +111,8 @@ var ANICHART_PIE = (function() {
       this.aColorSet    = [];
       this.htPathOutlinePos = {};
       this.elOver       = null;
+      this.reqId        = null;
+      this.htReq        = {};
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -109,6 +129,9 @@ var ANICHART_PIE = (function() {
                           }.bind(this));
 
       this._makeCreatePathElement();
+
+      _c.setCompatiblility();
+
   }
 
 
@@ -219,7 +242,7 @@ var ANICHART_PIE = (function() {
 
         this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
 
-        window.requestAnimationFrame(this.runAnimation.bind(this));
+        requestAnimationFrame(this.runAnimation.bind(this));
     },
 
     _afterAnimation : function() {
@@ -254,7 +277,14 @@ var ANICHART_PIE = (function() {
         } 
 
         if(this.elOver && this.elOver !== elCur) _c._rollback.call(this);
-        _c.movePiece.call(this, elCur, 300);
+        //_c.movePiece.call(this, elCur, 300);
+
+        //before animation moving, should be cancel all animationframe
+        for(var value in this.htReq) {
+            cancelAnimationFrame(this.htReq[value]);
+        }
+
+        _c.movePiece.call(this, elCur, 30);
         this.elOver = elCur;
     },
     _setSVGPathAttribute : function(v,i,o) {
@@ -317,10 +347,7 @@ var ANICHART_PIE = (function() {
     },
 
     _pushCenterPosition : function(nX, nY, nIndex) {
-        //var elCurrent = this.elParentSVG.querySelector("g:nth-child("+(nIndex+1)+") path"); 
         var elCurrent = this.elParentSVG.querySelector("#elPath"+nIndex);
-        //this.aOutlinePos.push([nX,nY]);
-        //this.htPathOutlinePos[elCurrent] = [nX, nY];
         this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
 
