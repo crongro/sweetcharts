@@ -180,8 +180,7 @@ var ANICHART_PIE = (function() {
         var htCoreOption  = htOption.core;
         this.htPiece      = htOption.htPiece;
         this.aPieceKeys   = Object.keys(this.htPiece);
-        ////this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v];}.bind(this));
-        this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v].data;}.bind(this));
+        this.aPieceValue  = this.aPieceKeys.map(function(v){return this.htPiece[v].data;}, this);
 
         //check. piece count
         if(this.aPieceValue.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
@@ -204,7 +203,7 @@ var ANICHART_PIE = (function() {
             this.htCore.aColorType = "aColorType" + this.htCore.aColorType.toUpperCase();
             this.aColorSet    = _u.getRandomColorArray(this.htCore.aColorType, this.aPieceValue.length);
         } else {
-            this.aColorSet    = this.aPieceKeys.map(function(v){return this.htPiece[v].color;}.bind(this));
+            this.aColorSet    = this.aPieceKeys.map(function(v){return this.htPiece[v].color;}, this);
         }
 
         //100 is piece animation time(adjusted value)
@@ -363,7 +362,7 @@ var ANICHART_PIE = (function() {
     },
 
     _showTextData : function() {
-        var aAngles = this.aPieceValue.map(this._setSVGPathAttribute.bind(this));
+        var aAngles = this.aPieceValue.map(this._setSVGPathAttribute, this);
         //append to array value of Center piece angle.
         for(var i = 0, _al=aAngles.length; i< _al; i++) {
             var oPos = _u.getPosition(aAngles, this.htCore, i, this._pushCenterPosition.bind(this));
