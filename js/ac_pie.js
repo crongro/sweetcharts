@@ -15,33 +15,21 @@ var ANICHART_PIE = (function() {
             SUM_ERROR         : "the sum of pieceData should be 100"
       },
       htDefaultCoreValue  : {
-            centerX:100, centerY:100, radius:50, nMaxAngle:360, nMilliSecondCycle : 1000, nIncrease:5, aColorType : "custom"
+            //centerX:0, centerY:0, radius:50, nMaxAngle:360, nMilliSecondCycle: 1000, nIncrease:5, sRandomColorType: ""
+            radius:50, nMaxAngle:360, nMilliSecondCycle: 1000, nIncrease:5, sRandomColorType: ""
       },
       CSS : {
         chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))",
-
-        /**
-         * URL : http://www.google.com/design/spec/style/color.html#color-color-palette
-         * get css method
-            (function(num) {
-              var list = document.querySelectorAll(".color-group ul li:nth-child("+num+") span:last-child");
-              var alist = Array.prototype.slice.call(list);
-              return alist.map(function(v,i,o){
-                      return v.innerText;
-                     });
-            })(11);
-
-            //a:100, b:a100, c:500, d: http://colrd.com/palette/19308/ 
-         */
-
+      },
+      colorType : {
         //TODO . Object 형태로..
-        aColorTypeA : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
+        a : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
                   '#c8e6c9', '#dcedc8', '#f0f4c3', '#fff9c4', '#ffecb3', '#ffe0b2', '#ffccbc', '#d7ccc8', '#f5f5f5', '#cfd8dc'],
-        aColorTypeB : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
+        b : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
                    "#B9F6CA", "#CCFF90", "#F4FF81", "#FFFF8D", "#FFE57F", "#FFD180", "#FF9E80"],
-        aColorTypeC : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
+        c : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
                   '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'],
-        aColorTypeD : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
+        d : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
                   '#c94a53', '#be5168', '#a34974', '#993767', '#65387d', '#4e2472', '#9163b6', '#e279a3', '#e0598b', '#7c9fb0','#5698c4','#9abf88']
       }
   };
@@ -131,10 +119,10 @@ var ANICHART_PIE = (function() {
 
           return { "x" : _tx, "y" : _ty};
       },
-      getRandomColorArray : function(aColorType, nPieceLen) {
-            var aRandomIndex  = _u.getRandomIndex(FXDATA.CSS[aColorType].length-1, nPieceLen);
+      getRandomColorArray : function(sRandomColorType, nPieceLen) {
+            var aRandomIndex  = _u.getRandomIndex(FXDATA.colorType[sRandomColorType].length-1, nPieceLen);
             var aColorSet     = aRandomIndex.map(function(v){
-                                  return FXDATA.CSS[aColorType][v];
+                                  return FXDATA.colorType[sRandomColorType][v];
                                 });
             return  aColorSet;
       }
@@ -195,13 +183,18 @@ var ANICHART_PIE = (function() {
           this.aPieceValue[i] = Number(((v/_nSumPiece)*100).toFixed(2));
         },this);
 
+        //set default options
         for(var name in FXDATA.htDefaultCoreValue) {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
         }
 
-        if(this.htCore.aColorType !== "custom") {
-            this.htCore.aColorType = "aColorType" + this.htCore.aColorType.toUpperCase();
-            this.aColorSet    = _u.getRandomColorArray(this.htCore.aColorType, this.aPieceValue.length);
+        //set center position
+        this.htCore.centerX = htCoreOption.centerX || (this.elWrapDiv.clientWidth*0.7/2); //because of 70%
+        this.htCore.centerY = htCoreOption.centerY || (this.elWrapDiv.clientHeight/2);
+
+        //set color
+        if(this.htCore.sRandomColorType.toLowerCase() in FXDATA.colorType) {
+            this.aColorSet    = _u.getRandomColorArray(this.htCore.sRandomColorType.toLowerCase(), this.aPieceValue.length);
         } else {
             this.aColorSet    = this.aPieceKeys.map(function(v){return this.htPiece[v].color;}, this);
         }
@@ -306,7 +299,7 @@ var ANICHART_PIE = (function() {
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
-        if(elCurName === "path" && e.relatedTarget.nodeName === "text") return;
+        if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
         if(elCurName !== "path") {

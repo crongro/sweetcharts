@@ -9,18 +9,17 @@ require([
 ], function (ANICHART_PIE) {
     var oPy = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(1) svg"), {
         core : {
-          centerX:150,
-          centerY:150,
-          radius:100,
+          // centerX:50, //default: center
+          // centerY:200, //default: center 
+          radius:300,
           nMilliSecondCycle:1000,
-          aColorType : "c"
+          //sRandomColorType : "c" //default: user custom value
         }, 
-        //piece : [15, 13, 20, 30, 12, 23]
         htPiece : {
                    "WEBUI"          : {"data" : 23, "color" : "red"},
                    "WEBServer"      : {"data" : 13, "color" : "blue"},
                    "DBMaster"       : {"data" : 3,  "color" : "grey"},
-                   "ProjectManager" : {"data" : 33, "color" : "green"},
+                   "ProjectManager" : {"data" : 33.3, "color" : "green"},
                    "Designer"       : {"data" : 63, "color" : "magenta"},
                  }
     }).runAnimation();
