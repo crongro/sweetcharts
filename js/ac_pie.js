@@ -193,7 +193,7 @@ var ANICHART_PIE = (function() {
         });
 
         this.aPieceValue.forEach(function(v,i,o) {
-          this.aPieceValue[i] = +(((v/_nSumPiece)*100).toFixed(2));
+          this.aPieceValue[i] = Number(((v/_nSumPiece)*100).toFixed(2));
         },this);
 
         for(var name in FXDATA.htDefaultCoreValue) {
@@ -332,7 +332,7 @@ var ANICHART_PIE = (function() {
 
 
         //emphasize Legend match menu.
-        var nIndex = (+elCur.id.substr(6)); //6 is count of word('elPath')
+        var nIndex = Number(elCur.id.substr(6)); //6 is count of word('elPath')
         this.oLegend.emphasizeMenu(nIndex);
 
         this.elOver = elCur;
@@ -353,8 +353,8 @@ var ANICHART_PIE = (function() {
         this._nR += _nPieceRange;
 
         //set end Point
-        this._aArc[i].x = (_sx - _r) + (+(Math.cos(Math.PI/180 * this._nR))) * _r;
-        this._aArc[i].y = (_sy) + (+(Math.sin(Math.PI/180 * this._nR))) * _r;
+        this._aArc[i].x = (_sx - _r) + (Number(Math.cos(Math.PI/180 * this._nR))) * _r;
+        this._aArc[i].y = (_sy) + (Number(Math.sin(Math.PI/180 * this._nR))) * _r;
 
         //change flag (if 180 degree)
         if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) this._aArc[i].largeArcFlag = 1;
@@ -381,7 +381,7 @@ var ANICHART_PIE = (function() {
         var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
 
         var b = elGs.getBBox();
-        var _nPercentRatio = +(this.aPieceValue[index].toFixed(1));
+        var _nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
         var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
         var xResult = x - _nPercentFontIncreaseSize*3.0;
