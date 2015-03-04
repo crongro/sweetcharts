@@ -191,9 +191,10 @@ var ANICHART_PIE = (function() {
           if(typeof pre!== "number") pre = +pre; 
           return pre + now;
         });
+
         this.aPieceValue.forEach(function(v,i,o) {
           this.aPieceValue[i] = +(((v/_nSumPiece)*100).toFixed(2));
-        }.bind(this));
+        },this);
 
         for(var name in FXDATA.htDefaultCoreValue) {
           this.htCore[name] = htCoreOption[name] || FXDATA.htDefaultCoreValue[name];
@@ -276,7 +277,7 @@ var ANICHART_PIE = (function() {
         //revise maximum value 
         if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
 
-        this.aPieceValue.forEach(this._setSVGPathAttribute.bind(this));
+        this.aPieceValue.forEach(this._setSVGPathAttribute, this);
 
         requestAnimationFrame(this.runAnimation.bind(this));
     },
@@ -437,7 +438,7 @@ var ANICHART_PIE = (function() {
           this.aName.forEach(function(v,i) {
               var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
               this.createElement(v,this.aColor[i],_nPlusValue);
-          }.bind(this));
+          }, this);
       },
       createElement : function(sName,sColor,nPlusValue) {
           var p = this.elParentSVG;
