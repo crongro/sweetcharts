@@ -34,6 +34,45 @@ var ANICHART_PIE = (function() {
       }
   };
 
+  var _polyfill = {
+      exec : function() {
+          for(var method in this) {
+             if(method === "exec") continue;
+             if(this.hasOwnProperty(method) && (typeof this[method] === "function")) {
+                this[method].call(null);
+             }
+         }
+      },
+      animationFrame : function() {
+          console.log("animationframe called");
+          //Polyfill reference : https://gist.github.com/paulirish/1579671
+          var lastTime = 0;
+          var vendors = ['ms', 'moz', 'webkit', 'o'];
+          for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+              window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+              window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+              || window[vendors[x]+'CancelRequestAnimationFrame'];
+          }
+
+          if (!window.requestAnimationFrame)
+              window.requestAnimationFrame = function(callback, element) {
+                  var currTime = new Date().getTime();
+                  var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                  var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+                  lastTime = currTime + timeToCall;
+                  return id;
+          };
+
+          if (!window.cancelAnimationFrame)
+              window.cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+              };
+      },
+      dummy : function() {
+          console.log("dumm called");
+      },
+  }
+
   //Utility
   var _u = {
       setAttrs : function(elBase, htData) {
@@ -49,42 +88,29 @@ var ANICHART_PIE = (function() {
           var nDistance = Math.sqrt(Math.pow(htCore.centerX - _x, 2) + Math.pow(htCore.centerY - _y, 2));
           return nDistance;
       },
-      movePiece : function(elCur, nTx, nTy, nSize) {
-          var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
-          
-          aPos = this.htPathOutlinePos[elCur.id];
-          nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
-          nXdirection = (aPos[0] > 0) ? 1 : -1;
-          nYdirection = (aPos[1] > 0) ? 1 : -1;
-          nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1));
-
-          elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
-
-          //move text element
-          elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
-
-          nSize+=20; //increase size
-
-          if(nSize < 300) { 
-            this.reqId = requestAnimationFrame(_u.movePiece.bind(this,elCur,nTx, nTy, nSize));
-            this.htReq[elCur.id] = this.reqId;
-          }
-      },
-      rollback : function() {
-          _u.cancelAllAnimationFrame(this.htReq);
-          _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
-          _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
-          this.elOver = null;
-      },
       setCompatiblility : function() {
-        requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+          //Polyfill reference : https://gist.github.com/paulirish/1579671
+          // var lastTime = 0;
+          // var vendors = ['ms', 'moz', 'webkit', 'o'];
+          // for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+          //     window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+          //     window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+          //     || window[vendors[x]+'CancelRequestAnimationFrame'];
+          // }
 
-        cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+          // if (!window.requestAnimationFrame)
+          //     window.requestAnimationFrame = function(callback, element) {
+          //         var currTime = new Date().getTime();
+          //         var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+          //         var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+          //         lastTime = currTime + timeToCall;
+          //         return id;
+          // };
 
-      },
-      cancelAllAnimationFrame : function(htReq) {
-          for(var value in htReq) {cancelAnimationFrame(htReq[value]);}
+          // if (!window.cancelAnimationFrame)
+          //     window.cancelAnimationFrame = function(id) {
+          //       clearTimeout(id);
+          //     };
       },
       getRandomIndex : function(nRandomRange, nNeedCount) {
         var _arr = [];
@@ -129,6 +155,11 @@ var ANICHART_PIE = (function() {
   };
 
   function PIE(elTarget, htOption) {
+
+      //_u.setCompatiblility();
+      //.setCompatiblility();
+      _polyfill.exec();
+
       if(!(htOption && typeof htOption === "object")) {
           if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
           return null;
@@ -159,7 +190,6 @@ var ANICHART_PIE = (function() {
 
       this._makeCreatePathElement();
 
-      _u.setCompatiblility();
   }
 
   PIE.prototype = {
@@ -289,12 +319,11 @@ var ANICHART_PIE = (function() {
     _moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
 
-        //var nDistance = _u.getDistanceFromCircleCenter.call(this,e);
         var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
         if(nDistance < this.htCore.radius) return;
         if(this.elOver) {
              if(this.oLegend) this.oLegend.clearEmphasizeMenu();
-            _u.rollback.call(this);
+            this.rollback();
         }
     },
     _overHandler : function(e) {
@@ -306,28 +335,53 @@ var ANICHART_PIE = (function() {
             var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) {
                 if(this.oLegend) this.oLegend.clearEmphasizeMenu();
-                _u.rollback.call(this);
+                this.rollback();
             }
             return;
         } 
 
-        if(this.elOver && this.elOver !== elCur) _u.rollback.call(this);
+        if(this.elOver && this.elOver !== elCur) this.rollback();
 
         //before animation moving, should be cancel all animationframe
-       _u.cancelAllAnimationFrame(this.htReq);
+        this.cancelAllAnimationFrame();
 
-       //set text position
-       // var nTextX = elCur.nextElementSibling.transform.baseVal.getItem(0).matrix.e;
-       // var nTextY = elCur.nextElementSibling.transform.baseVal.getItem(0).matrix.f;
-
-        _u.movePiece.call(this, elCur, this.htTextPos[elCur.id].x,this.htTextPos[elCur.id].y, 30);
-
+        this.movePiece(elCur, this.htTextPos[elCur.id].x,this.htTextPos[elCur.id].y, 30);
 
         //emphasize Legend match menu.
         var nIndex = Number(elCur.id.substr(6)); //6 is count of word('elPath')
         this.oLegend.emphasizeMenu(nIndex);
 
         this.elOver = elCur;
+    },
+    rollback : function() {
+        this.cancelAllAnimationFrame();
+        _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+        _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
+        this.elOver = null;
+    },
+    cancelAllAnimationFrame : function() {
+        for(var value in this.htReq) {cancelAnimationFrame(this.htReq[value]);}
+    },
+    movePiece : function(elCur, nTx, nTy, nSize) {
+        var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
+        
+        aPos = this.htPathOutlinePos[elCur.id];
+        nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
+        nXdirection = (aPos[0] > 0) ? 1 : -1;
+        nYdirection = (aPos[1] > 0) ? 1 : -1;
+        nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1));
+
+        elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+
+        //move text element
+        elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
+
+        nSize+=20; //increase size
+
+        if(nSize < 300) { 
+          this.reqId = requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
+          this.htReq[elCur.id] = this.reqId;
+        }
     },
     _setSVGPathAttribute : function(v,i,o) {
 
@@ -376,11 +430,10 @@ var ANICHART_PIE = (function() {
         var _nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
         var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
-        var xResult = x - _nPercentFontIncreaseSize*3.0;
+        var xResult = x - _nPercentFontIncreaseSize*2.0; // a '2.0' is adjusted data for postion center.
 
         _u.setAttrs(t, {
-            //"transform" : "translate(" + (x - _nPercentFontIncreaseSize*3.0) + " " + y + ")", // a '3.0' is adjusted data for postion center.
-            "transform" : "translate(" + xResult + " " + y + ")", // a '3.0' is adjusted data for postion center.
+            "transform" : "translate(" + xResult + " " + y + ")",
             "fill"      : "#000",
             "font-size" : 8 + _nPercentFontIncreaseSize + "", //a '8' is default font-size(minimum-size)
         });

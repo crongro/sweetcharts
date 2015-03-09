@@ -11,8 +11,8 @@ require([
         core : {
           // centerX:50, //default: center
           // centerY:200, //default: center 
-          radius:300,
-          nMilliSecondCycle:1000,
+          radius:150,
+          nMilliSecondCycle:500,
           //sRandomColorType : "c" //default: user custom value
         }, 
         htPiece : {
