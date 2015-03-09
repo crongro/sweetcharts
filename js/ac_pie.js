@@ -68,9 +68,6 @@ var ANICHART_PIE = (function() {
                 clearTimeout(id);
               };
       },
-      dummy : function() {
-          console.log("dumm called");
-      },
   }
 
   //Utility
