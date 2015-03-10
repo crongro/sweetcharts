@@ -43,9 +43,8 @@ var ANICHART_PIE = (function() {
              }
          }
       },
+      //reference : https://gist.github.com/paulirish/1579671
       animationFrame : function() {
-          console.log("animationframe called");
-          //Polyfill reference : https://gist.github.com/paulirish/1579671
           var lastTime = 0;
           var vendors = ['ms', 'moz', 'webkit', 'o'];
           for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -80,8 +79,8 @@ var ANICHART_PIE = (function() {
           }
       },
       getDistanceFromCircleCenter : function(e, htCore) {
-          _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
-          _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
+          var _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
+          var _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
           var nDistance = Math.sqrt(Math.pow(htCore.centerX - _x, 2) + Math.pow(htCore.centerY - _y, 2));
           return nDistance;
       },
@@ -302,7 +301,8 @@ var ANICHART_PIE = (function() {
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
-        if(elCurName !== "path") {
+        if(elCurName !== "path" && elCurName !== "text") {
+           console.log("elCurName" , elCurName);
             var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) {
                 if(this.oLegend) this.oLegend.clearEmphasizeMenu();
