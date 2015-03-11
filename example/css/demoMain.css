@@ -1,36 +1,54 @@
-svg:nth-child(1) {
+
+
+body {
+  1font-family: Raleway, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-family: Raleway, 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 100;
+}
+
+#wrap{
+    width : 1045px;
+    margin : 0px auto;
+    overflow: hidden;
+}
+
+header {
+  margin: 70px 0px;
+  width: 1000px;
+  text-align: center;
+  line-height: 2em;
+  text-transform: uppercase;
+}
+
+header h2 {
+  font-size : 3em;
+  font-weight: 100;
+ }
+
+.chart-wrap {
+  outline : 1px solid rgb(230, 230, 230);
+  margin-left: 20px;
+  margin-top:20px;
+  float:left;
+}
+
+.row-first, .row-second {
+    overflow: hidden;
+    min-width: 1040px;
+}
+
+/* ANIChart */
+.ani-chart {
   width: 70%;
   height: 100%;
 }
 
-svg:nth-child(2) {
+.ani-legend {
   width: 25%;
   height: 100%;
 }
 
-svg:nth-child(2) > g > text {
-  1font-size: 12px;
-}
-
-#wrap {
-  min-width: 1050px;
-  padding-top: 20px;
-}
-.pieWrap {
-  outline : 1px solid gray;
-  float:left;
-  margin-left: 20px;
-  margin-top:20px;
-}
-#leftDesc {
-  float: left;
-  width: 200px;
-  margin-left: 50px;
-  text-align: center;
-  line-height: 2em;
-}
-
-@media (max-width: 768) { /* mobile 768 */
+/*@media (max-width: 768) { /* mobile 768
   #wrap {
     min-width: 320px;
     background-color: "red";
@@ -39,3 +57,4 @@ svg:nth-child(2) > g > text {
     float: none;
   }
 }
+*/

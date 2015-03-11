@@ -138,8 +138,8 @@ var ANICHART_PIE = (function() {
       this.aElPath      = [];
       this._aArc        = [];
       this._aStart      = [];
-      this.elParentSVG  = elTarget;
-      this.elWrapDiv    = elTarget.parentNode;
+      this.elWrapDiv    = elTarget;
+      this.elChartSVG   = elTarget.querySelector(".ani-chart");
       this.htCore       = {};
       this.aPieceKeys   = [];
       this.aPieceValue  = [];
@@ -204,7 +204,7 @@ var ANICHART_PIE = (function() {
      },
     _createPathElements : function (nIndex) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
-        this.elParentSVG.appendChild(g);
+        this.elChartSVG.appendChild(g);
 
         this.aElPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
@@ -284,8 +284,8 @@ var ANICHART_PIE = (function() {
         setTimeout(function(){ this._overHandler({"target" : elMaxValuePath})}.bind(this), 200);
     },
     _registerOverEffect : function() {
-        this.elParentSVG.addEventListener("mouseover", this._overHandler.bind(this));
-        this.elParentSVG.addEventListener("mousemove", this._moveHandler.bind(this));
+        this.elChartSVG.addEventListener("mouseover", this._overHandler.bind(this));
+        this.elChartSVG.addEventListener("mousemove", this._moveHandler.bind(this));
     },
     _moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
@@ -388,13 +388,13 @@ var ANICHART_PIE = (function() {
     },
 
     _pushCenterPosition : function(nX, nY, nIndex) {
-        var elCurrent = this.elParentSVG.querySelector("#elPath"+nIndex);
+        var elCurrent = this.elChartSVG.querySelector("#elPath"+nIndex);
         this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
 
     _appendText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
-        var elGs = this.elParentSVG.querySelector("g:nth-child("+(index+1)+")");
+        var elGs = this.elChartSVG.querySelector("g:nth-child("+(index+1)+")");
 
         var b = elGs.getBBox();
         var _nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
@@ -417,15 +417,15 @@ var ANICHART_PIE = (function() {
 
     _addShadow : function() {
         var _v = FXDATA.CSS.chartShadow;
-        this.elParentSVG.style.webkitFilter = _v;
-        this.elParentSVG.style.filter = _v;
+        this.elChartSVG.style.webkitFilter = _v;
+        this.elChartSVG.style.filter = _v;
     },
     constructor : PIE,
   };
 
   //Legend CLASS
   function LegendManager(elParentDiv, aName, aColor) {
-      this.elParentSVG = elParentDiv.querySelector("svg:nth-child(2)");
+      this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
       this.nDivHeight = parseInt(elParentDiv.style.height);
       this.aName = aName;
       this.aColor = aColor;
@@ -456,7 +456,7 @@ var ANICHART_PIE = (function() {
           }, this);
       },
       createElement : function(sName,sColor,nPlusValue) {
-          var p = this.elParentSVG;
+          var p = this.elLegendSVG;
           var g = document.createElementNS(FXDATA.xmlns, "g");
           var r = document.createElementNS(FXDATA.xmlns, "rect");
           var t = document.createElementNS(FXDATA.xmlns, "text");
@@ -482,7 +482,7 @@ var ANICHART_PIE = (function() {
           g.appendChild(t);
       },
       emphasizeMenu : function(nIndex) {
-          this.aElText = Array.prototype.slice.call(this.elParentSVG.querySelectorAll("g > text"));
+          this.aElText = Array.prototype.slice.call(this.elLegendSVG.querySelectorAll("g > text"));
           var n = this.htData.nFontSize;
           this.aElText.forEach(function(v,i){
               if(nIndex === i) {
