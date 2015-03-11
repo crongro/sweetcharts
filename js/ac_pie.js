@@ -202,7 +202,6 @@ var ANICHART_PIE = (function() {
         //100 is piece animation time(adjusted value)
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
      },
-
     _createPathElements : function (nIndex) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
         this.elParentSVG.appendChild(g);
@@ -220,7 +219,6 @@ var ANICHART_PIE = (function() {
 
         g.appendChild(this.aElPath[nIndex]);
     },
-
     _getCoordProperty : function() {
       var _result = "M" + this.htCore.startX + " " + this.htCore.startY + " "+ 
                     "A" + this.htCore.radius + "," + this.htCore.radius + " "+ 
@@ -252,7 +250,6 @@ var ANICHART_PIE = (function() {
           this._setDataForSet(i);
         }
     },
-
     runAnimation : function() {
         this._nR = 0;
         var _ma = this.htCore.nMaxAngle;
@@ -281,6 +278,10 @@ var ANICHART_PIE = (function() {
         this.oLegend.makeLegend();
 
         this._registerOverEffect();
+
+        //fire piece animation
+        var elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
+        setTimeout(function(){ this._overHandler({"target" : elMaxValuePath})}.bind(this), 200);
     },
     _registerOverEffect : function() {
         this.elParentSVG.addEventListener("mouseover", this._overHandler.bind(this));
@@ -302,7 +303,6 @@ var ANICHART_PIE = (function() {
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
         if(elCurName !== "path" && elCurName !== "text") {
-           console.log("elCurName" , elCurName);
             var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) {
                 if(this.oLegend) this.oLegend.clearEmphasizeMenu();
@@ -378,7 +378,6 @@ var ANICHART_PIE = (function() {
 
         return this._nR; //for Array.map
     },
-
     _showTextData : function() {
         var aAngles = this.aPieceValue.map(this._setSVGPathAttribute, this);
         //append to array value of Center piece angle.
