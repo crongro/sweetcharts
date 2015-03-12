@@ -8,7 +8,7 @@ require([
     "ac_pie"
 ], function (ANICHART_PIE) {
 
-    if(!isMobile) {
+    if(!isMobile()) {
       var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
         core : {
           // centerX:50, //default: center
