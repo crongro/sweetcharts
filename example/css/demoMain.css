@@ -1,9 +1,8 @@
 
 
 body {
-  1font-family: Raleway, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-  font-family: Raleway, 'Helvetica Neue', Helvetica, sans-serif;
-  font-weight: 100;
+  font-family: Raleway, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
 }
 
 #wrap{
@@ -22,7 +21,6 @@ header {
 
 header h2 {
   font-size : 3em;
-  font-weight: 100;
  }
 
 .chart-wrap {
@@ -48,13 +46,44 @@ header h2 {
   height: 100%;
 }
 
-/*@media (max-width: 768) { /* mobile 768
-  #wrap {
-    min-width: 320px;
-    background-color: "red";
+@media screen and (max-width: 768px) { /* mobile 768 */
+  body,header,#wrap {
+    width : auto;
+    min-width: 280px;
   }
-  #wrap, #leftDesc{
-    float: none;
+
+  body {
+    margin: 0px;
+  }
+
+  header {
+    margin : 20px 0px;
+  }
+
+  .row-first, .row-second {
+    min-width: 280px;
+  }
+
+  .row-first, .row-second > div:first-child{
+    display: none;
+  }
+  header h2 {
+    font-size: 2em;
+  }
+
+  .chart-wrap {
+    margin : 0px;
+    float:none;
+  }
+  .chart-wrap .ani-legend text {
+    font-size : 10px;
+  }
+  .ani-chart {
+    width: 65%;
+    height: 100%;
+  }
+  .ani-legend {
+    width: 30%;
+    height: 100%;
   }
 }
-*/
