@@ -1,8 +1,14 @@
+ANIChart.js
+============
 
-**Anichart is a Chart library designed for the easy and quick building of Animation web Chart.**
+Anichart is a Chart library designed for the easy and quick building of Animation web Chart. *
+
+## Example
+[PIE Chart Example](http://git.io/pyD4) <br />
 at this present it only supports a pie chart.
 
-# Base Usage
+
+## Usage
 
 	var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
 		core : {
@@ -20,3 +26,4 @@ at this present it only supports a pie chart.
 			"opera"        : {"data" : 2, "color" : "red"},
 		}
 	}).runAnimation();
+
