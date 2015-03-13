@@ -8,7 +8,6 @@ body {
 #wrap{
     width : 1045px;
     margin : 0px auto;
-    overflow: hidden;
 }
 
 header {
@@ -31,7 +30,6 @@ header h2 {
 }
 
 .row-first, .row-second {
-    overflow: hidden;
     min-width: 1040px;
 }
 

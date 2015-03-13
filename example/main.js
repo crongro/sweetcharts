@@ -75,7 +75,7 @@ require([
         core : {
           // centerX:50, //default: center
           // centerY:200, //default: center 
-          radius:90,
+          radius:150,
           nMilliSecondCycle:500,
           sRandomColorType : "c" //default: user custom value
         }, 
