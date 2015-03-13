@@ -34,98 +34,6 @@ var ANICHART_PIE = (function() {
       }
   };
 
-  var _polyfill = {
-      exec : function() {
-          for(var method in this) {
-             if(method === "exec") continue;
-             if(this.hasOwnProperty(method) && (typeof this[method] === "function")) {
-                this[method].call(null);
-             }
-         }
-      },
-      //reference : https://gist.github.com/paulirish/1579671
-      animationFrame : function() {
-          var lastTime = 0;
-          var vendors = ['ms', 'moz', 'webkit', 'o'];
-          for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-              window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-              window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
-              || window[vendors[x]+'CancelRequestAnimationFrame'];
-          }
-
-          if (!window.requestAnimationFrame)
-              window.requestAnimationFrame = function(callback, element) {
-                  var currTime = new Date().getTime();
-                  var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-                  var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
-                  lastTime = currTime + timeToCall;
-                  return id;
-          };
-
-          if (!window.cancelAnimationFrame)
-              window.cancelAnimationFrame = function(id) {
-                clearTimeout(id);
-              };
-      },
-  }
-
-  //Utility
-  var _u = {
-      setAttrs : function(elBase, htData) {
-          for(var sKey in htData) {
-              if(htData.hasOwnProperty(sKey)) {
-                  elBase.setAttribute(sKey, htData[sKey]);
-              }
-          }
-      },
-      getDistanceFromCircleCenter : function(e, htCore) {
-          var _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
-          var _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
-          var nDistance = Math.sqrt(Math.pow(htCore.centerX - _x, 2) + Math.pow(htCore.centerY - _y, 2));
-          return nDistance;
-      },
-      getRandomIndex : function(nRandomRange, nNeedCount) {
-        var _arr = [];
-        while(_arr.length < nNeedCount) {
-          var _ranValue = Math.round(Math.random() * nRandomRange);
-          if(_arr.length > nRandomRange) _arr.push(_ranValue);
-          else if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
-          else continue;
-        }
-        return _arr;
-      },
-      getPosition : function(aAngles,htCore, i, fCallback) {
-          var _ta;
-          var _caledPy = 0.01745329251; // (Math.PI / 180)
-          var _r = htCore.radius;
-          var _cx = htCore.centerX;
-          var _cy = htCore.centerY;
-
-          //calculate center angle (_ta)
-          if(i === 0 ) _ta = Math.round(aAngles[0]/2);
-          else _ta = Math.round((aAngles[i] - aAngles[i-1])/2 + aAngles[i-1]);
-
-          //set x,y position to the circle center
-          var _tx = (Math.cos(_caledPy * _ta)) * _r;
-          var _ty = (Math.sin(_caledPy * _ta)) * _r;
-
-          fCallback(_tx, _ty, i);
-
-          //set x,y position to the SVG Element
-          _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
-          _ty = _cy + (_ty/1.6);
-
-          return { "x" : _tx, "y" : _ty};
-      },
-      getRandomColorArray : function(sRandomColorType, nPieceLen) {
-            var aRandomIndex  = _u.getRandomIndex(FXDATA.colorType[sRandomColorType].length-1, nPieceLen);
-            var aColorSet     = aRandomIndex.map(function(v){
-                                  return FXDATA.colorType[sRandomColorType][v];
-                                });
-            return  aColorSet;
-      }
-  };
-
   function PIE(elTarget, htOption) {
 
       _polyfill.exec();
@@ -194,14 +102,21 @@ var ANICHART_PIE = (function() {
 
         //set color
         if(this.htCore.sRandomColorType.toLowerCase() in FXDATA.colorType) {
-            this.aColorSet    = _u.getRandomColorArray(this.htCore.sRandomColorType.toLowerCase(), this.aPieceValue.length);
+            this.aColorSet    = this.getRandomColorArray(this.htCore.sRandomColorType.toLowerCase(), this.aPieceValue.length);
         } else {
             this.aColorSet    = this.aPieceKeys.map(function(v){return this.htPiece[v].color;}, this);
         }
 
         //100 is piece animation time(adjusted value)
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
-     },
+    },
+    getRandomColorArray : function(sRandomColorType, nPieceLen) {
+        var aRandomIndex  = _u.getRandomIndex(FXDATA.colorType[sRandomColorType].length-1, nPieceLen);
+        var aColorSet     = aRandomIndex.map(function(v){
+          return FXDATA.colorType[sRandomColorType][v];
+        });
+        return  aColorSet;
+    },
     _createPathElements : function (nIndex) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
         this.elChartSVG.appendChild(g);
