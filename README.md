@@ -1,28 +1,22 @@
-# WebAnimationDemo
-web animation demo 모음
 
+**Anichart is a Chart library designed for the easy and quick building of Animation web Chart.**
+at this present it only supports a pie chart.
 
+# Base Usage
 
-# require.js usage
-
-	require(["ac_pie"], function (ANICHART_PIE) {
-    	var oPy = new ANICHART_PIE( document.querySelector(".pieWrap:nth-child(1) svg"), {
-	        core : {
-		        centerX:200,
-		        centerY:200,
-		        radius:150,
-		        nMilliSecondCycle:1000,
-	        }, 
-	        piece :
-	        [[15,'magenta'], [3,'skyblue'], [37,'#fff'], [45,'green']]
-	   	}).runAnimation();
-	});
-
-
-    
-
-    
-    
-
-
-
+	var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
+		core : {
+			// centerX:50,  /* default: center */
+			// centerY:200, /* default: center */
+			radius:150,
+			nMilliSecondCycle:500,
+			//sRandomColorType : "c"  /* a~d, default: htPiece color attribute */
+		}, 
+		htPiece : {
+			"Chrome(all)"  : {"data" : 46.08, "color" : "green"},
+			"Firefox 5+"   : {"data" : 17.67, "color" : "orange"},
+			"IE(all)"      : {"data" : 20.78, "color" : "dodgerblue"},
+			"safari 7.0"   : {"data" : 10.36, "color" : "skyblue"},
+			"opera"        : {"data" : 2, "color" : "red"},
+		}
+	}).runAnimation();

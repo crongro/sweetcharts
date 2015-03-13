@@ -31,7 +31,7 @@ require([
           // centerX:50, //default: center
           // centerY:200, //default: center 
           radius:150,
-          nMilliSecondCycle:1000,
+          nMilliSecondCycle:500,
           sRandomColorType : "a" //default: user custom value
         }, 
         htPiece : {
@@ -52,7 +52,7 @@ require([
           // centerX:50, //default: center
           // centerY:200, //default: center 
           radius:150,
-          nMilliSecondCycle:1500,
+          nMilliSecondCycle:300,
           sRandomColorType : "b" //default: user custom value
         }, 
         htPiece : {
@@ -69,14 +69,14 @@ require([
          "Designer3"       : {"data" : 63, "color" : "magenta"},
        }
      }).runAnimation();
-  }
+    }
 
     var oPy4 = new ANICHART_PIE( document.querySelector(".row-second > .chart-wrap:last-child "), {
         core : {
           // centerX:50, //default: center
           // centerY:200, //default: center 
           radius:90,
-          nMilliSecondCycle:700,
+          nMilliSecondCycle:500,
           sRandomColorType : "c" //default: user custom value
         }, 
         htPiece : {
@@ -94,7 +94,7 @@ require([
                  }
     }).runAnimation();
 
-     function isMobile() {
+    function isMobile() {
       function isMobileAgent() {
         return !! (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
       }
