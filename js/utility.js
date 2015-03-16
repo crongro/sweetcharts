@@ -45,4 +45,9 @@ var _u = {
 
         return { "x" : _tx, "y" : _ty};
     },
+    linkSimpleInherit : function(fnChild, fnParent) {
+        fnChild.prototype = Object.create(fnParent.prototype);
+        fnChild.prototype.constructor = fnChild;
+        return fnChild;
+    }
 };

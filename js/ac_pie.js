@@ -117,30 +117,27 @@ var ANICHART_PIE = (function() {
         });
         return  aColorSet;
     },
-    _createPathElements : function (nIndex) {
+    _createPathElements : function (aPath, nIndex, sCoords, sColor) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
         this.elChartSVG.appendChild(g);
 
-        this.aElPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
+        aPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
-        var _coords = this._getCoordProperty();
-
-        _u.setAttrs(this.aElPath[nIndex], {
-            //"id"    : "elPath",
+        _u.setAttrs(aPath[nIndex], {
             "id"    : "elPath"+nIndex,
-            "d"     : _coords,
-            "style" : "stroke:white;fill:"+ this.aColorSet[nIndex],
+            "d"     : sCoords,
+            "style" : "stroke:white;fill:"+ sColor,
         });
 
-        g.appendChild(this.aElPath[nIndex]);
+        g.appendChild(aPath[nIndex]);
     },
-    _getCoordProperty : function() {
-      var _result = "M" + this.htCore.startX + " " + this.htCore.startY + " "+ 
-                    "A" + this.htCore.radius + "," + this.htCore.radius + " "+ 
-                    "0 0,1 "+
-                    this.htCore.startX + ","+
-                    this.htCore.startY + " "+
-                    "L" + this.htCore.centerX + "," + this.htCore.centerY + " "+
+    _getCoordProperty : function(startX, startY, endX, endY, radius,centerX,centerY) {
+      var _result = "M " + startX + " " + startY + " "+ 
+                    "A " + radius + " " + radius + " "+ 
+                    "0 0 1 "+
+                    endX + " "+
+                    endY + " "+
+                    "L " + centerX + " " + centerY + " "+
                     "Z";
       return _result;
     },
@@ -159,9 +156,11 @@ var ANICHART_PIE = (function() {
 
     _makeCreatePathElement : function(){ 
         var nPathCount = this.aPieceValue.length;
+        var _d = this.htCore;
+        var sCoords = this._getCoordProperty(_d.startX,_d.startY,_d.startX,_d.startY,_d.radius,_d.centerX,_d.centerY);
 
         for(var i=0; i<nPathCount; i++) {
-          this._createPathElements(i);
+          this._createPathElements(this.aElPath, i, sCoords, this.aColorSet[i]);
           this._setDataForSet(i);
         }
     },
@@ -338,87 +337,87 @@ var ANICHART_PIE = (function() {
     constructor : PIE,
   };
 
-  //Legend CLASS
-  function LegendManager(elParentDiv, aName, aColor) {
-      this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
-      this.nDivHeight = parseInt(elParentDiv.style.height);
-      this.aName = aName;
-      this.aColor = aColor;
-      this.htData = {
-        nGap  : 24, //line Height
-        nSize : 16, //height and width
-        nFontSize : 12
-      };
-      this.init();
-  }
+  // //Legend CLASS
+  // function LegendManager(elParentDiv, aName, aColor) {
+  //     this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
+  //     this.nDivHeight = parseInt(elParentDiv.style.height);
+  //     this.aName = aName;
+  //     this.aColor = aColor;
+  //     this.htData = {
+  //       nGap  : 24, //line Height
+  //       nSize : 16, //height and width
+  //       nFontSize : 12
+  //     };
+  //     this.init();
+  // }
 
-  LegendManager.prototype = {
-      init : function() {
+  // LegendManager.prototype = {
+  //     init : function() {
 
-          //1. calculate all element's height.
-          var o = this.htData;
-          var nLegendHeight = o.nGap * this.aName.length - (o.nGap-o.nSize);
-          if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
+  //         //1. calculate all element's height.
+  //         var o = this.htData;
+  //         var nLegendHeight = o.nGap * this.aName.length - (o.nGap-o.nSize);
+  //         if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
 
-          //2. decide first element position 
-          this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
+  //         //2. decide first element position 
+  //         this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
 
-      },
-      makeLegend : function() {
-          this.aName.forEach(function(v,i) {
-              var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
-              this.createElement(v,this.aColor[i],_nPlusValue);
-          }, this);
-      },
-      createElement : function(sName,sColor,nPlusValue) {
-          var p = this.elLegendSVG;
-          var g = document.createElementNS(FXDATA.xmlns, "g");
-          var r = document.createElementNS(FXDATA.xmlns, "rect");
-          var t = document.createElementNS(FXDATA.xmlns, "text");
+  //     },
+  //     makeLegend : function() {
+  //         this.aName.forEach(function(v,i) {
+  //             var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
+  //             this.createElement(v,this.aColor[i],_nPlusValue);
+  //         }, this);
+  //     },
+  //     createElement : function(sName,sColor,nPlusValue) {
+  //         var p = this.elLegendSVG;
+  //         var g = document.createElementNS(FXDATA.xmlns, "g");
+  //         var r = document.createElementNS(FXDATA.xmlns, "rect");
+  //         var t = document.createElementNS(FXDATA.xmlns, "text");
 
-          _u.setAttrs(r, {
-              "x"       : "10",
-              "y"       : nPlusValue,
-              "width"   : this.htData.nSize,
-              "height"  : this.htData.nSize,
-              "fill"    : sColor,
-          });
+  //         _u.setAttrs(r, {
+  //             "x"       : "10",
+  //             "y"       : nPlusValue,
+  //             "width"   : this.htData.nSize,
+  //             "height"  : this.htData.nSize,
+  //             "fill"    : sColor,
+  //         });
 
-          _u.setAttrs(t, {
-              "x"         : "40",
-              "y"         : nPlusValue+this.htData.nFontSize,
-              "font-size" : this.htData.nFontSize,
-              "fill"      : "#000",
-          });
+  //         _u.setAttrs(t, {
+  //             "x"         : "40",
+  //             "y"         : nPlusValue+this.htData.nFontSize,
+  //             "font-size" : this.htData.nFontSize,
+  //             "fill"      : "#000",
+  //         });
 
-          t.textContent = sName;
-          p.appendChild(g);
-          g.appendChild(r);
-          g.appendChild(t);
-      },
-      emphasizeMenu : function(nIndex) {
-          this.aElText = Array.prototype.slice.call(this.elLegendSVG.querySelectorAll("g > text"));
-          var n = this.htData.nFontSize;
-          this.aElText.forEach(function(v,i){
-              if(nIndex === i) {
-                  v.setAttribute("font-size", n * 1.3);
-                  v.style.opacity = "1.0";
-              } 
-              else {
-                  v.setAttribute("font-size",n);
-                  v.style.opacity = "0.3";
-              } 
-          });
-      },
-      clearEmphasizeMenu : function() {
-          var n = this.htData.nFontSize;
-          this.aElText.forEach(function(v){
-              v.setAttribute("font-size", n);
-              v.style.opacity = "1.0";
-          });
-      },
-      constructor : LegendManager
-  };
+  //         t.textContent = sName;
+  //         p.appendChild(g);
+  //         g.appendChild(r);
+  //         g.appendChild(t);
+  //     },
+  //     emphasizeMenu : function(nIndex) {
+  //         this.aElText = Array.prototype.slice.call(this.elLegendSVG.querySelectorAll("g > text"));
+  //         var n = this.htData.nFontSize;
+  //         this.aElText.forEach(function(v,i){
+  //             if(nIndex === i) {
+  //                 v.setAttribute("font-size", n * 1.3);
+  //                 v.style.opacity = "1.0";
+  //             } 
+  //             else {
+  //                 v.setAttribute("font-size",n);
+  //                 v.style.opacity = "0.3";
+  //             } 
+  //         });
+  //     },
+  //     clearEmphasizeMenu : function() {
+  //         var n = this.htData.nFontSize;
+  //         this.aElText.forEach(function(v){
+  //             v.setAttribute("font-size", n);
+  //             v.style.opacity = "1.0";
+  //         });
+  //     },
+  //     constructor : LegendManager
+  //};
 
   return PIE;
 }());
