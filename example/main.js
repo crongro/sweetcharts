@@ -8,7 +8,7 @@ require([
     "ac_pie","ac_donut"
 ], function (ANICHART_PIE, Donut) {
 
-    if(!isMobile()) {
+    //if(!isMobile()) {
      //  var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
      //    core : {
      //      // centerX:50, //default: center
@@ -110,7 +110,7 @@ require([
                    "Designer3"       : {"data" : 63, "color" : "magenta"},
                  }
       }).runAnimation();
-    }
+    //}
 
 
     function isMobile() {
