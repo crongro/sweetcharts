@@ -261,7 +261,7 @@ var ANICHART_PIE = (function() {
         _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
 
         if(this.bDonutChart) { 
-          var _elDonutPiece = document.querySelector("#InnerPath" + (Number(this.elOver.id.substr(6))));
+          var _elDonutPiece = this.elChartSVG.querySelector("#InnerPath" + (Number(this.elOver.id.substr(6))));
           _u.setAttrs(_elDonutPiece, {"transform":"translate(0,0)"});
         }
 
@@ -284,7 +284,7 @@ var ANICHART_PIE = (function() {
         elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
 
         if(this.bDonutChart) {
-          var _elDonutPiece = document.querySelector("#InnerPath" + (Number(elCur.id.substr(6))));
+          var _elDonutPiece = this.elChartSVG.querySelector("#InnerPath" + (Number(elCur.id.substr(6))));
           _elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
         }
 
