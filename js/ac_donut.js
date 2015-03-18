@@ -73,7 +73,6 @@ var Donut = (function(ANICHART_PIE) {
     		var _endY = (i == (_aHalfPOS.length-1)) ? _aHalfPOS[0].startY : _aHalfPOS[i+1].startY;
 
 			var sCoords = this._getCoordProperty(_d.startX,_d.startY,_endX, _endY, _d.radius, _d.centerX, _d.centerY);
-		    //this._createPathElements(this.aELHalfPath, i+this.aPieceKeys.length, sCoords, "#fff",true);
             this._createPathElements(this.aELHalfPath, i, sCoords, "#fff",true);
     	}
     };

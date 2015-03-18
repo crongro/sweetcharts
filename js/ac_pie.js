@@ -118,7 +118,7 @@ var ANICHART_PIE = (function() {
         });
         return  aColorSet;
     },
-    _createPathElements : function (aPath, nIndex, sCoords, sColor) {
+    _createPathElements : function (aPath, nIndex, sCoords, sColor, bDonut) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
         var _el = this.elChartSVG.lastElementChild;
 
@@ -126,10 +126,10 @@ var ANICHART_PIE = (function() {
 
         aPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
-        var _sIDName = (arguments[4]) ? "InnerPath" : "elPath";
+        var _sIDName = (bDonut) ? "InnerPath" : "elPath";
 
         _u.setAttrs(aPath[nIndex], {
-            "id"    : _sIDName + nIndex,
+            "class"    : _sIDName + nIndex,
             "d"     : sCoords,
             "style" : "stroke:white;fill:"+ sColor,
         });
@@ -223,7 +223,7 @@ var ANICHART_PIE = (function() {
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
-        var bInnerPath = e.target.id.lastIndexOf("In",0)===0;
+        var bInnerPath = e.target.className.baseVal.lastIndexOf("In",0)===0;
 
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
 
@@ -247,10 +247,10 @@ var ANICHART_PIE = (function() {
         //before animation moving, should be cancel all animationframe
         this.cancelAllAnimationFrame();
 
-        this.movePiece(elCur, this.htTextPos[elCur.id].x,this.htTextPos[elCur.id].y, 30);
+        this.movePiece(elCur, this.htTextPos[elCur.className.baseVal].x,this.htTextPos[elCur.className.baseVal].y, 30);
 
         //emphasize Legend match menu.
-        var nIndex = Number(elCur.id.substr(6)); //6 is count of word('elPath')
+        var nIndex = Number(elCur.className.baseVal.substr(6)); //6 is count of word('elPath')
         this.oLegend.emphasizeMenu(nIndex);
 
         this.elOver = elCur;
@@ -258,10 +258,10 @@ var ANICHART_PIE = (function() {
     rollback : function() {
         this.cancelAllAnimationFrame();
         _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
-        _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
+        _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.className.baseVal].x+","+this.htTextPos[this.elOver.className.baseVal].y+")"});
 
         if(this.bDonutChart) { 
-          var _elDonutPiece = this.elChartSVG.querySelector("#InnerPath" + (Number(this.elOver.id.substr(6))));
+          var _elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(this.elOver.className.baseVal.substr(6))));
           _u.setAttrs(_elDonutPiece, {"transform":"translate(0,0)"});
         }
 
@@ -273,7 +273,7 @@ var ANICHART_PIE = (function() {
     movePiece : function(elCur, nTx, nTy, nSize) {
         var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
         
-        aPos = this.htPathOutlinePos[elCur.id];
+        aPos = this.htPathOutlinePos[elCur.className.baseVal];
         nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
         nXdirection = aPos[0] / Math.abs(aPos[0]);
         nYdirection = aPos[1] / Math.abs(aPos[1]);
@@ -284,7 +284,7 @@ var ANICHART_PIE = (function() {
         elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
 
         if(this.bDonutChart) {
-          var _elDonutPiece = this.elChartSVG.querySelector("#InnerPath" + (Number(elCur.id.substr(6))));
+          var _elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(elCur.className.baseVal.substr(6))));
           _elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
         }
 
@@ -292,7 +292,7 @@ var ANICHART_PIE = (function() {
 
         if(nSize < 300) { 
           this.reqId = requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
-          this.htReq[elCur.id] = this.reqId;
+          this.htReq[elCur.className.baseVal] = this.reqId;
         }
     },
     _setSVGPathAttribute : function(v,i,o) {
@@ -329,7 +329,7 @@ var ANICHART_PIE = (function() {
     },
 
     _pushCenterPosition : function(nX, nY, nIndex) {
-        var elCurrent = this.elChartSVG.querySelector("#elPath"+nIndex);
+        var elCurrent = this.elChartSVG.querySelector(".elPath"+nIndex);
         this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
 
@@ -353,7 +353,7 @@ var ANICHART_PIE = (function() {
         elGs.appendChild(t);
 
         //save text position info
-        this.htTextPos[elGs.firstElementChild.id] = { "x" : xResult , "y" : y};
+        this.htTextPos[elGs.firstElementChild.className.baseVal] = { "x" : xResult , "y" : y};
     },
 
     _addShadow : function() {
