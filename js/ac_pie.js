@@ -59,6 +59,7 @@ var ANICHART_PIE = (function() {
       this.htTextPos    = {};
       this.oLegend      = null;
       this.bDonutChart  = this.bDonutChart || false;
+      this.bShadow      = !this.bDonutChart;
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -119,21 +120,16 @@ var ANICHART_PIE = (function() {
     },
     _createPathElements : function (aPath, nIndex, sCoords, sColor) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
-        //this.elChartSVG.appendChild(g);
         var _el = this.elChartSVG.lastElementChild;
 
-        // //donut
-        // if(_el && _el.id ==="one") this.elChartSVG.insertBefore(g, this.elChartSVG.lastElementChild);
-        // //pie
-        // else this.elChartSVG.appendChild(g);
-
-        //if(this.bDonutChart) this.elChartSVG.insertBefore(g, this.elChartSVG.lastElementChild);
         this.elChartSVG.appendChild(g);
 
         aPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
+        var _sIDName = (arguments[4]) ? "InnerPath" : "elPath";
+
         _u.setAttrs(aPath[nIndex], {
-            "id"    : "elPath"+nIndex,
+            "id"    : _sIDName + nIndex,
             "d"     : sCoords,
             "style" : "stroke:white;fill:"+ sColor,
         });
@@ -197,7 +193,7 @@ var ANICHART_PIE = (function() {
     },
     _execAfterAnimation : function() {
         this._showTextData();
-        this._addShadow();
+        if(this.bShadow) this._addShadow();
 
         this.oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
         this.oLegend.makeLegend();
@@ -227,10 +223,16 @@ var ANICHART_PIE = (function() {
     },
     _overHandler : function(e) {
         var elCurName = e.target.nodeName;
+        var bInnerPath = e.target.id.lastIndexOf("In",0)===0;
+
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
+
+        if(elCurName === "text") return;
+        if(bInnerPath) return;
+
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
-        if(elCurName !== "path" && elCurName !== "text") {
+        if((elCurName !== "path" && elCurName !== "text") ) {
             var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) {
                 if(this.oLegend) this.oLegend.clearEmphasizeMenu();
@@ -239,6 +241,7 @@ var ANICHART_PIE = (function() {
             return;
         } 
 
+        //when enter into other Piece
         if(this.elOver && this.elOver !== elCur) this.rollback();
 
         //before animation moving, should be cancel all animationframe
@@ -256,6 +259,12 @@ var ANICHART_PIE = (function() {
         this.cancelAllAnimationFrame();
         _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
         _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.id].x+","+this.htTextPos[this.elOver.id].y+")"});
+
+        if(this.bDonutChart) { 
+          var _elDonutPiece = document.querySelector("#InnerPath" + (Number(this.elOver.id.substr(6))));
+          _u.setAttrs(_elDonutPiece, {"transform":"translate(0,0)"});
+        }
+
         this.elOver = null;
     },
     cancelAllAnimationFrame : function() {
@@ -266,14 +275,18 @@ var ANICHART_PIE = (function() {
         
         aPos = this.htPathOutlinePos[elCur.id];
         nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
-        nXdirection = (aPos[0] > 0) ? 1 : -1;
-        nYdirection = (aPos[1] > 0) ? 1 : -1;
+        nXdirection = aPos[0] / Math.abs(aPos[0]);
+        nYdirection = aPos[1] / Math.abs(aPos[1]);
         nXPos = Math.sqrt(nSize / (Math.pow(nSlope,2)+1));
 
         elCur.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
-
         //move text element
         elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
+
+        if(this.bDonutChart) {
+          var _elDonutPiece = document.querySelector("#InnerPath" + (Number(elCur.id.substr(6))));
+          _elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+        }
 
         nSize+=20; //increase size
 
@@ -322,7 +335,6 @@ var ANICHART_PIE = (function() {
 
     _appendText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
-        //var elGs = this.elChartSVG.querySelector("g:nth-child("+(index+1)+")");
         var elGs = this.elChartSVG.querySelector("g:nth-of-type("+(index+1)+")");
 
         var b = elGs.getBBox();
@@ -334,7 +346,7 @@ var ANICHART_PIE = (function() {
         _u.setAttrs(t, {
             "transform" : "translate(" + xResult + " " + y + ")",
             "fill"      : "#000",
-            "font-size" : 8 + _nPercentFontIncreaseSize + "", //a '8' is default font-size(minimum-size)
+            "font-size" : 8 + _nPercentFontIncreaseSize + "", //'8' is default font-size(minimum-size)
         });
 
         t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
@@ -351,88 +363,6 @@ var ANICHART_PIE = (function() {
     },
     constructor : PIE,
   };
-
-  // //Legend CLASS
-  // function LegendManager(elParentDiv, aName, aColor) {
-  //     this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
-  //     this.nDivHeight = parseInt(elParentDiv.style.height);
-  //     this.aName = aName;
-  //     this.aColor = aColor;
-  //     this.htData = {
-  //       nGap  : 24, //line Height
-  //       nSize : 16, //height and width
-  //       nFontSize : 12
-  //     };
-  //     this.init();
-  // }
-
-  // LegendManager.prototype = {
-  //     init : function() {
-
-  //         //1. calculate all element's height.
-  //         var o = this.htData;
-  //         var nLegendHeight = o.nGap * this.aName.length - (o.nGap-o.nSize);
-  //         if(this.nDivHeight <= nLegendHeight) console.error("Legend is too big");
-
-  //         //2. decide first element position 
-  //         this.nFirstElementTop = (this.nDivHeight - nLegendHeight) / 2;
-
-  //     },
-  //     makeLegend : function() {
-  //         this.aName.forEach(function(v,i) {
-  //             var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
-  //             this.createElement(v,this.aColor[i],_nPlusValue);
-  //         }, this);
-  //     },
-  //     createElement : function(sName,sColor,nPlusValue) {
-  //         var p = this.elLegendSVG;
-  //         var g = document.createElementNS(FXDATA.xmlns, "g");
-  //         var r = document.createElementNS(FXDATA.xmlns, "rect");
-  //         var t = document.createElementNS(FXDATA.xmlns, "text");
-
-  //         _u.setAttrs(r, {
-  //             "x"       : "10",
-  //             "y"       : nPlusValue,
-  //             "width"   : this.htData.nSize,
-  //             "height"  : this.htData.nSize,
-  //             "fill"    : sColor,
-  //         });
-
-  //         _u.setAttrs(t, {
-  //             "x"         : "40",
-  //             "y"         : nPlusValue+this.htData.nFontSize,
-  //             "font-size" : this.htData.nFontSize,
-  //             "fill"      : "#000",
-  //         });
-
-  //         t.textContent = sName;
-  //         p.appendChild(g);
-  //         g.appendChild(r);
-  //         g.appendChild(t);
-  //     },
-  //     emphasizeMenu : function(nIndex) {
-  //         this.aElText = Array.prototype.slice.call(this.elLegendSVG.querySelectorAll("g > text"));
-  //         var n = this.htData.nFontSize;
-  //         this.aElText.forEach(function(v,i){
-  //             if(nIndex === i) {
-  //                 v.setAttribute("font-size", n * 1.3);
-  //                 v.style.opacity = "1.0";
-  //             } 
-  //             else {
-  //                 v.setAttribute("font-size",n);
-  //                 v.style.opacity = "0.3";
-  //             } 
-  //         });
-  //     },
-  //     clearEmphasizeMenu : function() {
-  //         var n = this.htData.nFontSize;
-  //         this.aElText.forEach(function(v){
-  //             v.setAttribute("font-size", n);
-  //             v.style.opacity = "1.0";
-  //         });
-  //     },
-  //     constructor : LegendManager
-  //};
 
   return PIE;
 }());
