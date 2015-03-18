@@ -11,7 +11,7 @@ require([
     var oPy = new Donut( document.querySelector(".row-first > .chart-wrap:first-child "), {
         core : {
           radius:150,
-          nMilliSecondCycle:500,
+          nMilliSecondCycle:1000,
           sRandomColorType : "c" //default: user custom value
         }, 
         htPiece : {

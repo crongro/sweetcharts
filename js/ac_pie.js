@@ -58,6 +58,7 @@ var ANICHART_PIE = (function() {
       this.htReq        = {};
       this.htTextPos    = {};
       this.oLegend      = null;
+      this.bDonutChart  = this.bDonutChart || false;
 
       //set options
       try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
@@ -67,7 +68,6 @@ var ANICHART_PIE = (function() {
       this.htCore.startY = this.htCore.centerY;
 
       this._makeCreatePathElement();
-
   }
 
   PIE.prototype = {
@@ -119,6 +119,15 @@ var ANICHART_PIE = (function() {
     },
     _createPathElements : function (aPath, nIndex, sCoords, sColor) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
+        //this.elChartSVG.appendChild(g);
+        var _el = this.elChartSVG.lastElementChild;
+
+        // //donut
+        // if(_el && _el.id ==="one") this.elChartSVG.insertBefore(g, this.elChartSVG.lastElementChild);
+        // //pie
+        // else this.elChartSVG.appendChild(g);
+
+        //if(this.bDonutChart) this.elChartSVG.insertBefore(g, this.elChartSVG.lastElementChild);
         this.elChartSVG.appendChild(g);
 
         aPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
@@ -163,6 +172,8 @@ var ANICHART_PIE = (function() {
           this._createPathElements(this.aElPath, i, sCoords, this.aColorSet[i]);
           this._setDataForSet(i);
         }
+
+        if(this.bDonutChart) this.makeCircle();
     },
     runAnimation : function() {
         this._nR = 0;
@@ -193,9 +204,12 @@ var ANICHART_PIE = (function() {
 
         this._registerOverEffect();
 
+        //Donut code
+        if(this.bDonutChart) this.makeDonut();
+
         //fire piece animation
         var elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
-        setTimeout(function(){ this._overHandler({"target" : elMaxValuePath})}.bind(this), 200);
+        setTimeout(function(){ this._overHandler({"target" : elMaxValuePath});}.bind(this), 200);
     },
     _registerOverEffect : function() {
         this.elChartSVG.addEventListener("mouseover", this._overHandler.bind(this));
@@ -308,7 +322,8 @@ var ANICHART_PIE = (function() {
 
     _appendText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
-        var elGs = this.elChartSVG.querySelector("g:nth-child("+(index+1)+")");
+        //var elGs = this.elChartSVG.querySelector("g:nth-child("+(index+1)+")");
+        var elGs = this.elChartSVG.querySelector("g:nth-of-type("+(index+1)+")");
 
         var b = elGs.getBBox();
         var _nPercentRatio = Number(this.aPieceValue[index].toFixed(1));

@@ -1,35 +1,37 @@
 var Donut = (function(ANICHART_PIE) {
 
+    var FXDATA = {
+      xmlns               : "http://www.w3.org/2000/svg",
+    };
+
 	var Donut = function() {
 	    var aArg = [].slice.call(arguments);
 	    //aArg.shift();
+        this.bDonutChart = true;
 	    ANICHART_PIE.apply(this,aArg);
 	};
 
 	Donut = _u.linkSimpleInherit(Donut ,ANICHART_PIE);
 
-	//override
-	Donut.prototype._execAfterAnimation = function() {
-        this._showTextData();
-        this._addShadow();
-
-        this.oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
-        this.oLegend.makeLegend();
-
-        this._registerOverEffect();
-
-        //Donut code
-        this.makeDonut();
-
-        //fire piece animation
-        // var elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
-        // setTimeout(function(){ this._overHandler({"target" : elMaxValuePath})}.bind(this), 200);
-    };
-
+    //Methods for Donut
     Donut.prototype.makeDonut = function() {
     	//calculate halfPosition
     	var aHalfPosition = this.calculateHalfPosition();
     	this.createPathElements(aHalfPosition);
+    };
+
+    Donut.prototype.makeCircle = function() {
+       var g = document.createElementNS(FXDATA.xmlns, "g");
+       this.elChartSVG.appendChild(g);
+       c = document.createElementNS(FXDATA.xmlns, "circle");
+       _u.setAttrs(c, {
+          "id"    : "donutCircle",
+          "style" : "fill:#fff",
+          "cx"    : this.htCore.centerX,
+          "cy"    : this.htCore.centerY,
+          "r"     : this.htCore.radius/2
+       });
+       g.appendChild(c);
     };
 
     Donut.prototype.calculateHalfPosition = function() {
