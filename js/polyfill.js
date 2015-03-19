@@ -1,4 +1,4 @@
-var _polyfill = {
+var polyfill = {
     exec : function() {
         for(var method in this) {
            if(method === "exec") continue;

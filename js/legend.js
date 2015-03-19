@@ -7,7 +7,7 @@ var LegendManager = (function() {
 
     var FXDATA = {
         xmlns               : "http://www.w3.org/2000/svg",
-    }
+    };
 
     function LegendManager(elParentDiv, aName, aColor) {
         this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
@@ -36,8 +36,8 @@ var LegendManager = (function() {
         },
         makeLegend : function() {
             this.aName.forEach(function(v,i) {
-                var _nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
-                this.createElement(v,this.aColor[i],_nPlusValue);
+                var nPlusValue = this.nFirstElementTop + i*this.htData.nGap;
+                this.createElement(v,this.aColor[i],nPlusValue);
             }, this);
         },
         createElement : function(sName,sColor,nPlusValue) {
@@ -46,7 +46,7 @@ var LegendManager = (function() {
             var r = document.createElementNS(FXDATA.xmlns, "rect");
             var t = document.createElementNS(FXDATA.xmlns, "text");
 
-            _u.setAttrs(r, {
+            u.setAttrs(r, {
                 "x"       : "10",
                 "y"       : nPlusValue,
                 "width"   : this.htData.nSize,
@@ -54,7 +54,7 @@ var LegendManager = (function() {
                 "fill"    : sColor,
             });
 
-            _u.setAttrs(t, {
+            u.setAttrs(t, {
                 "x"         : "40",
                 "y"         : nPlusValue+this.htData.nFontSize,
                 "font-size" : this.htData.nFontSize,
@@ -88,7 +88,7 @@ var LegendManager = (function() {
             });
         },
         constructor : LegendManager
-    }
+    };
 
     return LegendManager;
 })();

@@ -1,4 +1,4 @@
-var _u = {
+var u = {
     setAttrs : function(elBase, htData) {
         for(var sKey in htData) {
             if(htData.hasOwnProperty(sKey)) {

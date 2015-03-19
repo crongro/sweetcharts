@@ -36,7 +36,7 @@ var ANICHART_PIE = (function() {
 
   function PIE(elTarget, htOption) {
 
-      _polyfill.exec();
+      polyfill.exec();
 
       if(!(htOption && typeof htOption === "object")) {
           if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
@@ -44,8 +44,8 @@ var ANICHART_PIE = (function() {
        }
       this.nCount       = 0;
       this.aElPath      = [];
-      this._aArc        = [];
-      this._aStart      = [];
+      this.aArc         = [];
+      this.aStart       = [];
       this.elWrapDiv    = elTarget;
       this.elChartSVG   = elTarget.querySelector(".ani-chart");
       this.elMaxValuePath = null;
@@ -63,17 +63,17 @@ var ANICHART_PIE = (function() {
       this.bShadow      = !this.bDonutChart;
 
       //set options
-      try {this._setOption(htOption);} catch(errMsg){console.error(errMsg);}
+      try {this.setOption(htOption);} catch(errMsg){console.error(errMsg);}
 
       //set center position
       this.htCore.startX = this.htCore.centerX + this.htCore.radius;
       this.htCore.startY = this.htCore.centerY;
 
-      this._makeCreatePathElement();
+      this.makeCreatePathElement();
   }
 
   PIE.prototype = {
-    _setOption : function(htOption) {
+    setOption : function(htOption) {
 
         var htCoreOption  = htOption.core;
         this.htPiece      = htOption.htPiece;
@@ -84,13 +84,13 @@ var ANICHART_PIE = (function() {
         if(this.aPieceValue.length < FXDATA.minPieceCount) throw Error(FXDATA.sErrorMSG.REQ_PIECE_DATA);
 
         //piece option recalculate : to % ratio
-        var _nSumPiece = this.aPieceValue.reduce(function(pre,now,i,o){
+        var nSumPiece = this.aPieceValue.reduce(function(pre,now,i,o){
           if(typeof pre!== "number") pre = +pre; 
           return pre + now;
         });
 
         this.aPieceValue.forEach(function(v,i,o) {
-          this.aPieceValue[i] = Number(((v/_nSumPiece)*100).toFixed(2));
+          this.aPieceValue[i] = Number(((v/nSumPiece)*100).toFixed(2));
         },this);
 
         //set default options
@@ -113,39 +113,39 @@ var ANICHART_PIE = (function() {
         this.htCore.nIncrease = (FXDATA.nAniTime * 360) / (htCoreOption.nMilliSecondCycle - 100);
     },
     getRandomColorArray : function(sRandomColorType, nPieceLen) {
-        var aRandomIndex  = _u.getRandomIndex(FXDATA.colorType[sRandomColorType].length-1, nPieceLen);
+        var aRandomIndex  = u.getRandomIndex(FXDATA.colorType[sRandomColorType].length-1, nPieceLen);
         var aColorSet     = aRandomIndex.map(function(v){
           return FXDATA.colorType[sRandomColorType][v];
         });
         return  aColorSet;
     },
-    _createPathElements : function (aPath, nIndex, sCoords, sColor, bDonut) {
+    createPathElements : function (aPath, nIndex, sCoords, sColor, bDonut) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
-        var _el = this.elChartSVG.lastElementChild;
+        var el = this.elChartSVG.lastElementChild;
 
         this.elChartSVG.appendChild(g);
 
         aPath[nIndex] = document.createElementNS(FXDATA.xmlns, "path");
 
-        var _sIDName = (bDonut) ? "InnerPath" : "elPath";
+        var sIDName = (bDonut) ? "InnerPath" : "elPath";
 
-        _u.setAttrs(aPath[nIndex], {
-            "class"    : _sIDName + nIndex,
+        u.setAttrs(aPath[nIndex], {
+            "class"    : sIDName + nIndex,
             "d"     : sCoords,
             "style" : "stroke:white;fill:"+ sColor,
         });
 
         g.appendChild(aPath[nIndex]);
     },
-    _getCoordProperty : function(startX, startY, endX, endY, radius,centerX,centerY) {
-      var _result = "M " + startX + " " + startY + " "+ 
+    getCoordProperty : function(startX, startY, endX, endY, radius,centerX,centerY) {
+      var result = "M " + startX + " " + startY + " "+ 
                     "A " + radius + " " + radius + " "+ 
                     "0 0 1 "+
                     endX + " "+
                     endY + " "+
                     "L " + centerX + " " + centerY + " "+
                     "Z";
-      return _result;
+      return result;
     },
 
      /* var segments = el.pathSegList;
@@ -153,77 +153,77 @@ var ANICHART_PIE = (function() {
       * ARC : r1, r2, angle, largeArcFlag, sweepFlag, x, y ----->  segments.getItem(1);
       * LINE : x,y  ------> segments.getItem(2);
       */
-    _setDataForSet : function(nIndex) {
+    setDataForSet : function(nIndex) {
         var aSegments = [];
         aSegments[nIndex] = this.aElPath[nIndex].pathSegList;
-        this._aArc[nIndex] = aSegments[nIndex].getItem(1);
-        this._aStart[nIndex] = aSegments[nIndex].getItem(0);
+        this.aArc[nIndex] = aSegments[nIndex].getItem(1);
+        this.aStart[nIndex] = aSegments[nIndex].getItem(0);
     },
 
-    _makeCreatePathElement : function(){ 
+    makeCreatePathElement : function(){ 
         var nPathCount = this.aPieceValue.length;
-        var _d = this.htCore;
-        var sCoords = this._getCoordProperty(_d.startX,_d.startY,_d.startX,_d.startY,_d.radius,_d.centerX,_d.centerY);
+        var d = this.htCore;
+        var sCoords = this.getCoordProperty(d.startX,d.startY,d.startX,d.startY,d.radius,d.centerX,d.centerY);
 
         for(var i=0; i<nPathCount; i++) {
-          this._createPathElements(this.aElPath, i, sCoords, this.aColorSet[i]);
-          this._setDataForSet(i);
+          this.createPathElements(this.aElPath, i, sCoords, this.aColorSet[i]);
+          this.setDataForSet(i);
         }
 
         if(this.bDonutChart) this.makeCircle();
     },
     runAnimation : function() {
-        this._nR = 0;
-        var _ma = this.htCore.nMaxAngle;
-        var _ic = this.htCore.nIncrease;
+        this.nR = 0;
+        var ma = this.htCore.nMaxAngle;
+        var ic = this.htCore.nIncrease;
 
         //condition of stop ANIMATION
         if(this.nCount >= FXDATA.maxAngle) {
-          this._execAfterAnimation();
+          this.execAfterAnimation();
           return;
         }
 
-        this.nCount = this.nCount + _ic;
+        this.nCount = this.nCount + ic;
 
         //revise maximum value 
-        if(this.nCount > (_ma - _ic)) this.nCount = FXDATA.maxAngle;
+        if(this.nCount > (ma - ic)) this.nCount = FXDATA.maxAngle;
 
-        this.aPieceValue.forEach(this._setSVGPathAttribute, this);
+        this.aPieceValue.forEach(this.setSVGPathAttribute, this);
 
         requestAnimationFrame(this.runAnimation.bind(this));
     },
-    _execAfterAnimation : function() {
-        this._showTextData();
-        if(this.bShadow) this._addShadow();
+    execAfterAnimation : function() {
+        this.showTextData();
+        if(this.bShadow) this.addShadow();
 
         this.oLegend = new LegendManager(this.elWrapDiv, this.aPieceKeys, this.aColorSet);
         this.oLegend.makeLegend();
 
-        this._registerOverEffect();
+        this.registerOverEffect();
 
         //fire piece animation
         this.elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
-        setTimeout(function(){ this._overHandler({"target" : this.elMaxValuePath});}.bind(this), 200);
+        setTimeout(function(){ this.overHandler({"target" : this.elMaxValuePath});}.bind(this), 200);
 
         //Donut code
         if(this.bDonutChart) this.execDonutAfterProcess();
 
     },
-    _registerOverEffect : function() {
-        this.elChartSVG.addEventListener("mouseover", this._overHandler.bind(this));
-        this.elChartSVG.addEventListener("mousemove", this._moveHandler.bind(this));
+    registerOverEffect : function() {
+        this.elChartSVG.addEventListener("mouseover", this.overHandler.bind(this));
+        this.elChartSVG.addEventListener("mousemove", this.moveHandler.bind(this));
     },
-    _moveHandler :  function(e) {
+    moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
 
-        var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
+        var nDistance = u.getDistanceFromCircleCenter(e, this.htCore);
         if(nDistance < this.htCore.radius) return;
         if(this.elOver) {
              if(this.oLegend) this.oLegend.clearEmphasizeMenu();
             this.rollback();
         }
     },
-    _overHandler : function(e) {
+    overHandler : function(e) {
         var elCurName = e.target.nodeName;
         var bInnerPath = e.target.className.baseVal.lastIndexOf("In",0)===0;
 
@@ -235,7 +235,7 @@ var ANICHART_PIE = (function() {
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 
         if((elCurName !== "path" && elCurName !== "text") ) {
-            var nDistance = _u.getDistanceFromCircleCenter(e, this.htCore);
+            var nDistance = u.getDistanceFromCircleCenter(e, this.htCore);
             if(nDistance > this.htCore.radius && this.elOver) {
                 if(this.oLegend) this.oLegend.clearEmphasizeMenu();
                 this.rollback();
@@ -249,10 +249,9 @@ var ANICHART_PIE = (function() {
         //before animation moving, should be cancel all animationframe
         this.cancelAllAnimationFrame();
 
-        //async.
+        //above all logic is async.
         this.movePiece(elCur, this.htTextPos[elCur.className.baseVal].x,this.htTextPos[elCur.className.baseVal].y, 30);
 
-        /** TODO change movepiece callback exec */
         //emphasize Legend match menu.
         var nIndex = Number(elCur.className.baseVal.substr(6)); //6 is count of word('elPath')
         this.oLegend.emphasizeMenu(nIndex);
@@ -264,12 +263,12 @@ var ANICHART_PIE = (function() {
     },
     rollback : function() {
         this.cancelAllAnimationFrame();
-        _u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
-        _u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.className.baseVal].x+","+this.htTextPos[this.elOver.className.baseVal].y+")"});
+        u.setAttrs(this.elOver, {"transform":"translate(0,0)"});
+        u.setAttrs(this.elOver.nextElementSibling, {"transform":"translate("+this.htTextPos[this.elOver.className.baseVal].x+","+this.htTextPos[this.elOver.className.baseVal].y+")"});
 
         if(this.bDonutChart) { 
-          var _elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(this.elOver.className.baseVal.substr(6))));
-          _u.setAttrs(_elDonutPiece, {"transform":"translate(0,0)"});
+          var elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(this.elOver.className.baseVal.substr(6))));
+          u.setAttrs(elDonutPiece, {"transform":"translate(0,0)"});
         }
 
         this.elOver = null;
@@ -278,7 +277,7 @@ var ANICHART_PIE = (function() {
         for(var value in this.htReq) {cancelAnimationFrame(this.htReq[value]);}
     },
     movePiece : function(elCur, nTx, nTy, nSize) {
-        var aPos, nSlope, nXdirection, nYdirection, nXPos,_id;
+        var aPos, nSlope, nXdirection, nYdirection, nXPos,id;
         
         aPos = this.htPathOutlinePos[elCur.className.baseVal];
         nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
@@ -292,8 +291,8 @@ var ANICHART_PIE = (function() {
 
         //when donut, move a InnerPath element.
         if(this.bDonutChart) {
-          var _elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(elCur.className.baseVal.substr(6))));
-          _elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
+          var elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(elCur.className.baseVal.substr(6))));
+          elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
         }
 
         nSize+=20; //increase size
@@ -301,73 +300,75 @@ var ANICHART_PIE = (function() {
         if (nSize < 300) { 
           this.reqId = requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
           this.htReq[elCur.className.baseVal] = this.reqId;
-        } else {}
+        } else {
+          //movepiece after calback
+        }
     },
-    _setSVGPathAttribute : function(v,i,o) {
+    setSVGPathAttribute : function(v,i,o) {
 
-        var _r = this.htCore.radius;
-        var _sx = this.htCore.startX;
-        var _sy = this.htCore.startY;
+        var r = this.htCore.radius;
+        var sx = this.htCore.startX;
+        var sy = this.htCore.startY;
 
         if(i > 0) {
-          this._aStart[i].x = this._aArc[i-1].x;
-          this._aStart[i].y = this._aArc[i-1].y;
+          this.aStart[i].x = this.aArc[i-1].x;
+          this.aStart[i].y = this.aArc[i-1].y;
         }
 
         //calculate piece Range
-        var _nPieceRange = this.nCount * v / 100;
-        this._nR += _nPieceRange;
+        var nPieceRange = this.nCount * v / 100;
+        this.nR += nPieceRange;
 
         //set end Point
-        this._aArc[i].x = (_sx - _r) + (Number(Math.cos(Math.PI/180 * this._nR))) * _r;
-        this._aArc[i].y = (_sy) + (Number(Math.sin(Math.PI/180 * this._nR))) * _r;
+        this.aArc[i].x = (sx - r) + (Number(Math.cos(Math.PI/180 * this.nR))) * r;
+        this.aArc[i].y = (sy) + (Number(Math.sin(Math.PI/180 * this.nR))) * r;
 
         //change flag (if 180 degree)
-        if((_nPieceRange) >= 180 && !this._aArc[i].largeArcFlag) this._aArc[i].largeArcFlag = 1;
+        if((nPieceRange) >= 180 && !this.aArc[i].largeArcFlag) this.aArc[i].largeArcFlag = 1;
 
-        return this._nR; //for Array.map
+        return this.nR; //for Array.map
     },
-    _showTextData : function() {
-        var aAngles = this.aPieceValue.map(this._setSVGPathAttribute, this);
+    showTextData : function() {
+        var aAngles = this.aPieceValue.map(this.setSVGPathAttribute, this);
         //append to array value of Center piece angle.
-        for(var i = 0, _al=aAngles.length; i< _al; i++) {
-            var oPos = _u.getPosition(aAngles, this.htCore, i, this._pushCenterPosition.bind(this));
-            this._appendText(i, oPos.x , oPos.y);
+        for(var i = 0, al=aAngles.length; i< al; i++) {
+            var oPos = u.getPosition(aAngles, this.htCore, i, this.pushCenterPosition.bind(this));
+            this.appendDataInText(i, oPos.x , oPos.y);
         }
     },
 
-    _pushCenterPosition : function(nX, nY, nIndex) {
+    pushCenterPosition : function(nX, nY, nIndex) {
         var elCurrent = this.elChartSVG.querySelector(".elPath"+nIndex);
         this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
 
-    _appendText : function(index,x,y) {
+    appendDataInText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
         var elGs = this.elChartSVG.querySelector("g:nth-of-type("+(index+1)+")");
 
         var b = elGs.getBBox();
-        var _nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
-        var _nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
+        var nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
+        var nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
-        var xResult = x - _nPercentFontIncreaseSize*2.0; // a '2.0' is adjusted data for postion center.
+        var xResult = x - nPercentFontIncreaseSize*2.0; // a '2.0' is adjusted data for postion center.
 
-        _u.setAttrs(t, {
+        u.setAttrs(t, {
             "transform" : "translate(" + xResult + " " + y + ")",
             "fill"      : "#000",
-            "font-size" : 8 + _nPercentFontIncreaseSize + "", //'8' is default font-size(minimum-size)
+            "font-size" : 8 + nPercentFontIncreaseSize + "", //'8' is default font-size(minimum-size)
         });
 
-        t.textContent = (_nPercentRatio % 1 === 0) ? _nPercentRatio.toFixed(0)+"%" : _nPercentRatio+"%";
+        t.textContent = (nPercentRatio % 1 === 0) ? nPercentRatio.toFixed(0)+"%" : nPercentRatio+"%";
         elGs.appendChild(t);
 
         //save text position info
         this.htTextPos[elGs.firstElementChild.className.baseVal] = { "x" : xResult , "y" : y};
     },
 
-    _addShadow : function() {
-        var _v = FXDATA.CSS.chartShadow;
-        this.elChartSVG.style.webkitFilter = _v;
-        this.elChartSVG.style.filter = _v;
+    addShadow : function() {
+        var v = FXDATA.CSS.chartShadow;
+        this.elChartSVG.style.webkitFilter = v;
+        this.elChartSVG.style.filter = v;
     },
     constructor : PIE,
   };
