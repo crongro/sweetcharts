@@ -1,15 +1,23 @@
-var Donut = (function(ANICHART_PIE) {
+/**
+ * 
+ * ANICHART.JS.Donut-Chart 
+ * 
+ * MIT license
+ * @author [nigayo]
+ * Send me an email : aniga75@gmail.com
+ */
+ 
+"use strict";
+_ANICHART.Donut = (function(ANICHART_PIE, u, window, document) {
 
     var FXDATA = {
-      xmlns               : "http://www.w3.org/2000/svg",
+      xmlns: "http://www.w3.org/2000/svg",
     };
 
 	var Donut = function() {
 	    var aArg = [].slice.call(arguments);
-
         this.bDonutChart = true;
         this.elCenterText = null;
-
 	    ANICHART_PIE.apply(this,aArg);
 	};
 
@@ -41,13 +49,11 @@ var Donut = (function(ANICHART_PIE) {
             "font-size" : sFontSize+"",
         });
 
-
         this.elChartSVG.appendChild(g);
         g.appendChild(t);
 
         this.elCenterText = t;
         this.changeCenterTextMessage(sMaxPathKey);
-
     };
 
     Donut.prototype.changeCenterTextMessage = function(sMessage) {
@@ -59,8 +65,8 @@ var Donut = (function(ANICHART_PIE) {
 
     Donut.prototype.makeCircle = function() {
        var g = document.createElementNS(FXDATA.xmlns, "g");
+       var c = document.createElementNS(FXDATA.xmlns, "circle");
        this.elChartSVG.appendChild(g);
-       c = document.createElementNS(FXDATA.xmlns, "circle");
        u.setAttrs(c, {
           "class"    : "donutCircle",
           "style" : "fill:#fff",
@@ -116,10 +122,10 @@ var Donut = (function(ANICHART_PIE) {
 
 	return Donut;
 
-}(ANICHART_PIE));
+}(_ANICHART.PIE, _ANICHART.u, window, document));
 
 if (typeof define === "function" && define.amd) {
 	    define(["ac_pie"], function() {
-	        return Donut;
+	        return _ANICHART.Donut;
 	});
 }

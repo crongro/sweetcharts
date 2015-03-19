@@ -1,9 +1,15 @@
 /**
- * LEGEND-MANAGER 
+ * 
+ * ANICHART.JS. LEGEND
+ * 
+ * MIT license
  * @author [nigayo]
+ * Send me an email : aniga75@gmail.com
  */
+ 
+"use strict";
 
-var LegendManager = (function() {
+_ANICHART.LegendManager = (function(u) {
 
     var FXDATA = {
         xmlns               : "http://www.w3.org/2000/svg",
@@ -90,10 +96,11 @@ var LegendManager = (function() {
                 v.setAttribute("font-size", n);
                 v.setAttribute("font-weight","normal");
                 v.style.opacity = "1.0";
+                v.previousElementSibling.style.opacity=1.0;
             });
         },
         constructor : LegendManager
     };
 
     return LegendManager;
-})();
+})(_ANICHART.u);

@@ -1,4 +1,14 @@
-var u = {
+/**
+ * 
+ * ANICHART.JS Utility
+ * 
+ * MIT license
+ * @author [nigayo]
+ * Send me an email : aniga75@gmail.com
+ */
+ 
+"use strict";
+_ANICHART.u = {
     setAttrs : function(elBase, htData) {
         for(var sKey in htData) {
             if(htData.hasOwnProperty(sKey)) {

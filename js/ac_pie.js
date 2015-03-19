@@ -1,8 +1,15 @@
 /**
+ * 
  * ANICHART.JS. PIE-CHART
+ * 
+ * MIT license
  * @author [nigayo]
+ * Send me an email : aniga75@gmail.com
  */
-var ANICHART_PIE = (function() {
+
+"use strict";
+
+_ANICHART.PIE = (function(window, document, polyfill, u, LegendManager) {
 
   var FXDATA = {
       minPieceCount       : 2,
@@ -39,7 +46,7 @@ var ANICHART_PIE = (function() {
       polyfill.exec();
 
       if(!(htOption && typeof htOption === "object")) {
-          if(window.console) console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
+          if(window.console) window.console.error(FXDATA.sErrorMSG.OPTION_TYPE_ERROR);
           return null;
        }
       this.nCount       = 0;
@@ -63,7 +70,7 @@ var ANICHART_PIE = (function() {
       this.bShadow      = !this.bDonutChart;
 
       //set options
-      try {this.setOption(htOption);} catch(errMsg){console.error(errMsg);}
+      try {this.setOption(htOption);} catch(errMsg){window.console.error(errMsg);}
 
       //set center position
       this.htCore.startX = this.htCore.centerX + this.htCore.radius;
@@ -190,7 +197,7 @@ var ANICHART_PIE = (function() {
 
         this.aPieceValue.forEach(this.setSVGPathAttribute, this);
 
-        requestAnimationFrame(this.runAnimation.bind(this));
+        window.requestAnimationFrame(this.runAnimation.bind(this));
     },
     execAfterAnimation : function() {
         this.showTextData();
@@ -203,11 +210,9 @@ var ANICHART_PIE = (function() {
 
         //fire piece animation
         this.elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
-        setTimeout(function(){ this.overHandler({"target" : this.elMaxValuePath});}.bind(this), 200);
+        window.setTimeout(function(){ this.overHandler({"target" : this.elMaxValuePath});}.bind(this), 200);
 
-        //Donut code
         if(this.bDonutChart) this.execDonutAfterProcess();
-
     },
     registerOverEffect : function() {
         this.elChartSVG.addEventListener("mouseover", this.overHandler.bind(this));
@@ -225,7 +230,7 @@ var ANICHART_PIE = (function() {
     },
     overHandler : function(e) {
         var elCurName = e.target.nodeName;
-        
+
         //from text to path
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
 
@@ -274,7 +279,7 @@ var ANICHART_PIE = (function() {
         this.elOver = null;
     },
     cancelAllAnimationFrame : function() {
-        for(var value in this.htReq) {cancelAnimationFrame(this.htReq[value]);}
+        for(var value in this.htReq) {window.cancelAnimationFrame(this.htReq[value]);}
     },
     movePiece : function(elCur, nTx, nTy, nSize) {
         var aPos, nSlope, nXdirection, nYdirection, nXPos,id;
@@ -298,7 +303,7 @@ var ANICHART_PIE = (function() {
         nSize+=20; //increase size
 
         if (nSize < 300) { 
-          this.reqId = requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
+          this.reqId = window.requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
           this.htReq[elCur.className.baseVal] = this.reqId;
         } else {
           //movepiece after calback
@@ -375,11 +380,11 @@ var ANICHART_PIE = (function() {
   };
 
   return PIE;
-}());
+}(window, document, _ANICHART.polyfill, _ANICHART.u, _ANICHART.LegendManager));
 
 //support Require
 if (typeof define === "function" && define.amd) {
     define("ac_pie", [], function() {
-        return ANICHART_PIE;
+        return _ANICHART.PIE;
     });
 }

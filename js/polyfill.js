@@ -1,4 +1,19 @@
-var polyfill = {
+/**
+ * 
+ * ANICHART.JS. Polyfill Utility 
+ * 
+ * MIT license
+ * @author [nigayo]
+ * Send me an email : aniga75@gmail.com
+ */
+
+"use strict";
+/*global window: false */ 
+
+//set namespace
+var _ANICHART = {};
+
+_ANICHART.polyfill = {
     exec : function() {
         for(var method in this) {
            if(method === "exec") continue;
@@ -13,8 +28,7 @@ var polyfill = {
         var vendors = ['ms', 'moz', 'webkit', 'o'];
         for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
             window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
-            || window[vendors[x]+'CancelRequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
         }
 
         if (!window.requestAnimationFrame)
@@ -28,7 +42,7 @@ var polyfill = {
 
         if (!window.cancelAnimationFrame)
             window.cancelAnimationFrame = function(id) {
-              clearTimeout(id);
+              window.clearTimeout(id);
             };
     },
-}
+};
