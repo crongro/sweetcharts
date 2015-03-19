@@ -225,12 +225,12 @@ var ANICHART_PIE = (function() {
     },
     overHandler : function(e) {
         var elCurName = e.target.nodeName;
-        var bInnerPath = e.target.className.baseVal.lastIndexOf("In",0)===0;
-
+        
+        //from text to path
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
 
-        if(elCurName === "text") return;
-        if(bInnerPath) return;
+        var bInnerPath = e.target.className.baseVal.lastIndexOf("In",0)===0;
+        if(elCurName === "text" || bInnerPath) return;
 
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 

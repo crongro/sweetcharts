@@ -72,11 +72,15 @@ var LegendManager = (function() {
             this.aElText.forEach(function(v,i){
                 if(nIndex === i) {
                     v.setAttribute("font-size", n * 1.3);
+                    v.setAttribute("font-weight","bold");
                     v.style.opacity = "1.0";
+                    v.previousElementSibling.style.opacity=1.0;
                 } 
                 else {
                     v.setAttribute("font-size",n);
-                    v.style.opacity = "0.3";
+                    v.style.opacity = "0.1";
+                    //change rect style
+                    v.previousElementSibling.style.opacity=0.1;
                 } 
             });
         },
@@ -84,6 +88,7 @@ var LegendManager = (function() {
             var n = this.htData.nFontSize;
             this.aElText.forEach(function(v){
                 v.setAttribute("font-size", n);
+                v.setAttribute("font-weight","normal");
                 v.style.opacity = "1.0";
             });
         },
