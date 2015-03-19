@@ -329,10 +329,11 @@ var ANICHART_PIE = (function() {
         return this.nR; //for Array.map
     },
     showTextData : function() {
+        var nDistanceFromCenter = (this.bDonutChart) ? 1.3 : 1.6;
         var aAngles = this.aPieceValue.map(this.setSVGPathAttribute, this);
         //append to array value of Center piece angle.
         for(var i = 0, al=aAngles.length; i< al; i++) {
-            var oPos = u.getPosition(aAngles, this.htCore, i, this.pushCenterPosition.bind(this));
+            var oPos = u.getPosition(aAngles, this.htCore, i, this.pushCenterPosition.bind(this), nDistanceFromCenter);
             this.appendDataInText(i, oPos.x , oPos.y);
         }
     },

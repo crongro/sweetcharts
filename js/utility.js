@@ -7,43 +7,44 @@ var u = {
         }
     },
     getDistanceFromCircleCenter : function(e, htCore) {
-        var _x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
-        var _y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
-        var nDistance = Math.sqrt(Math.pow(htCore.centerX - _x, 2) + Math.pow(htCore.centerY - _y, 2));
+        var x = (e.offsetX) ? e.offsetX : (e.layerX - (e.target.parentElement.offsetLeft));
+        var y = (e.offsetY) ? e.offsetY : (e.layerY - (e.target.parentElement.offsetTop));
+        var nDistance = Math.sqrt(Math.pow(htCore.centerX - x, 2) + Math.pow(htCore.centerY - y, 2));
         return nDistance;
     },
     getRandomIndex : function(nRandomRange, nNeedCount) {
-      var _arr = [];
-      while(_arr.length < nNeedCount) {
-        var _ranValue = Math.round(Math.random() * nRandomRange);
-        if(_arr.length > nRandomRange) _arr.push(_ranValue);
-        else if(_arr.indexOf(_ranValue) < 0) _arr.push(_ranValue);
+      var arr = [];
+      while(arr.length < nNeedCount) {
+        var ranValue = Math.round(Math.random() * nRandomRange);
+        if(arr.length > nRandomRange) arr.push(ranValue);
+        else if(arr.indexOf(ranValue) < 0) arr.push(ranValue);
         else continue;
       }
-      return _arr;
+      return arr;
     },
-    getPosition : function(aAngles,htCore, i, fCallback) {
-        var _ta;
-        var _caledPy = 0.01745329251; // (Math.PI / 180)
-        var _r = htCore.radius;
-        var _cx = htCore.centerX;
-        var _cy = htCore.centerY;
+    getPosition : function(aAngles,htCore, i, fCallback, nDistanceFromCenter) {
+        var ta;
+        var caledPy = 0.01745329251; // (Math.PI / 180)
+        var r = htCore.radius;
+        var cx = htCore.centerX;
+        var cy = htCore.centerY;
+        nDistanceFromCenter = nDistanceFromCenter || 1.6;
 
-        //calculate center angle (_ta)
-        if(i === 0 ) _ta = Math.round(aAngles[0]/2);
-        else _ta = Math.round((aAngles[i] - aAngles[i-1])/2 + aAngles[i-1]);
+        //calculate center angle (ta)
+        if(i === 0 ) ta = Math.round(aAngles[0]/2);
+        else ta = Math.round((aAngles[i] - aAngles[i-1])/2 + aAngles[i-1]);
 
         //set x,y position to the circle center
-        var _tx = (Math.cos(_caledPy * _ta)) * _r;
-        var _ty = (Math.sin(_caledPy * _ta)) * _r;
+        var tx = (Math.cos(caledPy * ta)) * r;
+        var ty = (Math.sin(caledPy * ta)) * r;
 
-        fCallback(_tx, _ty, i);
+        fCallback(tx, ty, i);
 
         //set x,y position to the SVG Element
-        _tx = _cx + (_tx/1.6); // the smaller the value away from the center point.
-        _ty = _cy + (_ty/1.6);
+        tx = cx + (tx/nDistanceFromCenter); // the smaller the value away from the center point.
+        ty = cy + (ty/nDistanceFromCenter);
 
-        return { "x" : _tx, "y" : _ty};
+        return { "x" : tx, "y" : ty};
     },
     linkSimpleInherit : function(fnChild, fnParent) {
         fnChild.prototype = Object.create(fnParent.prototype);

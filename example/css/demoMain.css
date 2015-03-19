@@ -33,6 +33,11 @@ header h2 {
     min-width: 1040px;
 }
 
+.centerMessage {
+ font-family: "Helvetica Neue",Helvetica,arial,sans-serif;
+ font-weight: bold;
+}
+
 /* ANIChart */
 .ani-chart {
   width: 70%;
