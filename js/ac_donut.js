@@ -25,7 +25,7 @@ var Donut = (function(ANICHART_PIE) {
        this.elChartSVG.appendChild(g);
        c = document.createElementNS(FXDATA.xmlns, "circle");
        _u.setAttrs(c, {
-          "id"    : "donutCircle",
+          "class"    : "donutCircle",
           "style" : "fill:#fff",
           "cx"    : this.htCore.centerX,
           "cy"    : this.htCore.centerY,
