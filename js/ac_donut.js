@@ -6,18 +6,55 @@ var Donut = (function(ANICHART_PIE) {
 
 	var Donut = function() {
 	    var aArg = [].slice.call(arguments);
-	    //aArg.shift();
+
         this.bDonutChart = true;
+        this.elCenterText = null;
+
 	    ANICHART_PIE.apply(this,aArg);
 	};
 
 	Donut = _u.linkSimpleInherit(Donut ,ANICHART_PIE);
 
     //Methods for Donut
-    Donut.prototype.makeDonut = function() {
+    Donut.prototype.execDonutAfterProcess = function() {
     	//calculate halfPosition
     	var aHalfPosition = this.calculateHalfPosition();
     	this.createPathElements(aHalfPosition);
+
+        this.makeCenterTextElement();
+    };
+
+    Donut.prototype.makeCenterTextElement = function() {
+        var r = this.htCore.radius;
+        var g = document.createElementNS(FXDATA.xmlns, "g");
+        var t = document.createElementNS(FXDATA.xmlns, "text");
+
+
+        var nIndex = +this.elMaxValuePath.getAttribute('class').substring(6);
+        var sMaxPathKey = this.aPieceKeys[nIndex];
+
+        var sFontSize = r / (sMaxPathKey.length+1); //2 is adjustment for properly fontsize(little minification)
+
+        _u.setAttrs(t, {
+            "class"     : "centerMessage",
+            "fill"      : "gray",
+            "font-size" : sFontSize+"",
+        });
+
+
+        this.elChartSVG.appendChild(g);
+        g.appendChild(t);
+
+        this.elCenterText = t;
+        this.changeCenterTextMessage(sMaxPathKey);
+
+    };
+
+    Donut.prototype.changeCenterTextMessage = function(sMessage) {
+            this.elCenterText.textContent = sMessage;
+            var xPos = this.htCore.centerX - this.elCenterText.getBBox().width/2;
+            if(!this._yPos) this._yPos = this.htCore.centerY + this.elCenterText.getBBox().height/3; //3 is adjustment value for a text Y position.
+            _u.setAttrs(this.elCenterText, {"transform" : "translate(" + xPos + " " + this._yPos + ")", });
     };
 
     Donut.prototype.makeCircle = function() {

@@ -26,73 +26,73 @@ require([
      //   }
      // }).runAnimation();
 
-      var oPy2 = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child "), {
-        core : {
-          // centerX:50, //default: center
-          // centerY:200, //default: center 
-          radius:150,
-          nMilliSecondCycle:500,
-          sRandomColorType : "b" //default: user custom value
-        }, 
-        htPiece : {
-         "WEBUI"          : {"data" : 23, "color" : "red"},
-         "WEBServer"      : {"data" : 13, "color" : "blue"},
-         "DBMaster"       : {"data" : 3,  "color" : "grey"},
-         "ProjectManager" : {"data" : 43.3, "color" : "green"},
-         "ProjectManager2" : {"data" : 63.3, "color" : "green"},
-         "ProjectManager3" : {"data" : 23.3, "color" : "green"},
-         "Designer"       : {"data" : 13, "color" : "magenta"},
-         "Designer2"       : {"data" : 23, "color" : "magenta"},
-         "Designer3"       : {"data" : 33, "color" : "magenta"},
-       }
-     }).runAnimation();
+     //  var oPy2 = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child "), {
+     //    core : {
+     //      // centerX:50, //default: center
+     //      // centerY:200, //default: center 
+     //      radius:150,
+     //      nMilliSecondCycle:500,
+     //      sRandomColorType : "b" //default: user custom value
+     //    }, 
+     //    htPiece : {
+     //     "WEBUI"          : {"data" : 23, "color" : "red"},
+     //     "WEBServer"      : {"data" : 13, "color" : "blue"},
+     //     "DBMaster"       : {"data" : 3,  "color" : "grey"},
+     //     "ProjectManager" : {"data" : 43.3, "color" : "green"},
+     //     "ProjectManager2" : {"data" : 63.3, "color" : "green"},
+     //     "ProjectManager3" : {"data" : 23.3, "color" : "green"},
+     //     "Designer"       : {"data" : 13, "color" : "magenta"},
+     //     "Designer2"       : {"data" : 23, "color" : "magenta"},
+     //     "Designer3"       : {"data" : 33, "color" : "magenta"},
+     //   }
+     // }).runAnimation();
 
-      var oPy3 = new ANICHART_PIE( document.querySelector(".row-first> .chart-wrap:last-child "), {
-        core : {
-          // centerX:50, //default: center
-          // centerY:200, //default: center 
-          radius:150,
-          nMilliSecondCycle:1000,
-          sRandomColorType : "c" //default: user custom value
-        }, 
-        htPiece : {
-         "WEBUI"          : {"data" : 33, "color" : "red"},
-         "WEBServer"      : {"data" : 23, "color" : "blue"},
-         "DBMaster"       : {"data" : 3,  "color" : "grey"},
-         "DBMaster2"       : {"data" : 33,  "color" : "grey"},
-         "DBMaster3"       : {"data" : 13,  "color" : "grey"},
-         "ProjectManager" : {"data" : 13.3, "color" : "green"},
-         "ProjectManager2" : {"data" : 33.3, "color" : "green"},
-         "ProjectManager3" : {"data" : 13.3, "color" : "green"},
-         "Designer"       : {"data" : 33, "color" : "magenta"},
-         "Designer2"       : {"data" : 43, "color" : "magenta"},
-         "Designer3"       : {"data" : 63, "color" : "magenta"},
-       }
-     }).runAnimation();
+     //  var oPy3 = new ANICHART_PIE( document.querySelector(".row-first> .chart-wrap:last-child "), {
+     //    core : {
+     //      // centerX:50, //default: center
+     //      // centerY:200, //default: center 
+     //      radius:150,
+     //      nMilliSecondCycle:1000,
+     //      sRandomColorType : "c" //default: user custom value
+     //    }, 
+     //    htPiece : {
+     //     "WEBUI"          : {"data" : 33, "color" : "red"},
+     //     "WEBServer"      : {"data" : 23, "color" : "blue"},
+     //     "DBMaster"       : {"data" : 3,  "color" : "grey"},
+     //     "DBMaster2"       : {"data" : 33,  "color" : "grey"},
+     //     "DBMaster3"       : {"data" : 13,  "color" : "grey"},
+     //     "ProjectManager" : {"data" : 13.3, "color" : "green"},
+     //     "ProjectManager2" : {"data" : 33.3, "color" : "green"},
+     //     "ProjectManager3" : {"data" : 13.3, "color" : "green"},
+     //     "Designer"       : {"data" : 33, "color" : "magenta"},
+     //     "Designer2"       : {"data" : 43, "color" : "magenta"},
+     //     "Designer3"       : {"data" : 63, "color" : "magenta"},
+     //   }
+     // }).runAnimation();
 
-      var oPy_donut = new Donut( document.querySelector(".row-second> .chart-wrap:first-child "), {
-        core : {
-          radius:150,
-          nMilliSecondCycle:500,
-          sRandomColorType : "b" //default: user custom value
-        }, 
-        htPiece : {
-                   "WEBUI"          : {"data" : 33, "color" : "red"},
-                   "WEBServer"      : {"data" : 23, "color" : "blue"},
-                   "DBMaster"       : {"data" : 3,  "color" : "grey"},
-                   "DBMaster2"       : {"data" : 33,  "color" : "grey"},
-                   "DBMaster3"       : {"data" : 13,  "color" : "grey"},
-                   "ProjectManager2" : {"data" : 33.3, "color" : "green"},
-                   "ProjectManager3" : {"data" : 13.3, "color" : "green"},
-                   "Designer"       : {"data" : 33, "color" : "magenta"},
-                   "Designer2"       : {"data" : 43, "color" : "magenta"},
-                   "Designer3"       : {"data" : 63, "color" : "magenta"},
-                 }
-      }).runAnimation();
+     //  var oPy_donut = new Donut( document.querySelector(".row-second> .chart-wrap:first-child "), {
+     //    core : {
+     //      radius:150,
+     //      nMilliSecondCycle:500,
+     //      sRandomColorType : "b" //default: user custom value
+     //    }, 
+     //    htPiece : {
+     //               "WEBUI"          : {"data" : 33, "color" : "red"},
+     //               "WEBServer"      : {"data" : 23, "color" : "blue"},
+     //               "DBMaster"       : {"data" : 3,  "color" : "grey"},
+     //               "DBMaster2"       : {"data" : 33,  "color" : "grey"},
+     //               "DBMaster3"       : {"data" : 13,  "color" : "grey"},
+     //               "ProjectManager2" : {"data" : 33.3, "color" : "green"},
+     //               "ProjectManager3" : {"data" : 13.3, "color" : "green"},
+     //               "Designer"       : {"data" : 33, "color" : "magenta"},
+     //               "Designer2"       : {"data" : 43, "color" : "magenta"},
+     //               "Designer3"       : {"data" : 63, "color" : "magenta"},
+     //             }
+     //  }).runAnimation();
 
       var oPy_donut2 = new Donut( document.querySelector(".row-second> .chart-wrap:last-child "), {
         core : {
-          radius:150,
+          radius:100,
           nMilliSecondCycle:1000,
           sRandomColorType : "d" //default: user custom value
         }, 

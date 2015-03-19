@@ -48,6 +48,7 @@ var ANICHART_PIE = (function() {
       this._aStart      = [];
       this.elWrapDiv    = elTarget;
       this.elChartSVG   = elTarget.querySelector(".ani-chart");
+      this.elMaxValuePath = null;
       this.htCore       = {};
       this.aPieceKeys   = [];
       this.aPieceValue  = [];
@@ -200,12 +201,13 @@ var ANICHART_PIE = (function() {
 
         this._registerOverEffect();
 
-        //Donut code
-        if(this.bDonutChart) this.makeDonut();
-
         //fire piece animation
-        var elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
-        setTimeout(function(){ this._overHandler({"target" : elMaxValuePath});}.bind(this), 200);
+        this.elMaxValuePath = this.aElPath[this.aPieceValue.indexOf(Math.max.apply(null, this.aPieceValue))];
+        setTimeout(function(){ this._overHandler({"target" : this.elMaxValuePath});}.bind(this), 200);
+
+        //Donut code
+        if(this.bDonutChart) this.execDonutAfterProcess();
+
     },
     _registerOverEffect : function() {
         this.elChartSVG.addEventListener("mouseover", this._overHandler.bind(this));
@@ -247,11 +249,16 @@ var ANICHART_PIE = (function() {
         //before animation moving, should be cancel all animationframe
         this.cancelAllAnimationFrame();
 
+        //async.
         this.movePiece(elCur, this.htTextPos[elCur.className.baseVal].x,this.htTextPos[elCur.className.baseVal].y, 30);
 
+        /** TODO change movepiece callback exec */
         //emphasize Legend match menu.
         var nIndex = Number(elCur.className.baseVal.substr(6)); //6 is count of word('elPath')
         this.oLegend.emphasizeMenu(nIndex);
+
+        //change center text on Donut.
+        if(this.bDonutChart) this.changeCenterTextMessage(this.aPieceKeys[nIndex]);
 
         this.elOver = elCur;
     },
@@ -283,6 +290,7 @@ var ANICHART_PIE = (function() {
         //move text element
         elCur.nextElementSibling.setAttribute("transform", "translate(" + (nTx+(nXPos*nXdirection)) + "," + (nTy+(nXPos*nSlope*nYdirection)) + ")");
 
+        //when donut, move a InnerPath element.
         if(this.bDonutChart) {
           var _elDonutPiece = this.elChartSVG.querySelector(".InnerPath" + (Number(elCur.className.baseVal.substr(6))));
           _elDonutPiece.setAttribute("transform", "translate(" + (nXPos*nXdirection) + "," + (nXPos*nSlope*nYdirection) + ")");
@@ -290,10 +298,10 @@ var ANICHART_PIE = (function() {
 
         nSize+=20; //increase size
 
-        if(nSize < 300) { 
+        if (nSize < 300) { 
           this.reqId = requestAnimationFrame(this.movePiece.bind(this,elCur,nTx, nTy, nSize));
           this.htReq[elCur.className.baseVal] = this.reqId;
-        }
+        } else {}
     },
     _setSVGPathAttribute : function(v,i,o) {
 
