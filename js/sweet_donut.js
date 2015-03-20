@@ -7,7 +7,10 @@
  * Send me an email : aniga75@gmail.com
  */
  
+/*jslint browser: true*/
 "use strict";
+
+var SWEETCHARTS = SWEETCHARTS || {};
 SWEETCHARTS.Donut = (function(PIE, u, window, document) {
 
     var FXDATA = {
@@ -95,11 +98,11 @@ SWEETCHARTS.Donut = (function(PIE, u, window, document) {
     		var nHalfX = this.htCore.centerX + (nXdirection * _nHalfX);
     		var nHalfY = this.htCore.centerY + (nYdirection * _nHalfX * a);
 
-    		data["startX"] = nHalfX;
-    		data["startY"] = nHalfY;
-    		data["radius"] = this.htCore.radius / 2;
-    		data["centerX"] = this.htCore.centerX;
-    		data["centerY"] = this.htCore.centerY;
+    		data.startX = nHalfX;
+    		data.startY = nHalfY;
+    		data.radius = this.htCore.radius / 2;
+    		data.centerX = this.htCore.centerX;
+    		data.centerY = this.htCore.centerY;
 
     		aHalfPOS.push(data);
     	}
@@ -124,8 +127,8 @@ SWEETCHARTS.Donut = (function(PIE, u, window, document) {
 
 }(SWEETCHARTS.PIE, SWEETCHARTS.u, window, document));
 
-if (typeof define === "function" && define.amd) {
-	    define(["sweet_donut"], function() {
+if (typeof window.define === "function" && window.define.amd) {
+	    window.define(["sweet_donut.min"], function() {
 	        return SWEETCHARTS.Donut;
 	});
 }

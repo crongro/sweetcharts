@@ -6,9 +6,11 @@
  * @author [nigayo]
  * Send me an email : aniga75@gmail.com
  */
- 
+
+ /*jslint browser: true*/
 "use strict";
 
+var SWEETCHARTS = SWEETCHARTS || {};
 SWEETCHARTS.LegendManager = (function(u) {
 
     var FXDATA = {

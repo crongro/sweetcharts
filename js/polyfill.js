@@ -7,8 +7,8 @@
  * Send me an email : aniga75@gmail.com
  */
 
+/*jslint browser: true*/ 
 "use strict";
-/*global window: false */ 
 
 //set namespace
 var SWEETCHARTS = {};

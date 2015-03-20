@@ -7,7 +7,11 @@
  * Send me an email : aniga75@gmail.com
  */
 
+
+/*jslint browser: true*/ 
 "use strict";
+
+var SWEETCHARTS = SWEETCHARTS || {};
 
 SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
 
@@ -128,7 +132,6 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
     },
     createPathElements : function (aPath, nIndex, sCoords, sColor, bDonut) {
         var g = document.createElementNS(FXDATA.xmlns, "g");
-        var el = this.elChartSVG.lastElementChild;
 
         this.elChartSVG.appendChild(g);
 
@@ -282,7 +285,7 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         for(var value in this.htReq) {window.cancelAnimationFrame(this.htReq[value]);}
     },
     movePiece : function(elCur, nTx, nTy, nSize) {
-        var aPos, nSlope, nXdirection, nYdirection, nXPos,id;
+        var aPos, nSlope, nXdirection, nYdirection, nXPos;
         
         aPos = this.htPathOutlinePos[elCur.className.baseVal];
         nSlope = Math.abs(aPos[1] / aPos[0]); // slope = y/x
@@ -342,17 +345,13 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
             this.appendDataInText(i, oPos.x , oPos.y);
         }
     },
-
     pushCenterPosition : function(nX, nY, nIndex) {
-        var elCurrent = this.elChartSVG.querySelector(".elPath"+nIndex);
         this.htPathOutlinePos["elPath"+nIndex] = [nX, nY];
     },
-
     appendDataInText : function(index,x,y) {
         var t = document.createElementNS(FXDATA.xmlns, "text");
         var elGs = this.elChartSVG.querySelector("g:nth-of-type("+(index+1)+")");
 
-        var b = elGs.getBBox();
         var nPercentRatio = Number(this.aPieceValue[index].toFixed(1));
         var nPercentFontIncreaseSize =  Math.round(this.aPieceValue[index] * 0.40); //font-size range is 10~50(40)
 
@@ -370,7 +369,6 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         //save text position info
         this.htTextPos[elGs.firstElementChild.className.baseVal] = { "x" : xResult , "y" : y};
     },
-
     addShadow : function() {
         var v = FXDATA.CSS.chartShadow;
         this.elChartSVG.style.webkitFilter = v;
@@ -383,8 +381,8 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
 }(window, document, SWEETCHARTS.polyfill, SWEETCHARTS.u, SWEETCHARTS.LegendManager));
 
 //support Require
-if (typeof define === "function" && define.amd) {
-    define("sweet_pie", [], function() {
+if (typeof window.define === "function" && window.define.amd) {
+    window.define(["sweet_pie.min"], function() {
         return SWEETCHARTS.PIE;
     });
 }

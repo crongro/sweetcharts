@@ -7,7 +7,10 @@
  * Send me an email : aniga75@gmail.com
  */
  
+/*jslint browser: true*/
 "use strict";
+
+var SWEETCHARTS = SWEETCHARTS || {};
 SWEETCHARTS.u = {
     setAttrs : function(elBase, htData) {
         for(var sKey in htData) {
