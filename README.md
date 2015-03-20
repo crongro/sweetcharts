@@ -4,7 +4,7 @@
 Sweetcharts is a Chart library designed for the easy and quick building of Animation Web Chart.
 
 ## Example
-[SWEETCHARTS DEMO](http://git.io/hV6X) <br />
+[SWEETCHARTS DEMO](http://git.io/hViu) <br />
 at this present it only supports a pie chart.
 
 
