@@ -1,10 +1,10 @@
-SWEETCHARTS
+<span style='color:#FFBAD2;'>SWEETCHARTS</span>
 ============
 
-sweetcharts is a Chart library designed for the easy and quick building of Animation Web Chart.
+Sweetcharts is a Chart library designed for the easy and quick building of Animation Web Chart.
 
 ## Example
-[PIE Chart Example](http://git.io/pyD4) <br />
+[SWEETCHARTS DEMO](http://git.io/hV6X) <br />
 at this present it only supports a pie chart.
 
 
