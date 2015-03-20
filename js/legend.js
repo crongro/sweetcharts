@@ -1,6 +1,6 @@
 /**
  * 
- * ANICHART.JS. LEGEND
+ * SWEETCHARTS. LEGEND
  * 
  * MIT license
  * @author [nigayo]
@@ -9,14 +9,14 @@
  
 "use strict";
 
-_ANICHART.LegendManager = (function(u) {
+SWEETCHARTS.LegendManager = (function(u) {
 
     var FXDATA = {
         xmlns               : "http://www.w3.org/2000/svg",
     };
 
     function LegendManager(elParentDiv, aName, aColor) {
-        this.elLegendSVG = elParentDiv.querySelector(".ani-legend");
+        this.elLegendSVG = elParentDiv.querySelector(".sweet-legend");
         this.nDivHeight = parseInt(elParentDiv.style.height);
         this.aName = aName;
         this.aColor = aColor;
@@ -103,4 +103,4 @@ _ANICHART.LegendManager = (function(u) {
     };
 
     return LegendManager;
-})(_ANICHART.u);
+})(SWEETCHARTS.u);

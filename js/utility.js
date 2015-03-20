@@ -1,6 +1,6 @@
 /**
  * 
- * ANICHART.JS Utility
+ * SWEETCHARTS Utility
  * 
  * MIT license
  * @author [nigayo]
@@ -8,7 +8,7 @@
  */
  
 "use strict";
-_ANICHART.u = {
+SWEETCHARTS.u = {
     setAttrs : function(elBase, htData) {
         for(var sKey in htData) {
             if(htData.hasOwnProperty(sKey)) {

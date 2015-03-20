@@ -5,8 +5,8 @@ require.config({
 });
 
 require([
-    "ac_pie","ac_donut"
-], function (ANICHART_PIE, Donut) {
+    "sweet_pie","sweet_donut"
+], function (PIE, Donut) {
 
     //if(!isMobile()) {
      //  var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
@@ -26,7 +26,7 @@ require([
      //   }
      // }).runAnimation();
 
-      var oPy2 = new _ANICHART.PIE( document.querySelector(".row-first > .chart-wrap:first-child "), {
+      var oPy2 = new PIE( document.querySelector(".row-first > .chart-wrap:first-child "), {
         core : {
           // centerX:50, //default: center
           // centerY:200, //default: center 
@@ -47,7 +47,7 @@ require([
        }
      }).runAnimation();
 
-      var oPy3 = new _ANICHART.PIE( document.querySelector(".row-first> .chart-wrap:last-child "), {
+      var oPy3 = new PIE( document.querySelector(".row-first> .chart-wrap:last-child "), {
         core : {
           // centerX:50, //default: center
           // centerY:200, //default: center 
@@ -70,7 +70,7 @@ require([
        }
      }).runAnimation();
 
-      var oPy_donut = new _ANICHART.Donut( document.querySelector(".row-second> .chart-wrap:first-child "), {
+      var oPy_donut = new Donut( document.querySelector(".row-second> .chart-wrap:first-child "), {
         core : {
           radius:150,
           nMilliSecondCycle:500,
@@ -90,7 +90,7 @@ require([
                  }
       }).runAnimation();
 
-      var oPy_donut2 = new _ANICHART.Donut( document.querySelector(".row-second> .chart-wrap:last-child "), {
+      var oPy_donut2 = new Donut( document.querySelector(".row-second> .chart-wrap:last-child "), {
         core : {
           radius:150,
           nMilliSecondCycle:1000,

@@ -39,12 +39,12 @@ header h2 {
 }
 
 /* ANIChart */
-.ani-chart {
+.sweet-chart {
   width: 70%;
   height: 100%;
 }
 
-.ani-legend {
+.sweet-legend {
   width: 25%;
   height: 100%;
 }
@@ -78,14 +78,14 @@ header h2 {
     margin : 0px;
     float:none;
   }
-  .chart-wrap .ani-legend text {
+  .chart-wrap .sweet-legend text {
     font-size : 10px;
   }
-  .ani-chart {
+  .sweet-chart {
     width: 65%;
     height: 100%;
   }
-  .ani-legend {
+  .sweet-legend {
     width: 30%;
     height: 100%;
   }

@@ -1,6 +1,6 @@
 /**
  * 
- * ANICHART.JS. Polyfill Utility 
+ * SWEETCHARTS. Polyfill Utility 
  * 
  * MIT license
  * @author [nigayo]
@@ -11,9 +11,9 @@
 /*global window: false */ 
 
 //set namespace
-var _ANICHART = {};
+var SWEETCHARTS = {};
 
-_ANICHART.polyfill = {
+SWEETCHARTS.polyfill = {
     exec : function() {
         for(var method in this) {
            if(method === "exec") continue;
