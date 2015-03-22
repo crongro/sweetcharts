@@ -72,7 +72,9 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
       this.oLegend      = null;
       this.bDonutChart  = this.bDonutChart || false;
       this.bShadow      = !this.bDonutChart;
+      this.bMobile      = u.isMobile();
 
+      console.log("3", u.isMobile());
       //set options
       try {this.setOption(htOption);} catch(errMsg){window.console.error(errMsg);}
 
@@ -218,8 +220,13 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         if(this.bDonutChart) this.execDonutAfterProcess();
     },
     registerOverEffect : function() {
-        this.elChartSVG.addEventListener("mouseover", this.overHandler.bind(this));
+        var sEventType = this.getEventType();
+        this.elChartSVG.addEventListener(sEventType, this.overHandler.bind(this));
         this.elChartSVG.addEventListener("mousemove", this.moveHandler.bind(this));
+    },
+    getEventType : function() {
+        if(this.bMobile) return "touchstart";
+        return "mouseover";
     },
     moveHandler :  function(e) {
         if(e.target.nodeName !== "svg" || !this.elOver) return;
@@ -232,13 +239,16 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         }
     },
     overHandler : function(e) {
+        console.log('overHandler', e.type);
         var elCurName = e.target.nodeName;
 
         //from text to path
         if(elCurName === "path" && e.relatedTarget && e.relatedTarget.nodeName === "text") return;
 
-        var bInnerPath = e.target.className.baseVal.lastIndexOf("In",0)===0;
-        if(elCurName === "text" || bInnerPath) return;
+        if(e.type === "mouseover" && elCurName === "text") return;
+
+        //Donut
+        if(e.target.className.baseVal.lastIndexOf("In",0)===0) return;
 
         var elCur = (elCurName === "text") ? e.target.previousSibling : e.target;
 

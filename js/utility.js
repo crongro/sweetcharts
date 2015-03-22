@@ -63,5 +63,8 @@ SWEETCHARTS.u = {
         fnChild.prototype = Object.create(fnParent.prototype);
         fnChild.prototype.constructor = fnChild;
         return fnChild;
+    }, 
+    isMobile : function(){
+      return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     }
 };
