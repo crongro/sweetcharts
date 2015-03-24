@@ -61,18 +61,6 @@ header h2 {
 pre {
   font-family: "Source Code Pro",monospace;
 }
-  
-
-/* ANIChart */
-.sweet-chart {
-  width: 70%;
-  height: 100%;
-}
-
-.sweet-legend {
-  width: 25%;
-  height: 100%;
-}
 
 /*@media screen and (max-width: 768px) {
   body,header,#wrap {
