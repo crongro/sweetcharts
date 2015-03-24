@@ -79,7 +79,6 @@ SWEETCHARTS.LegendManager = (function(u) {
             var n = this.htData.nFontSize;
             this.aElText.forEach(function(v,i){
                 if(nIndex === i) {
-                    v.setAttribute("font-size", n * 1.3);
                     v.setAttribute("font-weight","bold");
                     v.style.opacity = "1.0";
                     v.previousElementSibling.style.opacity=1.0;

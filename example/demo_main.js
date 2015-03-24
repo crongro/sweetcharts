@@ -7,24 +7,6 @@ require.config({
 
 require(["sweet_pie.min", "sweet_donut.min"], function (PIE, Donut) {
 
-    //if(!isMobile()) {
-     //  var oPy = new ANICHART_PIE( document.querySelector(".row-first > .chart-wrap:first-child"), {
-     //    core : {
-     //      // centerX:50, //default: center
-     //      // centerY:200, //default: center 
-     //      radius:150,
-     //      nMilliSecondCycle:500,
-     //      //sRandomColorType : "c" //default: user custom value
-     //    }, 
-     //    htPiece : {
-     //     "Chrome(all)"  : {"data" : 46.08, "color" : "green"},
-     //     "Firefox 5+"   : {"data" : 17.67, "color" : "orange"},
-     //     "IE(all)"      : {"data" : 20.78, "color" : "dodgerblue"},
-     //     "safari 7.0"   : {"data" : 10.36, "color" : "skyblue"},
-     //     "opera"        : {"data" : 2, "color" : "red"},
-     //   }
-     // }).runAnimation();
-
       new PIE( document.querySelector(".row-first > .chart-wrap:first-child "), {
         core : {
           // centerX:50, //default: center
@@ -34,15 +16,11 @@ require(["sweet_pie.min", "sweet_donut.min"], function (PIE, Donut) {
           sRandomColorType : "b" //default: user custom value
         }, 
         htPiece : {
-         "WEBUI"          : {"data" : 23, "color" : "red"},
-         "WEBServer"      : {"data" : 13, "color" : "blue"},
-         "DBMaster"       : {"data" : 3,  "color" : "grey"},
-         "ProjectManager" : {"data" : 43.3, "color" : "green"},
-         "ProjectManager2" : {"data" : 63.3, "color" : "green"},
-         "ProjectManager3" : {"data" : 23.3, "color" : "green"},
-         "Designer"       : {"data" : 13, "color" : "magenta"},
-         "Designer2"       : {"data" : 23, "color" : "magenta"},
-         "Designer3"       : {"data" : 33, "color" : "magenta"},
+         "Chrome(all)"  : {"data" : 46.08, "color" : "green"},
+         "Firefox 5+"   : {"data" : 17.67, "color" : "orange"},
+         "IE(all)"      : {"data" : 20.78, "color" : "dodgerblue"},
+         "safari 7.0"   : {"data" : 10.36, "color" : "skyblue"},
+         "opera"        : {"data" : 2, "color" : "red"},
        }
      }).runAnimation();
 
@@ -109,16 +87,4 @@ require(["sweet_pie.min", "sweet_donut.min"], function (PIE, Donut) {
          "Designer3"       : {"data" : 63, "color" : "magenta"},
        }
       }).runAnimation();
-    //}
-
-
-    function isMobile() {
-      function isMobileAgent() {
-        return !!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-      }
-      function isMobileWidth() {
-        return (window.innerWidth < 401);
-      }
-      return !!(isMobileAgent() && isMobileWidth());
-    }
 });

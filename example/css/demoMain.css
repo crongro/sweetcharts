@@ -1,17 +1,21 @@
 
+li {
+  list-style: none;
+}
 
 body {
   font-family: Raleway, "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
   font-weight: 300;
+  -webkit-font-smoothing: antialiased;
 }
 
 #wrap{
-    width : 1045px;
+    1width : 1045px;
     margin : 0px auto;
 }
 
 header {
-  margin: 70px 0px;
+  margin: 70px auto;
   width: 1000px;
   text-align: center;
   line-height: 2em;
@@ -23,21 +27,41 @@ header h2 {
   color: #FFBAD2;
  }
 
-.chart-wrap {
-  outline : 1px solid rgb(230, 230, 230);
+.chart-wrap , .code {
   margin-left: 20px;
-  margin-top:20px;
   float:left;
 }
 
-.row-first, .row-second {
-    min-width: 1040px;
+.chart-wrap {
+  border : 1px solid rgb(230, 230, 230);
+  margin-top:20px;
+}
+
+.code{
+  opacity: 0;
+  width:500px;
+  padding-bottom:10px;
+  margin-top: 8px;
+   -webkit-transition : opacity 2s ease-in;
+  transition: opacity 2s ease-in;
+}
+
+.chartList{
+    overflow: hidden;
+    width: 1046px;
+    margin:0px auto;
+    margin-bottom: 50px;
 }
 
 .centerMessage {
  font-family: "Helvetica Neue",Helvetica,arial,sans-serif;
  font-weight: bold;
 }
+
+pre {
+  font-family: "Source Code Pro",monospace;
+}
+  
 
 /* ANIChart */
 .sweet-chart {
@@ -50,10 +74,9 @@ header h2 {
   height: 100%;
 }
 
-@media screen and (max-width: 768px) { /* mobile 768 */
+/*@media screen and (max-width: 768px) {
   body,header,#wrap {
     width : auto;
-    min-width: 280px;
   }
 
   body {
@@ -64,20 +87,16 @@ header h2 {
     margin : 20px 0px;
   }
 
-  .row-first, .row-second {
+  .chartList {
     min-width: 280px;
   }
 
-  .row-first, .row-second > div:first-child{
-    display: none;
-  }
   header h2 {
     font-size: 2em;
   }
 
   .chart-wrap {
     margin : 0px;
-    float:none;
   }
   .chart-wrap .sweet-legend text {
     font-size : 10px;
@@ -91,3 +110,4 @@ header h2 {
     height: 100%;
   }
 }
+*/

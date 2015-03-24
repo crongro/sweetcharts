@@ -33,14 +33,15 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         chartShadow : "drop-shadow(4px 5px 2.2px rgba(0,0,0,0.25))",
       },
       colorType : {
-        //TODO . Object 형태로..
-        a : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
+        //http://www.google.com/design/spec/style/color.html#color-color-palette
+        brightness100a : ['#ffcdd2', '#f8bbd0', '#e1bee7', '#d1c4e9', '#c5cae9', '#bbdefb', '#b3e5fc', '#b2ebf2','#b2dfdb',
                   '#c8e6c9', '#dcedc8', '#f0f4c3', '#fff9c4', '#ffecb3', '#ffe0b2', '#ffccbc', '#d7ccc8', '#f5f5f5', '#cfd8dc'],
-        b : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
+        brightness100b : ["#FF8A80", "#FF80AB", "#EA80FC", "#B388FF", "#8C9EFF", "#82B1FF", "#80D8FF", "#84FFFF", "#A7FFEB",
                    "#B9F6CA", "#CCFF90", "#F4FF81", "#FFFF8D", "#FFE57F", "#FFD180", "#FF9E80"],
-        c : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
+        brightness500a : ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688',
                   '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'],
-        d : ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
+        //http://colrd.com/palette/19308/ 
+        specialTrove: ['#51574a', '#447c69', '#74c493', '#8e8c6d', '#e4bf80', '#e9d78e', '#e2975d', '#f19670', '#e16552',
                   '#c94a53', '#be5168', '#a34974', '#993767', '#65387d', '#4e2472', '#9163b6', '#e279a3', '#e0598b', '#7c9fb0','#5698c4','#9abf88']
       }
   };
@@ -74,7 +75,6 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
       this.bShadow      = !this.bDonutChart;
       this.bMobile      = u.isMobile();
 
-      console.log("3", u.isMobile());
       //set options
       try {this.setOption(htOption);} catch(errMsg){window.console.error(errMsg);}
 
@@ -239,7 +239,6 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
         }
     },
     overHandler : function(e) {
-        console.log('overHandler', e.type);
         var elCurName = e.target.nodeName;
 
         //from text to path
@@ -390,9 +389,8 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
   return PIE;
 }(window, document, SWEETCHARTS.polyfill, SWEETCHARTS.u, SWEETCHARTS.LegendManager));
 
-//support Require
-if (typeof window.define === "function" && window.define.amd) {
-    window.define(["sweet_pie.min"], function() {
-        return SWEETCHARTS.PIE;
-    });
-}
+/*require support code*/if (typeof window.define === "function" && window.define.amd) {
+/*require support code*/window.define(["sweet_pie.min"], function() {
+/*require support code*/return SWEETCHARTS.PIE;
+/*require support code*/});
+/*require support code*/}
