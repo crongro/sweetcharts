@@ -1,0 +1,28 @@
+{
+  "name": "sweetcharts",
+  "version": "v0.0.1",
+  "homepage": "nigayo.github.io/sweetcharts/example/demo.html",
+  "main" : "build/",
+  "authors": [
+    "aniga75@gmail.com"
+  ],
+  "description": "html5 svg charts",
+  "keywords": [
+    "html5",
+    "charts",
+    "svg",
+    "sweetchart"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "doc",
+    "js",
+    ".gitignore",
+    ".jshintrc",
+    "bower.json",
+    "gruntfile.js",
+    "package.json",
+    "README.md"
+  ]
+}
