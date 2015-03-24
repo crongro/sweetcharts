@@ -44,7 +44,8 @@ SWEETCHARTS.Donut = (function(PIE, u, window, document) {
         var nIndex = +this.elMaxValuePath.getAttribute('class').substring(6);
         var sMaxPathKey = this.aPieceKeys[nIndex];
 
-        var sFontSize = r / (sMaxPathKey.length+1); //2 is adjustment for properly fontsize(little minification)
+        //var sFontSize = r / (sMaxPathKey.length+1); //2 is adjustment for properly fontsize(little minification)
+        var sFontSize = r / (sMaxPathKey.length); //2 is adjustment for properly fontsize(little minification)
 
         u.setAttrs(t, {
             "class"     : "centerMessage",

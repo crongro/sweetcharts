@@ -10,7 +10,7 @@ var paths = {
   basis 	: ['./js/polyfill.js', './js/utility.js', './js/legend.js'],
   pie 		: ['./js/sweet_pie.js'],
   donut 	: ['./js/sweet_pie.js', './js/sweet_donut.js'],
-  demo 		: ['./example/demo_main.js']
+  demo 		: ['./example/js/demo_main.js']
 };
 
 gulp.task('clean', function(cb) {
@@ -47,13 +47,13 @@ gulp.task('donut', function () {
         .pipe(gulp.dest('./build/'));
 });
 
-//Demo
+//Demo page
 gulp.task('demo', function () {
        gulp.src(paths.demo)
         .pipe(jshint('.jshintrc')).pipe(jshint.reporter('jshint-stylish'))
         .pipe(uglify())
         .pipe(rename({extname: '.min.js'}))
-        .pipe(gulp.dest('./example/'));
+        .pipe(gulp.dest('./example/js/'));
 });
 
 // Rerun the task when a file changes
