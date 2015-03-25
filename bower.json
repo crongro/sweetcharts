@@ -1,12 +1,10 @@
 {
-  name: 'sweetcharts',
-  version: '0.0.1',
-  ignore: [
-    '**/.*',
-    'node_modules',
-    'bower_components',
-    'js'
-  ],
-  dependencies: {
-  },
+  "name": "sweetcharts",
+  "version": "0.0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "js"
+  ]
 }
