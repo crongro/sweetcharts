@@ -7,8 +7,9 @@
     "node_modules",
     "bower_components",
     "js",
-    ".bower.json",
+    "bower.json",
     "package.json",
-    "gulpfile.json"
+    "gulpfile.js",
+    "README.md"
   ]
 }
