@@ -4,7 +4,12 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     rename = require("gulp-rename"),
     del = require('del'),
-    stripLine  = require('gulp-strip-line');
+    stripLine  = require('gulp-strip-line'),
+    browserSync = require("browser-sync"),
+    browserify = require("browserify"),
+    source = require("vinyl-source-stream"),
+    mochaPhantomJS = require("gulp-mocha-phantomjs");
+
 
 var paths = {
   basis 	: ['./js/polyfill.js', './js/utility.js', './js/legend.js'],
@@ -54,6 +59,47 @@ gulp.task('demo', function () {
         .pipe(uglify())
         .pipe(rename({extname: '.min.js'}))
         .pipe(gulp.dest('./example/js/'));
+});
+
+//testing
+//run Browser after read a 'utility.html' at first running time.
+gulp.task("browser-sync", function () {
+    "use strict";
+    browserSync({
+        server: {
+            //serve tests and the root as base dirs
+            baseDir: ["./test/", "./"],
+            //make tests.html the index file
+            index: "utility.html"
+        }
+    });
+});
+
+//test on Browser while monitor change of utility.test.js 
+gulp.task("browserify", function() {
+    "use strict";
+    return browserify("./test/utility.test.js")
+        .bundle()
+        .on("error", function (err) {
+            console.log(err.toString());
+            this.emit("end");
+        })
+        .pipe(source("tests-browserify.js"))
+        .pipe(gulp.dest("test/"))
+        .pipe(browserSync.reload({stream:true}));
+});
+
+//test on Console
+gulp.task("test-Console", function () {
+    "use strict";
+    return gulp.src("./test/utility.html")
+        .pipe(mochaPhantomJS());
+});
+
+gulp.task("serve", ["browserify", "browser-sync"], function () {
+    "use strict";
+    //when tests.js changes, browserify code and execute tests
+    gulp.watch(["test/utility.test.js"], ["browserify", "test-Console"]);
 });
 
 // Rerun the task when a file changes
