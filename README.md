@@ -1,7 +1,7 @@
 <span style='color:#FFBAD2;'>SWEETCHARTS</span>
 ============
 
-Sweetcharts is a Chart library designed for the easy and quick building of Animation Web Chart.
+Sweetcharts is a Chart library designed for the easy and quick building of Animation Web Chart
 
 ## Example
 [SWEETCHARTS DEMO](http://git.io/hViu) <br />
