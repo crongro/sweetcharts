@@ -390,7 +390,8 @@ SWEETCHARTS.PIE = (function(window, document, polyfill, u, LegendManager) {
 }(window, document, SWEETCHARTS.polyfill, SWEETCHARTS.u, SWEETCHARTS.LegendManager));
 
 /*require support code*/if (typeof window.define === "function" && window.define.amd) {
-/*require support code*/ window.define(["sweet_pie.min"], function() {
+/*require support code*/ //window.define(["sweet_pie.min"], function() {
+/*require support code*/window.define(["sweet_pie_debug"], function() {
 /*require support code*/return SWEETCHARTS.PIE;
 /*require support code*/});
 /*require support code*/}

@@ -76,16 +76,21 @@ gulp.task("browser-sync", function () {
 });
 
 //test on Browser while monitor change of utility.test.js 
+// gulp.task("browserify", function() {
+//     "use strict";
+//     return browserify("./test/utility.test.js")
+//         .bundle()
+//         .on("error", function (err) {
+//             console.log(err.toString());
+//             this.emit("end");
+//         })
+//         .pipe(source("tests-browserify.js"))
+//         .pipe(gulp.dest("test/"))
+//         .pipe(browserSync.reload({stream:true}));
+// });
+
 gulp.task("browserify", function() {
-    "use strict";
-    return browserify("./test/utility.test.js")
-        .bundle()
-        .on("error", function (err) {
-            console.log(err.toString());
-            this.emit("end");
-        })
-        .pipe(source("tests-browserify.js"))
-        .pipe(gulp.dest("test/"))
+    return gulp.src('test/utility.test.js')
         .pipe(browserSync.reload({stream:true}));
 });
 
@@ -97,9 +102,10 @@ gulp.task("test-Console", function () {
 });
 
 gulp.task("serve", ["browserify", "browser-sync"], function () {
+//gulp.task("serve", ["browser-sync"], function () {
     "use strict";
     //when tests.js changes, browserify code and execute tests
-    gulp.watch(["test/utility.test.js"], ["browserify", "test-Console"]);
+    gulp.watch(["test/utility.test.js"], ["browserify"]);
 });
 
 // Rerun the task when a file changes

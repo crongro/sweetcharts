@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Tests Utility</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="dummy"></div>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/should/should.js"></script>
+    <script src="../example/js/require_2.1.15.js"></script>
+    <script src="../build/sweet_basis.min.js"></script>
+    <script>
+      mocha.setup('bdd');
+      mocha.reporter('html');
+    </script>
+    <script src="utility.test.js"></script>
+    <script>
+      if (window.mochaPhantomJS) {
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }
+    </script>
+
+  </body>
+</html>`

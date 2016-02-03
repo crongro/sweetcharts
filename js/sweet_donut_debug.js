@@ -129,7 +129,8 @@ SWEETCHARTS.Donut = (function(PIE, u, window, document) {
 }(SWEETCHARTS.PIE, SWEETCHARTS.u, window, document));
 
 if (typeof window.define === "function" && window.define.amd) {
-	    window.define(["sweet_donut.min"], function() {
+	    //window.define(["sweet_donut.min"], function() {
+        window.define(["sweet_donut_debug"], function() {
 	        return SWEETCHARTS.Donut;
 	});
 }

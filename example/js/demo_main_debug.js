@@ -1,10 +1,10 @@
 'use strict';
 require.config({
-    baseUrl:"../build",
+    baseUrl:"../js",
     paths : {},
     waitSeconds: 15
 });
-require(["sweet_pie.min", "sweet_donut.min"], function (PIE, Donut) {
+require(["sweet_pie_debug", "sweet_donut_debug"], function (PIE, Donut) {
 
     new PIE( document.querySelector(".chartList:first-child > .chart-wrap"), {
         core : {
